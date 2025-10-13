@@ -1,32 +1,33 @@
 package com.fox.ysmu.client.renderer.entity;
 
+import com.fox.ysmu.client.model.entity.ModelDisguiseGecko;
+import com.fox.ysmu.common.TransformationEventHandler;
+import com.fox.ysmu.common.entity.EntityDisguiseGecko;
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
-import net.minecraft.entity.Entity; // 新增导入
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ResourceLocation; // 新增导入
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
-import com.fox.ysmu.client.model.entity.ModelDisguiseGecko;
-import com.fox.ysmu.entity.EntityDisguiseGecko;
-import com.fox.ysmu.TransformationEventHandler;
-import org.lwjgl.opengl.GL11;
 
 
 public class RenderDisguiseGecko extends GeoEntityRenderer<EntityDisguiseGecko> {
 
-    public RenderDisguiseGecko() {
-        super(new ModelDisguiseGecko());
+    public RenderDisguiseGecko(RenderManager renderManager) {
+        super(renderManager, new ModelDisguiseGecko());
         this.shadowSize = 0.5F;
     }
 
     @Override
-    public void doRender(Entity entity, double x, double y, double z, float yaw, float partialTicks) {
+    public void doRender(EntityDisguiseGecko entity, double x, double y, double z, float yaw, float partialTicks) {
         Minecraft mc = Minecraft.getMinecraft();
-        EntityPlayer localPlayer = mc.thePlayer;
+        EntityPlayer localPlayer = mc.player;
 
         // 如果玩家不存在，或游戏世界不存在，则执行默认渲染
-        if (localPlayer == null || mc.theWorld == null) {
+        if (localPlayer == null || mc.world == null) {
             super.doRender(entity, x, y, z, yaw, partialTicks);
             return;
         }
@@ -45,8 +46,8 @@ public class RenderDisguiseGecko extends GeoEntityRenderer<EntityDisguiseGecko> 
         // 如果不满足上述条件，则执行正常的Geckolib渲染
         super.doRender(entity, x, y, z, yaw, partialTicks);
 
-        EntityDisguiseGecko disguise = (EntityDisguiseGecko) entity;
-        ItemStack itemstack = disguise.getHeldItem();
+        EntityDisguiseGecko disguise = entity;
+        ItemStack itemstack = disguise.getHeldItem(entity.getActiveHand());
 
         if (itemstack != null) {
             // 从模型实例中直接获取骨骼
@@ -76,7 +77,7 @@ public class RenderDisguiseGecko extends GeoEntityRenderer<EntityDisguiseGecko> 
      * 访问修饰符应为 protected 以匹配父类。
      */
     @Override
-    protected ResourceLocation getEntityTexture(Entity entity) {
+    public ResourceLocation getEntityTexture(EntityDisguiseGecko entity) {
         // 调用我们模型提供者中的 getTextureLocation 方法
         return this.modelProvider.getTextureLocation((EntityDisguiseGecko) entity);
     }
@@ -85,16 +86,18 @@ public class RenderDisguiseGecko extends GeoEntityRenderer<EntityDisguiseGecko> 
     /**
      * 一个辅助方法，用于在指定的骨骼上渲染物品
      */
+    //TODO
     private void renderItemInHand(EntityDisguiseGecko entity, ItemStack itemstack, IBone handBone) {
+        Minecraft mc = Minecraft.getMinecraft();
         GL11.glPushMatrix(); // 保存当前矩阵状态
 
         // 1. 移动到骨骼的位置
         GL11.glTranslated(handBone.getPositionX() / 16.0F, handBone.getPositionY() / 16.0F, handBone.getPositionZ() / 16.0F);
 
         // 2. 应用骨骼的旋转 (注意从弧度转换为角度)
-        GL11.glRotatef(handBone.getRotationZ() * (180F / (float)Math.PI), 0.0F, 0.0F, 1.0F);
-        GL11.glRotatef(handBone.getRotationY() * (180F / (float)Math.PI), 0.0F, 1.0F, 0.0F);
-        GL11.glRotatef(handBone.getRotationX() * (180F / (float)Math.PI), 1.0F, 0.0F, 0.0F);
+        GL11.glRotatef(handBone.getRotationZ() * (180F / (float) Math.PI), 0.0F, 0.0F, 1.0F);
+        GL11.glRotatef(handBone.getRotationY() * (180F / (float) Math.PI), 0.0F, 1.0F, 0.0F);
+        GL11.glRotatef(handBone.getRotationX() * (180F / (float) Math.PI), 1.0F, 0.0F, 0.0F);
 
         // 3. 需要进行一些微调，让物品正确地握在手中
         GL11.glRotatef(-90.0F, 1.0F, 0.0F, 0.0F); // 将物品竖起来
@@ -102,12 +105,16 @@ public class RenderDisguiseGecko extends GeoEntityRenderer<EntityDisguiseGecko> 
         GL11.glScalef(0.8F, 0.8F, 0.8F);       // 缩放微调
 
         // 4. 调用Minecraft的物品渲染器
-        this.renderManager.itemRenderer.renderItem(entity, itemstack, 0);
+        mc.getItemRenderer().renderItem(entity, itemstack, ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND);
+        // this.renderManager.itemRenderer.renderItem(entity, itemstack, 0);
 
         // 如果是方块，渲染它的3D形态
-        if (itemstack.getItem().requiresMultipleRenderPasses()) {
+        /*
+        if (itemstack.getItem() instanceof ItemBlock) {
             this.renderManager.itemRenderer.renderItem(entity, itemstack, 1);
         }
+
+         */
 
         GL11.glPopMatrix(); // 恢复矩阵状态
     }
