@@ -1,19 +1,20 @@
-### 构建：
+## TemplateDevEnv
 
-克隆到IDEA，别的IDE应该也可以
+Template workspace for modding Minecraft 1.12.2. Licensed under MIT, it is made for public use.
 
-### 获取相关文件：
+This template currently utilizies **Gradle 8.7** + **[RetroFuturaGradle](https://github.com/GTNewHorizons/RetroFuturaGradle) 1.3.35** + **Forge 14.23.5.2847**.
 
-查看release与https://www.curseforge.com/minecraft/mc-mods/geckolib-unofficial-1-7-10
+With **coremod and mixin support** that is easy to configure.
 
-### 使用：
+### Instructions:
 
-确保你的mods文件夹下有ysmu-0.1.jar、geckolib-unofficial-1.7.10-1.0.3.jar。
+1. Click `use this template` at the top.
+2. Clone the repository you have created with this template.
+3. In the local repository, run the command `gradlew setupDecompWorkspace`
+4. Open the project folder in IDEA.
+5. Right-click in IDEA `build.gradle` of your project, and select `Link Gradle Project`, after completion, hit `Refresh All` in the gradle tab on the right.
+6. Run `gradlew runClient` and `gradlew runServer`, or use the auto-imported run configurations in IntelliJ like `1. Run Client`.
 
-解压model.zip至你的.minecraft目录下，形成.minecraft\model\assets\...的结构（如果你开启了版本隔离可能有所不同）。
+### Mixins:
 
-进入游戏后输入/transform main/night以切换模型，输入/transform clear换回原版模型。
-
-### Todo:
-
-*完全重构*——放弃在玩家位置强行绑定一个实体的方法（待研究）
+- When writing Mixins on IntelliJ, it is advisable to use latest [MinecraftDev Fork for RetroFuturaGradle](https://github.com/eigenraven/MinecraftDev/releases).

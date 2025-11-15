@@ -64,5 +64,18 @@ dependencies {
     // }
     compileOnly "org.jetbrains:annotations:17.0.0"
 
-    implementation rfg.deobf("curse.maven:geckolib-388172:4020277")
+  //  implementation rfg.deobf("curse.maven:geckolib-388172:4020277")
+
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.9.0")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.9.0")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.0")
+    implementation("org.junit.jupiter:junit-jupiter-api:5.6.2")
+    implementation("org.junit.jupiter:junit-jupiter-params:5.6.2")
+    implementation("org.junit.jupiter:junit-jupiter-engine:5.6.2")
+
+    test {
+        useJUnitPlatform()
+    }
+    implementation("org.joml:joml:1.10.8")
 }
