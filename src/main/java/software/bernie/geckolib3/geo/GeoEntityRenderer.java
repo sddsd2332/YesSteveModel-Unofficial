@@ -179,7 +179,7 @@ public abstract class GeoEntityRenderer<T extends EntityLivingBase & IAnimatable
         if (shouldSit && entity.ridingEntity instanceof EntityLivingBase livingentity) {
             f = Interpolations.lerpYaw(livingentity.prevRenderYawOffset, livingentity.renderYawOffset, partialTicks);
             netHeadYaw = f1 - f;
-            float f3 = com.eliotlash.mclib.utils.MathHelper.wrapDegrees(netHeadYaw);
+            float f3 = MathHelper.wrapDegrees(netHeadYaw);
             if (f3 < -85.0F) {
                 f3 = -85.0F;
             }

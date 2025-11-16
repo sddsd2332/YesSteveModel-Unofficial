@@ -1,7 +1,10 @@
 package com.fox.ysmu;
 
+import com.fox.ysmu.capabilities.Capabilities;
+import com.fox.ysmu.event.CommonEventHandler;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -13,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 
 @Mod(modid = ysmu.MODID, version = Tags.VERSION, name = "ysmu", acceptedMinecraftVersions = "[1.12.2]")
+@Mod.EventBusSubscriber()
 public class ysmu {
 
     public static final String MODID = "ysmu";
@@ -29,11 +33,14 @@ public class ysmu {
     // GameRegistry." (Remove if not needed)
     public void preInit(FMLPreInitializationEvent event) {
         proxy.preInit(event);
+        Capabilities.registerCapabilities();
     }
 
     @Mod.EventHandler
     // load "Do your mod setup. Build whatever data structures you care about. Register recipes." (Remove if not needed)
     public void init(FMLInitializationEvent event) {
+        MinecraftForge.EVENT_BUS.register(new CommonEventHandler());
+        MinecraftForge.EVENT_BUS.register(this);
         proxy.init(event);
     }
 

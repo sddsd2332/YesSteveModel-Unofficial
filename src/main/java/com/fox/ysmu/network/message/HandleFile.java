@@ -1,22 +1,17 @@
 package com.fox.ysmu.network.message;
 
-import java.io.File;
-import java.io.IOException;
-
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.MinecraftServer;
-
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.server.FMLServerHandler;
-import org.apache.commons.io.FileUtils;
-
 import com.fox.ysmu.model.ServerModelManager;
-
-
+import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import io.netty.buffer.ByteBuf;
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
 
 public class HandleFile implements IMessage {
 
@@ -25,7 +20,8 @@ public class HandleFile implements IMessage {
     private String action;
     private String rename;
 
-    public HandleFile() {}
+    public HandleFile() {
+    }
 
     public HandleFile(String name, Dir dir, String action, String rename) {
         this.name = name;
@@ -56,9 +52,9 @@ public class HandleFile implements IMessage {
         public IMessage onMessage(HandleFile message, MessageContext ctx) {
             EntityPlayerMP sender = ctx.getServerHandler().player;
             // TODO 混淆名注意
-            if (sender != null && FMLServerHandler.instance().getServer()
-                .getPlayerList()
-                .canSendCommands(sender.getGameProfile())) {
+            if (sender != null && FMLCommonHandler.instance().getMinecraftServerInstance()
+                    .getPlayerList()
+                    .canSendCommands(sender.getGameProfile())) {
                 handleFileOperation(message);
             }
             return null;
@@ -70,14 +66,14 @@ public class HandleFile implements IMessage {
             if (dirType == Dir.CUSTOM) {
                 String actionIn = message.action;
                 File file = ServerModelManager.CUSTOM.resolve(message.name)
-                    .toFile();
+                        .toFile();
                 if (file.isFile() || file.isDirectory()) {
                     if (actionIn.equals("delete")) {
                         FileUtils.deleteQuietly(file);
                     }
                     if (actionIn.equals("move")) {
                         File destFile = ServerModelManager.AUTH.resolve(message.name)
-                            .toFile();
+                                .toFile();
                         try {
                             if (file.isFile()) {
                                 FileUtils.moveFile(file, destFile);
@@ -91,7 +87,7 @@ public class HandleFile implements IMessage {
                     }
                     if (actionIn.equals("rename") && message.rename != null && !message.rename.isEmpty()) {
                         File destFile = ServerModelManager.CUSTOM.resolve(message.rename)
-                            .toFile();
+                                .toFile();
                         try {
                             if (file.isFile()) {
                                 FileUtils.moveFile(file, destFile);
@@ -109,14 +105,14 @@ public class HandleFile implements IMessage {
             if (dirType == Dir.AUTH) {
                 String actionIn = message.action;
                 File file = ServerModelManager.AUTH.resolve(message.name)
-                    .toFile();
+                        .toFile();
                 if (file.isFile() || file.isDirectory()) {
                     if (actionIn.equals("delete")) {
                         FileUtils.deleteQuietly(file);
                     }
                     if (actionIn.equals("move")) {
                         File destFile = ServerModelManager.CUSTOM.resolve(message.name)
-                            .toFile();
+                                .toFile();
                         try {
                             if (file.isFile()) {
                                 FileUtils.moveFile(file, destFile);
@@ -130,7 +126,7 @@ public class HandleFile implements IMessage {
                     }
                     if (actionIn.equals("rename") && message.rename != null && !message.rename.isEmpty()) {
                         File destFile = ServerModelManager.AUTH.resolve(message.rename)
-                            .toFile();
+                                .toFile();
                         try {
                             if (file.isFile()) {
                                 FileUtils.moveFile(file, destFile);

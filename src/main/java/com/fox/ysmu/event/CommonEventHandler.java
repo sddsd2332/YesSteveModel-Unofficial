@@ -13,15 +13,15 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
-@Mod.EventBusSubscriber
+
 public class CommonEventHandler {
     // WARNING:If you don't know what this does,DO NOT CHANGE IT
     // TODO不安全的实现方法
@@ -29,6 +29,10 @@ public class CommonEventHandler {
     // public static final int MOTION_DATAWATCHER_ID = 28;
     // public static final int ON_GROUND = 0x01;
     // public static final int IS_FLYING = 0x02;
+
+    public CommonEventHandler() {
+        MinecraftForge.EVENT_BUS.register(this);
+    }
 
     @SubscribeEvent
     public static void onPlayerLoggedIn(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent event) {

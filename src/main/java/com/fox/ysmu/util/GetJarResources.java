@@ -9,8 +9,8 @@ import org.apache.commons.io.FileUtils;
 import com.fox.ysmu.ysmu;
 
 public final class GetJarResources {
-
-    private GetJarResources() {}
+    private GetJarResources() {
+    }
 
     /**
      * 复制本模组的文件到指定文件夹
@@ -25,12 +25,10 @@ public final class GetJarResources {
             return;
         }
         try {
-            FileUtils.copyURLToFile(
-                url,
-                destPath.resolve(fileName)
-                    .toFile());
+            FileUtils.copyURLToFile(url, destPath.resolve(fileName).toFile());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 }
+

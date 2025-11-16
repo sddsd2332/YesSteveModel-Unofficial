@@ -1,5 +1,7 @@
 package com.eliotlash.mclib.utils;
 
+import net.minecraft.util.math.MathHelper;
+
 public class Interpolations {
 
     /**

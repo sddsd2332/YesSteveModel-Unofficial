@@ -5,7 +5,6 @@ import java.io.*;
 import javax.annotation.Nullable;
 
 public final class ObjectStreamUtil {
-
     public static byte[] toByteArray(Object object) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         try (ObjectOutputStream output = new ObjectOutputStream(stream)) {

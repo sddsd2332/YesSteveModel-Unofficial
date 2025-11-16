@@ -1,6 +1,5 @@
 package com.fox.ysmu;
 
-import com.fox.ysmu.capabilities.Capabilities;
 import com.fox.ysmu.command.RootCommand;
 import com.fox.ysmu.model.ServerModelManager;
 import com.fox.ysmu.network.NetworkHandler;
@@ -18,7 +17,6 @@ public class CommonProxy {
     // GameRegistry." (Remove if not needed)
     public void preInit(FMLPreInitializationEvent event) {
         Config.init(event.getSuggestedConfigurationFile());
-        Capabilities.registerCapabilities();
         ServerModelManager.reloadPacks();
         ysmu.LOG.info("I am ysmu at version " + Tags.VERSION);
     }
@@ -29,14 +27,17 @@ public class CommonProxy {
     }
 
     // postInit "Handle interaction with other mods, complete your setup based on this." (Remove if not needed)
-    public void postInit(FMLPostInitializationEvent event) {}
+    public void postInit(FMLPostInitializationEvent event) {
+    }
 
     // register server commands in this event handler (Remove if not needed)
     public void serverStarting(FMLServerStartingEvent event) {
         event.registerServerCommand(new RootCommand());
     }
 
-    public void handleAuthModels(SyncAuthModels message) {}
+    public void handleAuthModels(SyncAuthModels message) {
+    }
 
-    public void handleStarModels(SyncStarModels message) {}
+    public void handleStarModels(SyncStarModels message) {
+    }
 }

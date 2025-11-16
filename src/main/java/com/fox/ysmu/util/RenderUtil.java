@@ -36,13 +36,12 @@ import java.util.function.Consumer;
 @SuppressWarnings("all")
 public final class RenderUtil {
 
-    public static void renderTextureScreenEntity(float pPosX, float pPosY, float pScale, float pitch, float yaw,
-                                                 EntityPlayer player, ResourceLocation modelId, ResourceLocation textureId, boolean showGround,
-                                                 Consumer<CustomPlayerEntity> consumer) {
+    public static void renderTextureScreenEntity(float pPosX, float pPosY, float pScale, float pitch, float yaw, EntityPlayer player, ResourceLocation modelId, ResourceLocation textureId, boolean showGround, Consumer<CustomPlayerEntity> consumer) {
         if (player == null) {
             return;
         }
         try {
+            //TODO
             CustomPlayerRenderer renderer = ClientProxy.getInstance();
             IAnimatable animatable = AnimatableCacheUtil.TEXTURE_GUI_CACHE.get(modelId, CustomPlayerEntity::new);
             if (animatable instanceof CustomPlayerEntity entity) {
@@ -52,7 +51,7 @@ public final class RenderUtil {
                 entity.setTexture(textureId);
 
                 GlStateManager.pushMatrix();
-                GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+             //   GlStateManager.matrixMode(GL11.GL_MODELVIEW);
                 GlStateManager.translate(pPosX, pPosY, 1050.0D);
                 GlStateManager.scale(1.0F, 1.0F, -1.0F);
 
@@ -60,6 +59,7 @@ public final class RenderUtil {
                 GlStateManager.translate(0.0D, 0.0D, 1000.0D);
                 GlStateManager.scale(pScale, pScale, pScale);
                 GlStateManager.translate(0, 0.8, 0);
+
                 Quaternionf zp = Axis.ZP.rotationDegrees(180.0F);
                 Quaternionf xp = Axis.XP.rotationDegrees(-10 + pitch);
                 zp.mul(xp);
@@ -144,9 +144,6 @@ public final class RenderUtil {
         }
     }
 
-    // 创建一个全局的RenderBlocks实例以提高效率
-    private static final BlockRendererDispatcher renderBlocks = Minecraft.getMinecraft().getBlockRendererDispatcher();
-
     private static void renderBed(float scale, float pitch, float yaw) {
         GlStateManager.pushMatrix();
         GlStateManager.translate(0.0D, 0.0D, 1000.0D);
@@ -162,7 +159,7 @@ public final class RenderUtil {
         // Minecraft.getInstance().getBlockRenderer().renderSingleBlock(Blocks.RED_BED.defaultBlockState(), poseStack,
         // bufferSource, 0xf000f0, OverlayTexture.NO_OVERLAY);
         Minecraft.getMinecraft().getRenderManager().renderEngine.bindTexture(new ResourceLocation("textures/entity/bed/red.png"));
-        renderBlocks.renderBlockBrightness(Blocks.BED.getDefaultState(), 1.0F);
+        Minecraft.getMinecraft().getBlockRendererDispatcher().renderBlockBrightness(Blocks.BED.getDefaultState(), 1.0F);
         GlStateManager.popMatrix();
     }
 
@@ -183,19 +180,19 @@ public final class RenderUtil {
             for (int j = 0; j < 3; j++) {
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(0, 0, 1);
-                renderBlocks.renderBlockBrightness(Blocks.GLASS.getDefaultState(), 1.0F);
+                Minecraft.getMinecraft().getBlockRendererDispatcher().renderBlockBrightness(Blocks.GLASS.getDefaultState(), 1.0F);
                 GlStateManager.popMatrix();
             }
             GlStateManager.translate(1, 0, -3);
         }
         GlStateManager.pushMatrix();
         GlStateManager.translate(-1, 1, 1);
-        renderBlocks.renderBlockBrightness(Blocks.TALLGRASS.getStateFromMeta(1), 1.0F); // metadata 1 for grass
+        Minecraft.getMinecraft().getBlockRendererDispatcher().renderBlockBrightness(Blocks.TALLGRASS.getStateFromMeta(1), 1.0F); // metadata 1 for grass
         GlStateManager.popMatrix();
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(0, 0, 1);
-        renderBlocks.renderBlockBrightness(Blocks.RED_FLOWER.getDefaultState(), 1.0F); // metadata 0 for poppy (red tulip)
+        Minecraft.getMinecraft().getBlockRendererDispatcher().renderBlockBrightness(Blocks.RED_FLOWER.getDefaultState(), 1.0F); // metadata 0 for poppy (red tulip)
         GlStateManager.popMatrix();
 
         GlStateManager.popMatrix();
@@ -278,17 +275,12 @@ public final class RenderUtil {
         float yHeadRotO = player.prevRotationYawHead;
         float yHeadRot = player.rotationYawHead;
 
-        // 0-3 是盔甲
-        ItemStack[] itemStacks = new ItemStack[6];
-        itemStacks[0] = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD); // 头盔
-        itemStacks[1] = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-        itemStacks[2] = player.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
-        itemStacks[3] = player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
-        itemStacks[4] = player.getHeldItemMainhand();
-        itemStacks[5] = player.getHeldItemOffhand();
-        // 清空玩家物品以避免在模型上渲染
+        ItemStack[] itemStacks = new ItemStack[EntityEquipmentSlot.values().length];
+        int i = 0;
         for (EntityEquipmentSlot slot : EntityEquipmentSlot.values()) {
+            itemStacks[i] = player.getItemStackFromSlot(slot);
             player.setItemStackToSlot(slot, ItemStack.EMPTY);
+            i++;
         }
 
         // 设置渲染状态
@@ -303,7 +295,7 @@ public final class RenderUtil {
         ResourceLocation modelLocation = provider.getModelLocation(entity);
         GeoModel model = provider.getModel(modelLocation);
         AnimationEvent<CustomPlayerEntity> predicate = new AnimationEvent<>(entity, 0, 0, 0, false, Collections.emptyList());
-        if (renderer.getGeoModelProvider() instanceof IAnimatableModel) {
+        if (renderer.getGeoModelProvider() instanceof IAnimatableModel ) {
             ((IAnimatableModel<CustomPlayerEntity>) renderer.getGeoModelProvider()).setLivingAnimations(entity, entity.hashCode(), predicate);
         }
         Minecraft.getMinecraft().getTextureManager().bindTexture(provider.getTextureLocation(entity));
@@ -319,13 +311,12 @@ public final class RenderUtil {
         player.prevRotationYawHead = yHeadRotO;
         player.rotationYawHead = yHeadRot;
 
-        player.setItemStackToSlot(EntityEquipmentSlot.HEAD, itemStacks[0]);
-        player.setItemStackToSlot(EntityEquipmentSlot.CHEST, itemStacks[1]);
-        player.setItemStackToSlot(EntityEquipmentSlot.LEGS, itemStacks[2]);
-        player.setItemStackToSlot(EntityEquipmentSlot.FEET, itemStacks[3]);
-        player.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, itemStacks[4]);
-        player.setItemStackToSlot(EntityEquipmentSlot.OFFHAND, itemStacks[5]);
-
+        i = 0;
+        for (EntityEquipmentSlot slot : EntityEquipmentSlot.values()) {
+            ItemStack itemStack = itemStacks[i];
+            player.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, itemStack);
+            i++;
+        }
     }
 
     public static void renderPlayerEntity(EntityPlayer player, double posX, double posY, float scale, float yawOffset, double z) {

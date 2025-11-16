@@ -15,11 +15,9 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 public final class AESUtil {
-
     private static final String ALGORITHM = "AES/CBC/PKCS5Padding";
 
-    public static ByteArrayOutputStream encrypt(SecretKey key, AlgorithmParameterSpec iv, byte[] input)
-        throws IOException, GeneralSecurityException {
+    public static ByteArrayOutputStream encrypt(SecretKey key, AlgorithmParameterSpec iv, byte[] input) throws IOException, GeneralSecurityException {
         final ByteArrayInputStream inputStream = new ByteArrayInputStream(input);
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -42,8 +40,7 @@ public final class AESUtil {
         return outputStream;
     }
 
-    public static ByteArrayOutputStream decrypt(SecretKey key, AlgorithmParameterSpec iv, byte[] input)
-        throws IOException, GeneralSecurityException {
+    public static ByteArrayOutputStream decrypt(SecretKey key, AlgorithmParameterSpec iv, byte[] input) throws IOException, GeneralSecurityException {
         final ByteArrayInputStream inputStream = new ByteArrayInputStream(input);
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
