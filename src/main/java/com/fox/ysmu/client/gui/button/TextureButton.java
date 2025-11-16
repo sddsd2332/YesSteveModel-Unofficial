@@ -1,6 +1,8 @@
 package com.fox.ysmu.client.gui.button;
 
-import com.fox.ysmu.eep.ExtendedModelInfo;
+
+import com.fox.ysmu.capabilities.Capabilities;
+import com.fox.ysmu.eep.ModelInfoCapability;
 import com.fox.ysmu.network.NetworkHandler;
 import com.fox.ysmu.network.message.OpenModelGuiMessage;
 import com.fox.ysmu.network.message.SetModelAndTexture;
@@ -11,8 +13,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
@@ -32,14 +34,16 @@ public class TextureButton extends GuiButton {
     }
 
     public void doPress() {
-        ExtendedModelInfo eep = ExtendedModelInfo.get(player);
-        if (eep != null) {
-            eep.setModelAndTexture(modelId, textureId);
-        }
-        if (player.equals(Minecraft.getMinecraft().player)) {
-            NetworkHandler.CHANNEL.sendToServer(new SetModelAndTexture(modelId, textureId));
-        } else {
-            NetworkHandler.CHANNEL.sendToServer(new SetNpcModelAndTexture(modelId, textureId, OpenModelGuiMessage.CURRENT_NPC_ID));
+        if (player.hasCapability(Capabilities.ModelInfo, null)) {
+            ModelInfoCapability eep = player.getCapability(Capabilities.ModelInfo, null);
+            if (eep != null) {
+                eep.setModelAndTexture(modelId, textureId);
+            }
+            if (player.equals(Minecraft.getMinecraft().player)) {
+                NetworkHandler.CHANNEL.sendToServer(new SetModelAndTexture(modelId, textureId));
+            } else {
+                NetworkHandler.CHANNEL.sendToServer(new SetNpcModelAndTexture(modelId, textureId, OpenModelGuiMessage.CURRENT_NPC_ID));
+            }
         }
     }
 
@@ -56,7 +60,7 @@ public class TextureButton extends GuiButton {
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         GL11.glScissor(scissorX, scissorY, scissorW, scissorH);
         RenderUtil.renderEntityInInventory(this.x + this.width / 2, this.y + this.height / 2 + 24,
-            35, mc.player, modelId, textureId);
+                35, mc.player, modelId, textureId);
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
         List<String> split = font.listFormattedStringToWidth(name, 50);

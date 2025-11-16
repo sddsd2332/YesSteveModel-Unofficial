@@ -19,8 +19,8 @@ public class PlayerModelScreenKey {
 
     @SubscribeEvent
     public static void onKeyboardInput(InputEvent.KeyInputEvent event) {
-        boolean isAltKeyDown = Keyboard.isKeyDown(Keyboard.KEY_LMENU) || Keyboard.isKeyDown(Keyboard.KEY_RMENU);
-        if (PLAYER_MODEL_KEY.isPressed() && isAltKeyDown) {
+   //     boolean isAltKeyDown = Keyboard.isKeyDown(Keyboard.KEY_LMENU) || Keyboard.isKeyDown(Keyboard.KEY_RMENU);
+        if (PLAYER_MODEL_KEY.isPressed()) {
             if (Config.DISCLAIMER_SHOW) {
                 Minecraft.getMinecraft().displayGuiScreen(new DisclaimerScreen());
             } else {

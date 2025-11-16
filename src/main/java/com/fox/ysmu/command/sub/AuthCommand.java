@@ -1,7 +1,8 @@
 package com.fox.ysmu.command.sub;
 
-import com.fox.ysmu.eep.ExtendedAuthModels;
-import com.fox.ysmu.eep.ExtendedModelInfo;
+import com.fox.ysmu.capabilities.Capabilities;
+import com.fox.ysmu.eep.AuthModelsCapability;
+import com.fox.ysmu.eep.ModelInfoCapability;
 import com.fox.ysmu.model.ServerModelManager;
 import com.fox.ysmu.network.NetworkHandler;
 import com.fox.ysmu.network.message.SyncAuthModels;
@@ -93,31 +94,35 @@ public class AuthCommand extends CommandBase {
         }
 
         for (EntityPlayerMP player : targets) {
-            ExtendedAuthModels eep = ExtendedAuthModels.get(player);
-            if (eep != null) {
-                ResourceLocation modelId = new ResourceLocation(ysmu.MODID, modelName);
-                eep.addModel(modelId);
-                NetworkHandler.sendToClientPlayer(new SyncAuthModels(eep.getAuthModels()), player);
-                sender.sendMessage(
-                        new TextComponentTranslation(
-                                "commands.yes_steve_model.auth_model.add.info",
-                                modelId.getPath(),
-                                player.getName()));
+            if (player.hasCapability(Capabilities.AuthModels, null)) {
+                AuthModelsCapability eep = player.getCapability(Capabilities.AuthModels, null);
+                if (eep != null) {
+                    ResourceLocation modelId = new ResourceLocation(ysmu.MODID, modelName);
+                    eep.addModel(modelId);
+                    NetworkHandler.sendToClientPlayer(new SyncAuthModels(eep.getAuthModels()), player);
+                    sender.sendMessage(
+                            new TextComponentTranslation(
+                                    "commands.yes_steve_model.auth_model.add.info",
+                                    modelId.getPath(),
+                                    player.getName()));
+                }
             }
         }
     }
 
     private void addAllAuthModel(ICommandSender sender, List<EntityPlayerMP> targets) {
         for (EntityPlayerMP player : targets) {
-            ExtendedAuthModels eep = ExtendedAuthModels.get(player);
-            if (eep != null) {
-                ServerModelManager.CACHE_NAME_INFO.keySet()
-                        .forEach(name -> eep.addModel(new ResourceLocation(ysmu.MODID, name)));
-                NetworkHandler.sendToClientPlayer(new SyncAuthModels(eep.getAuthModels()), player);
-                sender.sendMessage(
-                        new TextComponentTranslation(
-                                "commands.yes_steve_model.auth_model.all.info",
-                                player.getName()));
+            if (player.hasCapability(Capabilities.AuthModels, null)) {
+                AuthModelsCapability eep = player.getCapability(Capabilities.AuthModels, null);
+                if (eep != null) {
+                    ServerModelManager.CACHE_NAME_INFO.keySet()
+                            .forEach(name -> eep.addModel(new ResourceLocation(ysmu.MODID, name)));
+                    NetworkHandler.sendToClientPlayer(new SyncAuthModels(eep.getAuthModels()), player);
+                    sender.sendMessage(
+                            new TextComponentTranslation(
+                                    "commands.yes_steve_model.auth_model.all.info",
+                                    player.getName()));
+                }
             }
         }
     }
@@ -125,46 +130,44 @@ public class AuthCommand extends CommandBase {
     private void removeAuthModel(ICommandSender sender, List<EntityPlayerMP> targets, String modelName) {
         ResourceLocation modelId = new ResourceLocation(ysmu.MODID, modelName);
         for (EntityPlayerMP player : targets) {
-            ExtendedAuthModels ownModelsEEP = ExtendedAuthModels.get(player);
-            if (ownModelsEEP != null) {
-                ownModelsEEP.removeModel(modelId);
-                ExtendedModelInfo modelIdEEP = ExtendedModelInfo.get(player);
-                if (modelIdEEP != null) {
-                    if (ServerModelManager.AUTH_MODELS.contains(
-                            modelIdEEP.getModelId()
-                                    .getPath())
-                            && !ownModelsEEP.containModel(modelIdEEP.getModelId())) {
-                        ResourceLocation defaultModelId = new ResourceLocation(ysmu.MODID, "default");
-                        ResourceLocation defaultTextureId = new ResourceLocation(ysmu.MODID, "default/default.png");
-                        modelIdEEP.setModelAndTexture(defaultModelId, defaultTextureId);
+            if (player.hasCapability(Capabilities.AuthModels, null)) {
+                AuthModelsCapability ownModelsEEP = player.getCapability(Capabilities.AuthModels, null);
+                if (ownModelsEEP != null) {
+                    ownModelsEEP.removeModel(modelId);
+                    if (player.hasCapability(Capabilities.ModelInfo, null)) {
+                        ModelInfoCapability modelIdEEP = player.getCapability(Capabilities.ModelInfo, null);
+                        if (modelIdEEP != null) {
+                            if (ServerModelManager.AUTH_MODELS.contains(modelIdEEP.getModelId().getPath()) && !ownModelsEEP.containModel(modelIdEEP.getModelId())) {
+                                ResourceLocation defaultModelId = new ResourceLocation(ysmu.MODID, "default");
+                                ResourceLocation defaultTextureId = new ResourceLocation(ysmu.MODID, "default/default.png");
+                                modelIdEEP.setModelAndTexture(defaultModelId, defaultTextureId);
+                            }
+                        }
+                        NetworkHandler.sendToClientPlayer(new SyncAuthModels(ownModelsEEP.getAuthModels()), player);
+                        sender.sendMessage(new TextComponentTranslation("commands.yes_steve_model.auth_model.remove.info", modelId.getPath(), player.getName()));
                     }
                 }
-                NetworkHandler.sendToClientPlayer(new SyncAuthModels(ownModelsEEP.getAuthModels()), player);
-                sender.sendMessage(
-                        new TextComponentTranslation(
-                                "commands.yes_steve_model.auth_model.remove.info",
-                                modelId.getPath(),
-                                player.getName()));
             }
         }
     }
 
     private void clearAuthModel(ICommandSender sender, List<EntityPlayerMP> targets) {
         for (EntityPlayerMP player : targets) {
-            ExtendedAuthModels ownModelEEP = ExtendedAuthModels.get(player);
-            if (ownModelEEP != null) {
-                ownModelEEP.clear();
-                ExtendedModelInfo modelIdEEP = ExtendedModelInfo.get(player);
-                if (modelIdEEP != null) {
-                    ResourceLocation defaultModelId = new ResourceLocation(ysmu.MODID, "default");
-                    ResourceLocation defaultTextureId = new ResourceLocation(ysmu.MODID, "default/default.png");
-                    modelIdEEP.setModelAndTexture(defaultModelId, defaultTextureId);
+            if (player.hasCapability(Capabilities.AuthModels, null)) {
+                AuthModelsCapability ownModelEEP = player.getCapability(Capabilities.AuthModels, null);
+                if (ownModelEEP != null) {
+                    ownModelEEP.clear();
+                    if (player.hasCapability(Capabilities.ModelInfo, null)) {
+                        ModelInfoCapability modelIdEEP = player.getCapability(Capabilities.ModelInfo, null);
+                        if (modelIdEEP != null) {
+                            ResourceLocation defaultModelId = new ResourceLocation(ysmu.MODID, "default");
+                            ResourceLocation defaultTextureId = new ResourceLocation(ysmu.MODID, "default/default.png");
+                            modelIdEEP.setModelAndTexture(defaultModelId, defaultTextureId);
+                        }
+                        NetworkHandler.sendToClientPlayer(new SyncAuthModels(ownModelEEP.getAuthModels()), player);
+                        sender.sendMessage(new TextComponentTranslation("commands.yes_steve_model.auth_model.clear.info", player.getName()));
+                    }
                 }
-                NetworkHandler.sendToClientPlayer(new SyncAuthModels(ownModelEEP.getAuthModels()), player);
-                sender.sendMessage(
-                        new TextComponentTranslation(
-                                "commands.yes_steve_model.auth_model.clear.info",
-                                player.getName()));
             }
         }
     }

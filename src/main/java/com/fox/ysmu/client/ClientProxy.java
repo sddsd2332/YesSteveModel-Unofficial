@@ -1,19 +1,17 @@
 package com.fox.ysmu.client;
 
+import com.fox.ysmu.CommonProxy;
+import com.fox.ysmu.capabilities.Capabilities;
+import com.fox.ysmu.client.animation.AnimationRegister;
 import com.fox.ysmu.client.entity.CustomPlayerEntity;
 import com.fox.ysmu.client.input.*;
-
-import net.minecraft.client.Minecraft;
-
-import com.fox.ysmu.CommonProxy;
-import com.fox.ysmu.client.animation.AnimationRegister;
 import com.fox.ysmu.client.renderer.CustomPlayerRenderer;
-import com.fox.ysmu.eep.ExtendedAuthModels;
-import com.fox.ysmu.eep.ExtendedStarModels;
+import com.fox.ysmu.eep.AuthModelsCapability;
+import com.fox.ysmu.eep.StarModelsCapability;
 import com.fox.ysmu.network.message.SyncAuthModels;
 import com.fox.ysmu.network.message.SyncStarModels;
-
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import software.bernie.geckolib3.geo.GeoReplacedEntityRenderer;
@@ -32,7 +30,7 @@ public class ClientProxy extends CommonProxy {
         CUSTOM_PLAYER_RENDERER = new CustomPlayerRenderer();
         GeoReplacedEntityRenderer.registerReplacedEntity(CustomPlayerEntity.class, CUSTOM_PLAYER_RENDERER);
         ClientRegistry.registerKeyBinding(AnimationRouletteKey.ANIMATION_ROULETTE_KEY);
-        //ClientRegistry.registerKeyBinding(DebugAnimationKey.DEBUG_ANIMATION_KEY);
+        ClientRegistry.registerKeyBinding(DebugAnimationKey.DEBUG_ANIMATION_KEY);
         ExtraAnimationKey.registerKeyBindings();
         ClientRegistry.registerKeyBinding(ExtraPlayerConfigKey.EXTRA_PLAYER_RENDER_KEY);
         ClientRegistry.registerKeyBinding(PlayerModelScreenKey.PLAYER_MODEL_KEY);
@@ -45,10 +43,13 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void handleAuthModels(SyncAuthModels message) {
         Minecraft mc = Minecraft.getMinecraft();
-        if (mc.player != null) {
-            ExtendedAuthModels eep = ExtendedAuthModels.get(mc.player);
-            if (eep != null) {
-                eep.setAuthModels(message.getAuthModels());
+        EntityPlayer player = mc.player;
+        if (player != null) {
+            if (player.hasCapability(Capabilities.AuthModels, null)) {
+                AuthModelsCapability eep = player.getCapability(Capabilities.AuthModels, null);
+                if (eep != null) {
+                    eep.setAuthModels(message.getAuthModels());
+                }
             }
         }
     }
@@ -56,11 +57,15 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void handleStarModels(SyncStarModels message) {
         Minecraft mc = Minecraft.getMinecraft();
-        if (mc.player != null) {
-            ExtendedStarModels eep = ExtendedStarModels.get(mc.player);
-            if (eep != null) {
-                eep.setStarModels(message.getStarModels());
+        EntityPlayer player = mc.player;
+        if (player != null) {
+            if (player.hasCapability(Capabilities.StarModels, null)) {
+                StarModelsCapability eep = player.getCapability(Capabilities.StarModels, null);
+                if (eep != null) {
+                    eep.setStarModels(message.getStarModels());
+                }
             }
         }
     }
+
 }

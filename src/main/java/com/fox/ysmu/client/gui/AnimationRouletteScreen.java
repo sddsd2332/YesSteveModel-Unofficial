@@ -1,9 +1,10 @@
 package com.fox.ysmu.client.gui;
 
 import com.fox.ysmu.Config;
+import com.fox.ysmu.capabilities.Capabilities;
 import com.fox.ysmu.client.ClientModelManager;
 import com.fox.ysmu.client.input.ExtraAnimationKey;
-import com.fox.ysmu.eep.ExtendedModelInfo;
+import com.fox.ysmu.eep.ModelInfoCapability;
 import com.fox.ysmu.network.NetworkHandler;
 import com.fox.ysmu.network.message.SetPlayAnimation;
 import com.fox.ysmu.util.ModelIdUtil;
@@ -13,6 +14,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -36,12 +38,17 @@ public class AnimationRouletteScreen extends GuiScreen {
         this.x = width / 2;
         this.y = height / 2 - 8;
 
-        if (mc != null && mc.player != null) {
-            ExtendedModelInfo eep = ExtendedModelInfo.get(mc.player);
-            if (eep != null) {
-                ResourceLocation modelId = eep.getModelId();
-                if (ClientModelManager.EXTRA_ANIMATION_NAME.containsKey(ModelIdUtil.getMainId(modelId))) {
-                    this.names = ClientModelManager.EXTRA_ANIMATION_NAME.get(ModelIdUtil.getMainId(modelId));
+        if (mc != null) {
+            EntityPlayer player = mc.player;
+            if (player != null) {
+                if (player.hasCapability(Capabilities.ModelInfo, null)) {
+                    ModelInfoCapability eep = player.getCapability(Capabilities.ModelInfo, null);
+                    if (eep != null) {
+                        ResourceLocation modelId = eep.getModelId();
+                        if (ClientModelManager.EXTRA_ANIMATION_NAME.containsKey(ModelIdUtil.getMainId(modelId))) {
+                            this.names = ClientModelManager.EXTRA_ANIMATION_NAME.get(ModelIdUtil.getMainId(modelId));
+                        }
+                    }
                 }
             }
         }

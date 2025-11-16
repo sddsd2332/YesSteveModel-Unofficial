@@ -1,22 +1,22 @@
 package com.fox.ysmu.network.message;
 
+import com.fox.ysmu.capabilities.Capabilities;
+import com.fox.ysmu.eep.StarModelsCapability;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
-
-import com.fox.ysmu.eep.ExtendedStarModels;
-
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import io.netty.buffer.ByteBuf;
 
 public class SetStarModel implements IMessage {
 
     private String modelId;
     private boolean isAdd;
 
-    public SetStarModel() {}
+    public SetStarModel() {
+    }
 
     private SetStarModel(ResourceLocation modelId, boolean isAdd) {
         this.modelId = modelId.toString();
@@ -54,14 +54,16 @@ public class SetStarModel implements IMessage {
             return null;
         }
 
-        private void handleEEP(SetStarModel message, EntityPlayerMP sender) {
-            ExtendedStarModels eep = ExtendedStarModels.get(sender);
-            if (eep != null) {
-                ResourceLocation modelLoc = message.modelId.isEmpty() ? null : new ResourceLocation(message.modelId);
-                if (message.isAdd) {
-                    eep.addModel(modelLoc);
-                } else {
-                    eep.removeModel(modelLoc);
+        private void handleEEP(SetStarModel message, EntityPlayerMP player) {
+            if (player.hasCapability(Capabilities.StarModels, null)) {
+                StarModelsCapability eep = player.getCapability(Capabilities.StarModels, null);
+                if (eep != null) {
+                    ResourceLocation modelLoc = message.modelId.isEmpty() ? null : new ResourceLocation(message.modelId);
+                    if (message.isAdd) {
+                        eep.addModel(modelLoc);
+                    } else {
+                        eep.removeModel(modelLoc);
+                    }
                 }
             }
         }

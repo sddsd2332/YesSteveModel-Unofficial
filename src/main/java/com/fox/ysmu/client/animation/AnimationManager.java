@@ -1,29 +1,27 @@
 package com.fox.ysmu.client.animation;
 
-import java.util.LinkedList;
-
+import com.fox.ysmu.capabilities.Capabilities;
+import com.fox.ysmu.client.animation.condition.*;
+import com.fox.ysmu.client.entity.CustomPlayerEntity;
+import com.fox.ysmu.compat.BackhandCompat;
+import com.fox.ysmu.eep.ModelInfoCapability;
+import com.google.common.collect.Lists;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-
-import com.fox.ysmu.client.animation.condition.*;
-import com.fox.ysmu.client.entity.CustomPlayerEntity;
-import com.fox.ysmu.compat.BackhandCompat;
-import com.fox.ysmu.eep.ExtendedModelInfo;
-import com.google.common.collect.Lists;
-
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
 import software.bernie.geckolib3.core.builder.ILoopType;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.resource.GeckoLibCache;
+
+import java.util.LinkedList;
 
 public final class AnimationManager {
 
@@ -44,23 +42,23 @@ public final class AnimationManager {
 
     @NotNull
     private static <P extends IAnimatable> PlayState playAnimation(AnimationEvent<P> event, String animationName,
-        ILoopType loopType) {
+                                                                   ILoopType loopType) {
         event.getController()
-            .setAnimation(new AnimationBuilder().addAnimation(animationName, loopType));
+                .setAnimation(new AnimationBuilder().addAnimation(animationName, loopType));
         return PlayState.CONTINUE;
     }
 
     @NotNull
     private static <P extends IAnimatable> PlayState playAnimation(AnimationEvent<P> event, String animationName) {
         event.getController()
-            .setAnimation(new AnimationBuilder().addAnimation(animationName));
+                .setAnimation(new AnimationBuilder().addAnimation(animationName));
         return PlayState.CONTINUE;
     }
 
     public void register(AnimationState state) {
         if (data.containsKey(state.getPriority())) {
             data.get(state.getPriority())
-                .add(state);
+                    .add(state);
         } else {
             LinkedList<AnimationState> states = Lists.newLinkedList();
             states.add(state);
@@ -70,7 +68,7 @@ public final class AnimationManager {
 
     public PlayState predicateParallel(AnimationEvent<CustomPlayerEntity> event, String animationName) {
         if (Minecraft.getMinecraft()
-            .isGamePaused()) {
+                .isGamePaused()) {
             return PlayState.STOP;
         }
         return playLoopAnimation(event, animationName);
@@ -85,10 +83,11 @@ public final class AnimationManager {
             }
             return PlayState.STOP;
         }
-
-        ExtendedModelInfo eep = ExtendedModelInfo.get(player);
-        if (eep != null && eep.isPlayAnimation()) {
-            return playAnimation(event, eep.getAnimation());
+        if (player.hasCapability(Capabilities.ModelInfo, null)) {
+            ModelInfoCapability eep = player.getCapability(Capabilities.ModelInfo, null);
+            if (eep != null && eep.isPlayAnimation()) {
+                return playAnimation(event, eep.getAnimation());
+            }
         }
         return PlayState.STOP;
     }
@@ -96,7 +95,7 @@ public final class AnimationManager {
     @NotNull
     public PlayState predicateMain(AnimationEvent<CustomPlayerEntity> event) {
         EntityPlayer player = event.getAnimatable()
-            .getPlayer();
+                .getPlayer();
         if (player == null) {
             return PlayState.STOP;
         }
@@ -118,7 +117,7 @@ public final class AnimationManager {
 
     public PlayState predicateOffhandHold(AnimationEvent<CustomPlayerEntity> event) {
         EntityPlayer player = event.getAnimatable()
-            .getPlayer();
+                .getPlayer();
         if (player == null) {
             return PlayState.STOP;
         }
@@ -127,7 +126,7 @@ public final class AnimationManager {
         ItemStack offhandItem = player.getHeldItemOffhand();
         if (!offhandItem.isEmpty() && checkSwingAndUse(player, false)) {
             ResourceLocation id = event.getAnimatable()
-                .getAnimation();
+                    .getAnimation();
             ConditionalHold conditionalHold = ConditionManager.getHoldOffhand(id);
             if (conditionalHold != null) {
                 // 为兼容性传递false表示副手
@@ -142,7 +141,7 @@ public final class AnimationManager {
 
     public PlayState predicateMainhandHold(AnimationEvent<CustomPlayerEntity> event) {
         EntityPlayer player = event.getAnimatable()
-            .getPlayer();
+                .getPlayer();
         if (player == null) {
             return PlayState.STOP;
         }
@@ -162,7 +161,7 @@ public final class AnimationManager {
 
         if (!player.getHeldItemMainhand().isEmpty() && checkSwingAndUse(player, true)) {
             ResourceLocation id = event.getAnimatable()
-                .getAnimation();
+                    .getAnimation();
             ConditionalHold conditionalHold = ConditionManager.getHoldMainhand(id);
             if (conditionalHold != null) {
                 String name = conditionalHold.doTest(player, true);
@@ -176,7 +175,7 @@ public final class AnimationManager {
 
     public PlayState predicateSwing(AnimationEvent<CustomPlayerEntity> event) {
         EntityPlayer player = event.getAnimatable()
-            .getPlayer();
+                .getPlayer();
         if (player == null) {
             return PlayState.STOP;
         }
@@ -184,10 +183,10 @@ public final class AnimationManager {
             if (player.swingProgressInt == 0) {
                 event.getController().shouldResetTick = true;
                 event.getController()
-                    .adjustTick(0);
+                        .adjustTick(0);
             }
             ResourceLocation id = event.getAnimatable()
-                .getAnimation();
+                    .getAnimation();
             ConditionalSwing conditionalSwing = ConditionManager.getSwing(id);
             if (conditionalSwing != null) {
                 // 修改为使用兼容性方法
@@ -203,7 +202,7 @@ public final class AnimationManager {
 
     public PlayState predicateUse(AnimationEvent<CustomPlayerEntity> event) {
         EntityPlayer player = event.getAnimatable()
-            .getPlayer();
+                .getPlayer();
         if (player == null) {
             return PlayState.STOP;
         }
@@ -211,11 +210,11 @@ public final class AnimationManager {
             if (player.getItemInUseCount() == 1) { // TODO getItemInUseCount可能与高版本逻辑相反
                 event.getController().shouldResetTick = true;
                 event.getController()
-                    .adjustTick(0);
+                        .adjustTick(0);
             }
             if (BackhandCompat.getUsedItemHand(player)) { // 主手
                 ResourceLocation id = event.getAnimatable()
-                    .getAnimation();
+                        .getAnimation();
                 ConditionalUse conditionalUse = ConditionManager.getUseMainhand(id);
                 if (conditionalUse != null) {
                     String name = conditionalUse.doTest(player, true); // true表示主手
@@ -226,7 +225,7 @@ public final class AnimationManager {
                 return playAnimation(event, "use_mainhand", ILoopType.EDefaultLoopTypes.LOOP);
             } else {
                 ResourceLocation id = event.getAnimatable()
-                    .getAnimation();
+                        .getAnimation();
                 ConditionalUse conditionalUse = ConditionManager.getUseOffhand(id);
                 if (conditionalUse != null) {
                     String name = conditionalUse.doTest(player, false); // false表示副手
@@ -242,7 +241,7 @@ public final class AnimationManager {
 
     public PlayState predicateArmor(AnimationEvent<CustomPlayerEntity> event, EntityEquipmentSlot slotIndex) {
         EntityPlayer player = event.getAnimatable()
-            .getPlayer();
+                .getPlayer();
         if (player == null) {
             return PlayState.STOP;
         }
@@ -252,7 +251,7 @@ public final class AnimationManager {
         }
 
         ResourceLocation id = event.getAnimatable()
-            .getAnimation();
+                .getAnimation();
         ConditionArmor conditionArmor = ConditionManager.getArmor(id);
         if (conditionArmor != null) {
             String name = conditionArmor.doTest(player, slotIndex);
@@ -262,12 +261,12 @@ public final class AnimationManager {
         }
 
         ResourceLocation animation = event.getAnimatable()
-            .getAnimation();
+                .getAnimation();
         String slotName = ConditionArmor.getSlotNameFromIndex(slotIndex);
         String defaultName = slotName + ":default";
         if (GeckoLibCache.getInstance()
-            .getAnimations()
-            .get(animation).animations.containsKey(defaultName)) {
+                .getAnimations()
+                .get(animation).animations.containsKey(defaultName)) {
             return playAnimation(event, defaultName, ILoopType.EDefaultLoopTypes.LOOP);
         }
         return PlayState.STOP;

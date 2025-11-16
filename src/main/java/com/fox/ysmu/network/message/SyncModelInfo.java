@@ -1,11 +1,12 @@
 package com.fox.ysmu.network.message;
 
+import com.fox.ysmu.capabilities.Capabilities;
+import com.fox.ysmu.eep.ModelInfoCapability;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
-import com.fox.ysmu.eep.ExtendedModelInfo;
 import com.fox.ysmu.util.ThreadTools;
 
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -22,11 +23,11 @@ public class SyncModelInfo implements IMessage {
 
     public SyncModelInfo() {}
 
-    public SyncModelInfo(int entityId, ExtendedModelInfo modelInfo) {
+    public SyncModelInfo(int entityId, ModelInfoCapability modelInfo) {
         this.entityId = entityId;
         this.modelInfoNBT = new NBTTagCompound();
         if (modelInfo != null) {
-            modelInfo.saveNBTData(this.modelInfoNBT);
+            modelInfo.deserializeNBT(this.modelInfoNBT);
         }
     }
 
@@ -64,11 +65,14 @@ public class SyncModelInfo implements IMessage {
                         }
                        Entity entity = mc.world.getEntityByID(message.entityId);
                         if (entity instanceof EntityPlayer player) {
-                            ExtendedModelInfo eep = ExtendedModelInfo.get(player);
-                            if (eep != null) {
-                                eep.loadNBTData(message.modelInfoNBT);
+                            if (player.hasCapability(Capabilities.ModelInfo, null)) {
+                                ModelInfoCapability eep = player.getCapability(Capabilities.ModelInfo, null);
+                                if (eep != null) {
+                                    eep.deserializeNBT(message.modelInfoNBT);
+                                }
                             }
                         }
+
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }

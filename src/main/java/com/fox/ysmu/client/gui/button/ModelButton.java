@@ -1,8 +1,9 @@
 package com.fox.ysmu.client.gui.button;
 
+import com.fox.ysmu.capabilities.Capabilities;
+import com.fox.ysmu.eep.ModelInfoCapability;
+import com.fox.ysmu.eep.StarModelsCapability;
 import com.fox.ysmu.ysmu;
-import com.fox.ysmu.eep.ExtendedModelInfo;
-import com.fox.ysmu.eep.ExtendedStarModels;
 import com.fox.ysmu.network.NetworkHandler;
 import com.fox.ysmu.network.message.OpenModelGuiMessage;
 import com.fox.ysmu.network.message.SetModelAndTexture;
@@ -43,14 +44,16 @@ public class ModelButton extends GuiButton {
         if (this.needAuth) {
             return;
         }
-        ExtendedModelInfo eep = ExtendedModelInfo.get(player);
-        if (eep != null) {
-            eep.setModelAndTexture(modelInfo.getLeft(), modelInfo.getRight().get(0));
-        }
-        if (player.equals(Minecraft.getMinecraft().player)) {
-            NetworkHandler.CHANNEL.sendToServer(new SetModelAndTexture(modelInfo.getLeft(), modelInfo.getRight().get(0)));
-        } else {
-            NetworkHandler.CHANNEL.sendToServer(new SetNpcModelAndTexture(modelInfo.getLeft(), modelInfo.getRight().get(0), OpenModelGuiMessage.CURRENT_NPC_ID));
+        if (player.hasCapability(Capabilities.ModelInfo, null)) {
+            ModelInfoCapability eep = player.getCapability(Capabilities.ModelInfo, null);
+            if (eep != null) {
+                eep.setModelAndTexture(modelInfo.getLeft(), modelInfo.getRight().get(0));
+            }
+            if (player.equals(Minecraft.getMinecraft().player)) {
+                NetworkHandler.CHANNEL.sendToServer(new SetModelAndTexture(modelInfo.getLeft(), modelInfo.getRight().get(0)));
+            } else {
+                NetworkHandler.CHANNEL.sendToServer(new SetNpcModelAndTexture(modelInfo.getLeft(), modelInfo.getRight().get(0), OpenModelGuiMessage.CURRENT_NPC_ID));
+            }
         }
     }
 
@@ -93,12 +96,14 @@ public class ModelButton extends GuiButton {
             this.drawGradientRect(this.x, this.y + this.height - 1, this.x + this.width, this.y + this.height, 0xff_F3EFE0, 0xff_F3EFE0);
         }
         // 收藏图标
-        ExtendedStarModels eep = ExtendedStarModels.get(player);
-        if (eep != null && eep.containModel(modelInfo.getLeft())) {
-            // graphics.blit
-            mc.getTextureManager().bindTexture(ICON);
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-            this.drawTexturedModalRect(this.x + this.width - 14, this.y, 16, 0, 16, 16);
+        if (player.hasCapability(Capabilities.StarModels, null)) {
+            StarModelsCapability eep = player.getCapability(Capabilities.StarModels, null);
+            if (eep != null && eep.containModel(modelInfo.getLeft())) {
+                // graphics.blit
+                mc.getTextureManager().bindTexture(ICON);
+                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                this.drawTexturedModalRect(this.x + this.width - 14, this.y, 16, 0, 16, 16);
+            }
         }
         if (needAuth) {
             this.drawGradientRect(this.x, this.y, this.x + this.width, this.y + this.height, 0x9F222222, 0x9F222222);

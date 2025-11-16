@@ -12,11 +12,9 @@
     "logoFile": "${mod_logo_path}",
     "useDependencyInformation": true,
     "dependencies": [
-      "geckolib3"
     ],
     "requiredMods": [
-      "forge@[14.23.5.2768,)",
-      "geckolib3"
+      "forge@[14.23.5.2768,)"
     ]
   }
 ]

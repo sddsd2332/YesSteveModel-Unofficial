@@ -1,10 +1,11 @@
 package com.fox.ysmu.client.gui;
 
-import com.fox.ysmu.eep.ExtendedModelInfo;
+import com.fox.ysmu.capabilities.Capabilities;
 import com.fox.ysmu.client.ClientModelManager;
 import com.fox.ysmu.client.gui.button.FlatColorButton;
 import com.fox.ysmu.client.gui.button.FlatIconButton;
 import com.fox.ysmu.client.gui.button.TextureButton;
+import com.fox.ysmu.eep.ModelInfoCapability;
 import com.fox.ysmu.util.RenderUtil;
 import com.google.common.collect.Lists;
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -12,11 +13,10 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.resources.I18n;
-
-import net.minecraft.init.SoundEvents;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -103,7 +103,7 @@ public class PlayerTextureScreen extends GuiScreen {
             String keyDesc = String.format("gui.yes_steve_model.texture.button.%s.desc", name.replaceAll("\\:", "."));
             FlatColorButton sideButton = new FlatColorButton(a++, x + 5, yStart, 80, 16, I18n.format(key));
             sideButton.setTooltips(Lists.newArrayList(
-                TextFormatting.GOLD + I18n.format(keyDesc),
+                    TextFormatting.GOLD + I18n.format(keyDesc),
                     TextFormatting.GRAY + I18n.format("gui.yes_steve_model.texture.button.animation_name", name)
             ));
             this.buttonList.add(sideButton);
@@ -184,22 +184,23 @@ public class PlayerTextureScreen extends GuiScreen {
         this.drawGradientRect(x, y + 22, x + 90, y + 235, 0xff_222222, 0xff_222222);
         this.drawGradientRect(x + 93, y, x + 299, y + 235, 0xff_222222, 0xff_222222);
         this.drawGradientRect(x + 302, y, x + 420, y + 235, 0xff_222222, 0xff_222222);
-
-        ExtendedModelInfo eep = ExtendedModelInfo.get(player);
-        if (eep != null) {
-            int guiScale = new ScaledResolution(mc).getScaleFactor();
-            int scissorX = (this.x + 93) * guiScale;
-            int scissorY = mc.displayHeight - ((this.y + 235) * guiScale);
-            int scissorW = 206 * guiScale;
-            int scissorH = 235 * guiScale;
-            GL11.glEnable(GL11.GL_SCISSOR_TEST);
-            GL11.glScissor(scissorX, scissorY, scissorW, scissorH);
-            RenderUtil.renderTextureScreenEntity(this.x + 299 / 2.0F + 40 + posX, this.y + 235 / 2.0F + 80 + posY, scale, pitch, yaw, player, modelId, eep.getSelectTexture(), showGround, entity -> {
-                if (!entity.hasPreviewAnimation(animation)) {
-                    entity.setPreviewAnimation(animation);
-                }
-            });
-            GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        if (player.hasCapability(Capabilities.ModelInfo, null)) {
+            ModelInfoCapability eep = player.getCapability(Capabilities.ModelInfo, null);
+            if (eep != null) {
+                int guiScale = new ScaledResolution(mc).getScaleFactor();
+                int scissorX = (this.x + 93) * guiScale;
+                int scissorY = mc.displayHeight - ((this.y + 235) * guiScale);
+                int scissorW = 206 * guiScale;
+                int scissorH = 235 * guiScale;
+                GL11.glEnable(GL11.GL_SCISSOR_TEST);
+                GL11.glScissor(scissorX, scissorY, scissorW, scissorH);
+                RenderUtil.renderTextureScreenEntity(this.x + 299 / 2.0F + 40 + posX, this.y + 235 / 2.0F + 80 + posY, scale, pitch, yaw, player, modelId, eep.getSelectTexture(), showGround, entity -> {
+                    if (!entity.hasPreviewAnimation(animation)) {
+                        entity.setPreviewAnimation(animation);
+                    }
+                });
+                GL11.glDisable(GL11.GL_SCISSOR_TEST);
+            }
         }
 
         String texturePageInfo = String.format("%d/%d", texturePage + 1, this.maxTexturePage + 1);

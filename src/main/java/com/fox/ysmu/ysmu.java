@@ -1,5 +1,7 @@
 package com.fox.ysmu;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -9,10 +11,6 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-
 
 @Mod(modid = ysmu.MODID, version = Tags.VERSION, name = "ysmu", acceptedMinecraftVersions = "[1.12.2]")
 public class ysmu {
@@ -20,8 +18,8 @@ public class ysmu {
     public static final String MODID = "ysmu";
     public static final Logger LOG = LogManager.getLogger(MODID);
     public static final Gson GSON = new GsonBuilder().disableHtmlEscaping()
-        .setPrettyPrinting()
-        .create();
+            .setPrettyPrinting()
+            .create();
 
     @SidedProxy(clientSide = "com.fox.ysmu.client.ClientProxy", serverSide = "com.fox.ysmu.CommonProxy")
     public static CommonProxy proxy;
@@ -50,4 +48,6 @@ public class ysmu {
     public void serverStarting(FMLServerStartingEvent event) {
         proxy.serverStarting(event);
     }
+
+
 }

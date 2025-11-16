@@ -1,7 +1,8 @@
 package com.fox.ysmu.client.gui.button;
 
-import com.fox.ysmu.eep.ExtendedModelInfo;
-import com.fox.ysmu.eep.ExtendedStarModels;
+import com.fox.ysmu.capabilities.Capabilities;
+import com.fox.ysmu.eep.ModelInfoCapability;
+import com.fox.ysmu.eep.StarModelsCapability;
 import com.fox.ysmu.network.NetworkHandler;
 import com.fox.ysmu.network.message.SetStarModel;
 import com.fox.ysmu.ysmu;
@@ -24,18 +25,20 @@ public class StarButton extends FlatColorButton {
         int startY = (this.height - 16) / 2;
         EntityPlayer player = Minecraft.getMinecraft().player;
         if (player != null) {
-            ExtendedModelInfo modelInfoEEP = ExtendedModelInfo.get(player);
-            ExtendedStarModels starModelsEEP = ExtendedStarModels.get(player);
-            if (modelInfoEEP != null && starModelsEEP != null) {
-                ResourceLocation modelId = modelInfoEEP.getModelId();
-                if (starModelsEEP.containModel(modelId)) {
-                    mc.getTextureManager().bindTexture(ICON);
-                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                    this.drawTexturedModalRect(this.x + startX, this.y + startY, 16, 0, 16, 16);
-                } else {
-                    mc.getTextureManager().bindTexture(ICON);
-                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                    this.drawTexturedModalRect(this.x + startX, this.y + startY, 0, 0, 16, 16);
+            if (player.hasCapability(Capabilities.StarModels, null) && player.hasCapability(Capabilities.ModelInfo, null)) {
+                ModelInfoCapability modelInfoEEP = player.getCapability(Capabilities.ModelInfo, null);
+                StarModelsCapability starModelsEEP = player.getCapability(Capabilities.StarModels, null);
+                if (modelInfoEEP != null && starModelsEEP != null) {
+                    ResourceLocation modelId = modelInfoEEP.getModelId();
+                    if (starModelsEEP.containModel(modelId)) {
+                        mc.getTextureManager().bindTexture(ICON);
+                        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                        this.drawTexturedModalRect(this.x + startX, this.y + startY, 16, 0, 16, 16);
+                    } else {
+                        mc.getTextureManager().bindTexture(ICON);
+                        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                        this.drawTexturedModalRect(this.x + startX, this.y + startY, 0, 0, 16, 16);
+                    }
                 }
             }
         }
@@ -44,16 +47,18 @@ public class StarButton extends FlatColorButton {
     public void doPress() {
         EntityPlayer player = Minecraft.getMinecraft().player;
         if (player != null) {
-            ExtendedModelInfo modelInfoEEP = ExtendedModelInfo.get(player);
-            ExtendedStarModels starModelsEEP = ExtendedStarModels.get(player);
-            if (modelInfoEEP != null && starModelsEEP != null) {
-                ResourceLocation modelId = modelInfoEEP.getModelId();
-                if (starModelsEEP.containModel(modelId)) {
-                    starModelsEEP.removeModel(modelId);
-                    NetworkHandler.CHANNEL.sendToServer(SetStarModel.remove(modelId));
-                } else {
-                    starModelsEEP.addModel(modelId);
-                    NetworkHandler.CHANNEL.sendToServer(SetStarModel.add(modelId));
+            if (player.hasCapability(Capabilities.StarModels, null) && player.hasCapability(Capabilities.ModelInfo, null)) {
+                ModelInfoCapability modelInfoEEP = player.getCapability(Capabilities.ModelInfo, null);
+                StarModelsCapability starModelsEEP = player.getCapability(Capabilities.StarModels, null);
+                if (modelInfoEEP != null && starModelsEEP != null) {
+                    ResourceLocation modelId = modelInfoEEP.getModelId();
+                    if (starModelsEEP.containModel(modelId)) {
+                        starModelsEEP.removeModel(modelId);
+                        NetworkHandler.CHANNEL.sendToServer(SetStarModel.remove(modelId));
+                    } else {
+                        starModelsEEP.addModel(modelId);
+                        NetworkHandler.CHANNEL.sendToServer(SetStarModel.add(modelId));
+                    }
                 }
             }
         }

@@ -17,6 +17,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+
 import org.joml.Quaternionf;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;

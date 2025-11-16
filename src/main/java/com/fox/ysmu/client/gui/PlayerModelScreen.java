@@ -1,11 +1,12 @@
 package com.fox.ysmu.client.gui;
 
 import com.fox.ysmu.Tags;
+import com.fox.ysmu.capabilities.Capabilities;
 import com.fox.ysmu.client.ClientModelManager;
 import com.fox.ysmu.client.gui.button.*;
-import com.fox.ysmu.eep.ExtendedAuthModels;
-import com.fox.ysmu.eep.ExtendedModelInfo;
-import com.fox.ysmu.eep.ExtendedStarModels;
+import com.fox.ysmu.eep.AuthModelsCapability;
+import com.fox.ysmu.eep.ModelInfoCapability;
+import com.fox.ysmu.eep.StarModelsCapability;
 import com.fox.ysmu.util.ModelIdUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -57,24 +58,29 @@ public class PlayerModelScreen extends GuiScreen {
             this.models.putAll(ClientModelManager.MODELS);
         }
         if (this.category == Category.AUTH) {
-            ExtendedAuthModels eep = ExtendedAuthModels.get(this.player);
-            if (eep != null) {
-                for (ResourceLocation modelId : ClientModelManager.MODELS.keySet()) {
-                    if (eep.containModel(modelId) || !ClientModelManager.AUTH_MODELS.contains(modelId.getPath())) {
-                        this.models.put(modelId, ClientModelManager.MODELS.get(modelId));
+            if (player.hasCapability(Capabilities.AuthModels, null)) {
+                AuthModelsCapability eep = player.getCapability(Capabilities.AuthModels, null);
+                if (eep != null) {
+                    for (ResourceLocation modelId : ClientModelManager.MODELS.keySet()) {
+                        if (eep.containModel(modelId) || !ClientModelManager.AUTH_MODELS.contains(modelId.getPath())) {
+                            this.models.put(modelId, ClientModelManager.MODELS.get(modelId));
+                        }
                     }
                 }
             }
         }
         if (this.category == Category.STAR) {
-            ExtendedStarModels eep = ExtendedStarModels.get(this.player);
-            if (eep != null) {
-                for (ResourceLocation modelId : ClientModelManager.MODELS.keySet()) {
-                    if (eep.containModel(modelId)) {
-                        this.models.put(modelId, ClientModelManager.MODELS.get(modelId));
+            if (player.hasCapability(Capabilities.StarModels, null)) {
+                StarModelsCapability eep = player.getCapability(Capabilities.StarModels, null);
+                if (eep != null) {
+                    for (ResourceLocation modelId : ClientModelManager.MODELS.keySet()) {
+                        if (eep.containModel(modelId)) {
+                            this.models.put(modelId, ClientModelManager.MODELS.get(modelId));
+                        }
                     }
                 }
             }
+
         }
         if (textField != null) {
             String search = this.textField.getText().toLowerCase(Locale.US);
@@ -132,10 +138,12 @@ public class PlayerModelScreen extends GuiScreen {
             ResourceLocation id = modelOrderList.get(modelIndex);
             int xStart = x + 143 + 55 * (i % 5);
             int yStart = y + 28 + 93 * (i / 5);
-            ExtendedAuthModels eep = ExtendedAuthModels.get(player);
-            if (eep != null) {
-                boolean needAuth = ClientModelManager.AUTH_MODELS.contains(id.getPath()) && !eep.containModel(id);
-                this.buttonList.add(new ModelButton(buttonId++, xStart, yStart, needAuth, Pair.of(id, models.get(id)), ClientModelManager.EXTRA_INFO.get(ModelIdUtil.getMainId(id)), player));
+            if (player.hasCapability(Capabilities.AuthModels, null)) {
+                AuthModelsCapability eep = player.getCapability(Capabilities.AuthModels, null);
+                if (eep != null) {
+                    boolean needAuth = ClientModelManager.AUTH_MODELS.contains(id.getPath()) && !eep.containModel(id);
+                    this.buttonList.add(new ModelButton(buttonId++, xStart, yStart, needAuth, Pair.of(id, models.get(id)), ClientModelManager.EXTRA_INFO.get(ModelIdUtil.getMainId(id)), player));
+                }
             }
         }
     }
@@ -146,12 +154,14 @@ public class PlayerModelScreen extends GuiScreen {
             case 0:
                 break;
             case 1:
-                ExtendedModelInfo eep = ExtendedModelInfo.get(player);
-                if (eep != null) {
-                    List<ResourceLocation> textures = ClientModelManager.MODELS.get(eep.getModelId());
-                    if (textures != null) {
-                        // setScreen -> displayGuiScreen
-                        this.mc.displayGuiScreen(new PlayerTextureScreen(this, eep.getModelId(), textures));
+                if (player.hasCapability(Capabilities.ModelInfo, null)) {
+                    ModelInfoCapability eep = player.getCapability(Capabilities.ModelInfo, null);
+                    if (eep != null) {
+                        List<ResourceLocation> textures = ClientModelManager.MODELS.get(eep.getModelId());
+                        if (textures != null) {
+                            // setScreen -> displayGuiScreen
+                            this.mc.displayGuiScreen(new PlayerTextureScreen(this, eep.getModelId(), textures));
+                        }
                     }
                 }
                 break;
@@ -231,17 +241,18 @@ public class PlayerModelScreen extends GuiScreen {
         // func_147046_a(x,y,scale,toMouseX,toMouseY,entity)
         GuiInventory.drawEntityOnScreen(x + 67, y + 190, 70, x + 67 - mouseX, y + 180 - 95 - mouseY, player);
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
-
-        ExtendedModelInfo eep = ExtendedModelInfo.get(player);
-        if (eep != null) {
-            String modelName = eep.getModelId().getPath();
-            // font -> fontRendererObj
-            List<String> modelNameSplit = fontRenderer.listFormattedStringToWidth(modelName, 125);
-            int lineY = y + 205;
-            for (String line : modelNameSplit) {
-                int nameWidth = fontRenderer.getStringWidth(line);
-                this.drawString(fontRenderer, line, x + (135 - nameWidth) / 2, lineY, 0xF3EFE0);
-                lineY += 10;
+        if (player.hasCapability(Capabilities.ModelInfo, null)) {
+            ModelInfoCapability eep = player.getCapability(Capabilities.ModelInfo, null);
+            if (eep != null) {
+                String modelName = eep.getModelId().getPath();
+                // font -> fontRendererObj
+                List<String> modelNameSplit = fontRenderer.listFormattedStringToWidth(modelName, 125);
+                int lineY = y + 205;
+                for (String line : modelNameSplit) {
+                    int nameWidth = fontRenderer.getStringWidth(line);
+                    this.drawString(fontRenderer, line, x + (135 - nameWidth) / 2, lineY, 0xF3EFE0);
+                    lineY += 10;
+                }
             }
         }
 
@@ -252,7 +263,7 @@ public class PlayerModelScreen extends GuiScreen {
         String pageInfo = String.format("%d/%d", page + 1, this.maxPage + 1);
         this.drawString(fontRenderer, pageInfo, x + 138 + (282 - fontRenderer.getStringWidth(pageInfo)) / 2, y + 223 - fontRenderer.FONT_HEIGHT / 2, 0xF3EFE0);
 
-        String debugInfo = String.format("%s-%s", "1.7.10", Tags.VERSION);
+        String debugInfo = String.format("%s-%s", "1.12.2", Tags.VERSION);
         this.drawString(fontRenderer, debugInfo, x + 2, y + 226, 0x555555);
         // super.render -> super.drawScreen, 这会绘制所有按钮
         super.drawScreen(mouseX, mouseY, partialTicks);

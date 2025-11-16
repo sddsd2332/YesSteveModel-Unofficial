@@ -90,7 +90,7 @@ public class ClientModelManager {
 
             if (rawModel.getFormatVersion() == FormatVersion.VERSION_1_12_0) {
                 RawGeometryTree rawGeometryTree = RawGeometryTree.parseHierarchy(rawModel);
-                GeoModel geoModel = GeoBuilder.getGeoBuilder(id.getPath())
+                GeoModel geoModel = GeoBuilder.getGeoBuilder(id.getNamespace())
                     .constructGeoModel(rawGeometryTree);
                 SCALE_INFO.put(
                     id,

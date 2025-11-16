@@ -1,15 +1,15 @@
 package com.fox.ysmu.client.renderer;
 
+import com.fox.ysmu.capabilities.Capabilities;
 import com.fox.ysmu.client.entity.CustomPlayerEntity;
 import com.fox.ysmu.client.model.CustomPlayerModel;
 import com.fox.ysmu.client.renderer.layer.CustomPlayerItemInHandLayer;
 import com.fox.ysmu.data.NPCData;
-import com.fox.ysmu.eep.ExtendedModelInfo;
+import com.fox.ysmu.eep.ModelInfoCapability;
 import com.fox.ysmu.event.api.SpecialPlayerRenderEvent;
 import com.fox.ysmu.util.ModelIdUtil;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
@@ -25,7 +25,7 @@ public class CustomPlayerRenderer extends GeoReplacedEntityRenderer<CustomPlayer
 
     @SuppressWarnings("all")
     public CustomPlayerRenderer() {
-        super(Minecraft.getMinecraft().getRenderManager(),new CustomPlayerModel(), new CustomPlayerEntity());
+        super(Minecraft.getMinecraft().getRenderManager(), new CustomPlayerModel(), new CustomPlayerEntity());
         addLayer(new CustomPlayerItemInHandLayer<>(this));
         // addLayer(new CustomPlayerElytraLayer<>(this));
     }
@@ -34,33 +34,35 @@ public class CustomPlayerRenderer extends GeoReplacedEntityRenderer<CustomPlayer
     public void doRender(EntityLivingBase entityObj, double x, double y, double z, float entityYaw,
                          float partialTicks) {
         if (this.animatable != null && entityObj instanceof EntityPlayer player) {
-            ExtendedModelInfo eep = ExtendedModelInfo.get(player);
-            if (eep != null) {
-                this.animatable.setPlayer(player);
-                if (NPCData.contains(player.getUniqueID())) {
-                    Pair<ResourceLocation, ResourceLocation> data = NPCData.getData(player.getUniqueID());
-                    this.animatable.setMainModel(ModelIdUtil.getMainId(data.left()));
-                    this.animatable.setTexture(data.right());
-                } else {
-                    this.animatable.setMainModel(ModelIdUtil.getMainId(eep.getModelId()));
-                    this.animatable.setTexture(eep.getSelectTexture());
+            if (player.hasCapability(Capabilities.ModelInfo, null)) {
+                ModelInfoCapability eep = player.getCapability(Capabilities.ModelInfo, null);
+                if (eep != null) {
+                    this.animatable.setPlayer(player);
+                    if (NPCData.contains(player.getUniqueID())) {
+                        Pair<ResourceLocation, ResourceLocation> data = NPCData.getData(player.getUniqueID());
+                        this.animatable.setMainModel(ModelIdUtil.getMainId(data.left()));
+                        this.animatable.setTexture(data.right());
+                    } else {
+                        this.animatable.setMainModel(ModelIdUtil.getMainId(eep.getModelId()));
+                        this.animatable.setTexture(eep.getSelectTexture());
+                    }
+                }
+                if (MinecraftForge.EVENT_BUS.post(
+                        new SpecialPlayerRenderEvent(
+                                player,
+                                this.animatable,
+                                ModelIdUtil.getModelIdFromMainId(this.animatable.getMainModel())))) {
+                    return;
                 }
             }
-            if (MinecraftForge.EVENT_BUS.post(
-                    new SpecialPlayerRenderEvent(
-                            player,
-                            this.animatable,
-                            ModelIdUtil.getModelIdFromMainId(this.animatable.getMainModel())))) {
-                return;
+            ResourceLocation location = this.modelProvider.getModelLocation(animatable);
+            GeoModel geoModel = GeckoLibCache.getInstance()
+                    .getGeoModels()
+                    .get(location);
+            if (geoModel != null) {
+                this.geoModel = geoModel;
+                super.doRender(entityObj, x, y, z, entityYaw, partialTicks);
             }
-        }
-        ResourceLocation location = this.modelProvider.getModelLocation(animatable);
-        GeoModel geoModel = GeckoLibCache.getInstance()
-                .getGeoModels()
-                .get(location);
-        if (geoModel != null) {
-            this.geoModel = geoModel;
-            super.doRender(entityObj, x, y, z, entityYaw, partialTicks);
         }
     }
 

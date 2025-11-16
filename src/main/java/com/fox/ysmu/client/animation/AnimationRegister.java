@@ -279,7 +279,9 @@ public class AnimationRegister {
     }
 
     private static boolean isPlayerOnGround(EntityPlayer player) {
+        return player.onGround;
         // 本地玩家
+        /*
         if (player == Minecraft.getMinecraft().player) {
             return player.onGround;
         } else {
@@ -287,9 +289,12 @@ public class AnimationRegister {
             byte data = player.getDataManager().get(MOTION_DATAWATCHER_ID);
             return (data & ON_GROUND) != 0;
         }
+        */
     }
 
     private static boolean isPlayerFlying(EntityPlayer player) {
+        return player.capabilities.isFlying;
+        /*
         // 本地玩家
         if (player == Minecraft.getMinecraft().player) {
             return player.capabilities.isFlying;
@@ -298,5 +303,7 @@ public class AnimationRegister {
             byte data = player.getDataManager().get(MOTION_DATAWATCHER_ID);
             return (data & IS_FLYING) != 0;
         }
+
+         */
     }
 }

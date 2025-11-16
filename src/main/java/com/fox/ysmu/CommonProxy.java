@@ -1,5 +1,6 @@
 package com.fox.ysmu;
 
+import com.fox.ysmu.capabilities.Capabilities;
 import com.fox.ysmu.command.RootCommand;
 import com.fox.ysmu.model.ServerModelManager;
 import com.fox.ysmu.network.NetworkHandler;
@@ -17,6 +18,7 @@ public class CommonProxy {
     // GameRegistry." (Remove if not needed)
     public void preInit(FMLPreInitializationEvent event) {
         Config.init(event.getSuggestedConfigurationFile());
+        Capabilities.registerCapabilities();
         ServerModelManager.reloadPacks();
         ysmu.LOG.info("I am ysmu at version " + Tags.VERSION);
     }

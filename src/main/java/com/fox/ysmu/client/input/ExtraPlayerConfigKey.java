@@ -17,8 +17,8 @@ public class ExtraPlayerConfigKey {
 
     @SubscribeEvent
     public static void onKeyboardInput(InputEvent.KeyInputEvent event) {
-        boolean isAltKeyDown = Keyboard.isKeyDown(Keyboard.KEY_LMENU) || Keyboard.isKeyDown(Keyboard.KEY_RMENU);
-        if (EXTRA_PLAYER_RENDER_KEY.isPressed() && isAltKeyDown) {
+      //  boolean isAltKeyDown = Keyboard.isKeyDown(Keyboard.KEY_LMENU) || Keyboard.isKeyDown(Keyboard.KEY_RMENU);
+        if (EXTRA_PLAYER_RENDER_KEY.isPressed()) {
             Minecraft.getMinecraft().displayGuiScreen(new ExtraPlayerConfigScreen());
         }
     }
