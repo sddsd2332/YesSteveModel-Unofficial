@@ -13,14 +13,14 @@ import com.fox.ysmu.client.entity.CustomPlayerEntity;
 import com.fox.ysmu.util.ModelIdUtil;
 import com.fox.ysmu.ysmu;
 
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.molang.MolangParser;
-import software.bernie.geckolib3.core.processor.IBone;
-import software.bernie.geckolib3.geo.render.built.GeoBone;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
-import software.bernie.geckolib3.model.provider.data.EntityModelData;
-import software.bernie.geckolib3.resource.GeckoLibCache;
+import com.fox.ysmu.geckolib3.core.IAnimatable;
+import com.fox.ysmu.geckolib3.core.event.predicate.AnimationEvent;
+import com.fox.ysmu.geckolib3.core.molang.MolangParser;
+import com.fox.ysmu.geckolib3.core.processor.IBone;
+import com.fox.ysmu.geckolib3.geo.render.built.GeoBone;
+import com.fox.ysmu.geckolib3.model.AnimatedGeoModel;
+import com.fox.ysmu.geckolib3.model.provider.data.EntityModelData;
+import com.fox.ysmu.geckolib3.resource.GeckoLibCache;
 
 @SuppressWarnings("all")
 public class CustomPlayerModel extends AnimatedGeoModel {

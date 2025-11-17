@@ -1,8 +1,8 @@
 package com.fox.ysmu.command.sub;
 
 import com.fox.ysmu.capabilities.Capabilities;
-import com.fox.ysmu.eep.AuthModelsCapability;
-import com.fox.ysmu.eep.ModelInfoCapability;
+import com.fox.ysmu.capabilities.AuthModelsCapability;
+import com.fox.ysmu.capabilities.ModelInfoCapability;
 import com.fox.ysmu.model.ServerModelManager;
 import com.fox.ysmu.network.NetworkHandler;
 import com.fox.ysmu.network.message.SyncAuthModels;
@@ -94,8 +94,8 @@ public class AuthCommand extends CommandBase {
         }
 
         for (EntityPlayerMP player : targets) {
-            if (player.hasCapability(Capabilities.AuthModels, null)) {
-                AuthModelsCapability eep = player.getCapability(Capabilities.AuthModels, null);
+            if (player.hasCapability(Capabilities.AUTH_MODELS_CAP, null)) {
+                AuthModelsCapability eep = player.getCapability(Capabilities.AUTH_MODELS_CAP, null);
                 if (eep != null) {
                     ResourceLocation modelId = new ResourceLocation(ysmu.MODID, modelName);
                     eep.addModel(modelId);
@@ -112,8 +112,8 @@ public class AuthCommand extends CommandBase {
 
     private void addAllAuthModel(ICommandSender sender, List<EntityPlayerMP> targets) {
         for (EntityPlayerMP player : targets) {
-            if (player.hasCapability(Capabilities.AuthModels, null)) {
-                AuthModelsCapability eep = player.getCapability(Capabilities.AuthModels, null);
+            if (player.hasCapability(Capabilities.AUTH_MODELS_CAP, null)) {
+                AuthModelsCapability eep = player.getCapability(Capabilities.AUTH_MODELS_CAP, null);
                 if (eep != null) {
                     ServerModelManager.CACHE_NAME_INFO.keySet()
                             .forEach(name -> eep.addModel(new ResourceLocation(ysmu.MODID, name)));
@@ -130,12 +130,12 @@ public class AuthCommand extends CommandBase {
     private void removeAuthModel(ICommandSender sender, List<EntityPlayerMP> targets, String modelName) {
         ResourceLocation modelId = new ResourceLocation(ysmu.MODID, modelName);
         for (EntityPlayerMP player : targets) {
-            if (player.hasCapability(Capabilities.AuthModels, null)) {
-                AuthModelsCapability ownModelsEEP = player.getCapability(Capabilities.AuthModels, null);
+            if (player.hasCapability(Capabilities.AUTH_MODELS_CAP, null)) {
+                AuthModelsCapability ownModelsEEP = player.getCapability(Capabilities.AUTH_MODELS_CAP, null);
                 if (ownModelsEEP != null) {
                     ownModelsEEP.removeModel(modelId);
-                    if (player.hasCapability(Capabilities.ModelInfo, null)) {
-                        ModelInfoCapability modelIdEEP = player.getCapability(Capabilities.ModelInfo, null);
+                    if (player.hasCapability(Capabilities.MODEL_INFO_CAP, null)) {
+                        ModelInfoCapability modelIdEEP = player.getCapability(Capabilities.MODEL_INFO_CAP, null);
                         if (modelIdEEP != null) {
                             if (ServerModelManager.AUTH_MODELS.contains(modelIdEEP.getModelId().getPath()) && !ownModelsEEP.containModel(modelIdEEP.getModelId())) {
                                 ResourceLocation defaultModelId = new ResourceLocation(ysmu.MODID, "default");
@@ -153,12 +153,12 @@ public class AuthCommand extends CommandBase {
 
     private void clearAuthModel(ICommandSender sender, List<EntityPlayerMP> targets) {
         for (EntityPlayerMP player : targets) {
-            if (player.hasCapability(Capabilities.AuthModels, null)) {
-                AuthModelsCapability ownModelEEP = player.getCapability(Capabilities.AuthModels, null);
+            if (player.hasCapability(Capabilities.AUTH_MODELS_CAP, null)) {
+                AuthModelsCapability ownModelEEP = player.getCapability(Capabilities.AUTH_MODELS_CAP, null);
                 if (ownModelEEP != null) {
                     ownModelEEP.clear();
-                    if (player.hasCapability(Capabilities.ModelInfo, null)) {
-                        ModelInfoCapability modelIdEEP = player.getCapability(Capabilities.ModelInfo, null);
+                    if (player.hasCapability(Capabilities.MODEL_INFO_CAP, null)) {
+                        ModelInfoCapability modelIdEEP = player.getCapability(Capabilities.MODEL_INFO_CAP, null);
                         if (modelIdEEP != null) {
                             ResourceLocation defaultModelId = new ResourceLocation(ysmu.MODID, "default");
                             ResourceLocation defaultTextureId = new ResourceLocation(ysmu.MODID, "default/default.png");

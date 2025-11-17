@@ -21,9 +21,7 @@ public class ysmu {
 
     public static final String MODID = "ysmu";
     public static final Logger LOG = LogManager.getLogger(MODID);
-    public static final Gson GSON = new GsonBuilder().disableHtmlEscaping()
-            .setPrettyPrinting()
-            .create();
+    public static final Gson GSON = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
 
     @SidedProxy(clientSide = "com.fox.ysmu.client.ClientProxy", serverSide = "com.fox.ysmu.CommonProxy")
     public static CommonProxy proxy;

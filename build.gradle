@@ -213,6 +213,10 @@ jar {
 
 }
 
+tasks.withType(Jar) {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 idea {
     module {
         inheritOutputDirs = true

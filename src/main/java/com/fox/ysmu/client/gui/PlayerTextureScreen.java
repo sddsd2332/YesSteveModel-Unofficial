@@ -1,11 +1,11 @@
 package com.fox.ysmu.client.gui;
 
 import com.fox.ysmu.capabilities.Capabilities;
+import com.fox.ysmu.capabilities.ModelInfoCapability;
 import com.fox.ysmu.client.ClientModelManager;
 import com.fox.ysmu.client.gui.button.FlatColorButton;
 import com.fox.ysmu.client.gui.button.FlatIconButton;
 import com.fox.ysmu.client.gui.button.TextureButton;
-import com.fox.ysmu.eep.ModelInfoCapability;
 import com.fox.ysmu.util.RenderUtil;
 import com.google.common.collect.Lists;
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -19,7 +19,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -171,8 +170,8 @@ public class PlayerTextureScreen extends GuiScreen {
                         this.animation = this.animations.get(animationIndex);
                     }
                 }
-                if (button instanceof TextureButton) {
-                    ((TextureButton) button).doPress();
+                if (button instanceof TextureButton textureButton) {
+                    textureButton.onPress();
                 }
                 break;
         }
@@ -181,25 +180,25 @@ public class PlayerTextureScreen extends GuiScreen {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTick) {
         this.drawDefaultBackground();
-        this.drawGradientRect(x, y + 22, x + 90, y + 235, 0xff_222222, 0xff_222222);
-        this.drawGradientRect(x + 93, y, x + 299, y + 235, 0xff_222222, 0xff_222222);
-        this.drawGradientRect(x + 302, y, x + 420, y + 235, 0xff_222222, 0xff_222222);
-        if (player.hasCapability(Capabilities.ModelInfo, null)) {
-            ModelInfoCapability eep = player.getCapability(Capabilities.ModelInfo, null);
-            if (eep != null) {
+        this.drawGradientRect(x, y + 22, x + 90, y + 235, 0XFF222222, 0XFF222222);
+        this.drawGradientRect(x + 93, y, x + 299, y + 235, 0XFF222222, 0XFF222222);
+        this.drawGradientRect(x + 302, y, x + 420, y + 235, 0XFF222222, 0XFF222222);
+        if (player.hasCapability(Capabilities.MODEL_INFO_CAP, null)) {
+            ModelInfoCapability cap = player.getCapability(Capabilities.MODEL_INFO_CAP, null);
+            if (cap != null) {
                 int guiScale = new ScaledResolution(mc).getScaleFactor();
                 int scissorX = (this.x + 93) * guiScale;
                 int scissorY = mc.displayHeight - ((this.y + 235) * guiScale);
                 int scissorW = 206 * guiScale;
                 int scissorH = 235 * guiScale;
-                GL11.glEnable(GL11.GL_SCISSOR_TEST);
-                GL11.glScissor(scissorX, scissorY, scissorW, scissorH);
-                RenderUtil.renderTextureScreenEntity(this.x + 299 / 2.0F + 40 + posX, this.y + 235 / 2.0F + 80 + posY, scale, pitch, yaw, player, modelId, eep.getSelectTexture(), showGround, entity -> {
+                //    GL11.glEnable(GL11.GL_SCISSOR_TEST);
+                //   GL11.glScissor(scissorX, scissorY, scissorW, scissorH);
+                RenderUtil.renderTextureScreenEntity(this.x + 299 / 2.0F + 40 + posX, this.y + 235 / 2.0F + 80 + posY, scale, pitch, yaw, player, modelId, cap.getSelectTexture(), showGround, entity -> {
                     if (!entity.hasPreviewAnimation(animation)) {
                         entity.setPreviewAnimation(animation);
                     }
                 });
-                GL11.glDisable(GL11.GL_SCISSOR_TEST);
+                //    GL11.glDisable(GL11.GL_SCISSOR_TEST);
             }
         }
 
@@ -210,18 +209,7 @@ public class PlayerTextureScreen extends GuiScreen {
         this.drawString(fontRenderer, animationPageInfo, x + 5 + (80 - fontRenderer.getStringWidth(animationPageInfo)) / 2, y + 218, 0xF3EFE0);
 
         super.drawScreen(mouseX, mouseY, partialTick);
-        for (Object button : this.buttonList) {
-            if (button instanceof FlatColorButton fc) {
-                if (fc.isMouseOver() && fc.tooltips != null && !fc.tooltips.isEmpty()) {
-                    this.drawHoveringText(fc.tooltips, mouseX, mouseY);
-                }
-            }
-            if (button instanceof FlatIconButton fi) {
-                if (fi.isMouseOver() && fi.tooltips != null && !fi.tooltips.isEmpty()) {
-                    this.drawHoveringText(fi.tooltips, mouseX, mouseY);
-                }
-            }
-        }
+        buttonList.stream().filter(r -> r instanceof FlatColorButton f && f.isMouseOver() && f.tooltips != null && !f.tooltips.isEmpty()).forEach(b -> drawHoveringText(((FlatColorButton) b).tooltips, mouseX, mouseY));
     }
 
     @Override

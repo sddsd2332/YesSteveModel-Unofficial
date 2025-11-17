@@ -1,7 +1,7 @@
 package com.fox.ysmu.network.message;
 
 import com.fox.ysmu.capabilities.Capabilities;
-import com.fox.ysmu.eep.ModelInfoCapability;
+import com.fox.ysmu.capabilities.ModelInfoCapability;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -65,8 +65,8 @@ public class SyncModelInfo implements IMessage {
                         }
                        Entity entity = mc.world.getEntityByID(message.entityId);
                         if (entity instanceof EntityPlayer player) {
-                            if (player.hasCapability(Capabilities.ModelInfo, null)) {
-                                ModelInfoCapability eep = player.getCapability(Capabilities.ModelInfo, null);
+                            if (player.hasCapability(Capabilities.MODEL_INFO_CAP, null)) {
+                                ModelInfoCapability eep = player.getCapability(Capabilities.MODEL_INFO_CAP, null);
                                 if (eep != null) {
                                     eep.deserializeNBT(message.modelInfoNBT);
                                 }

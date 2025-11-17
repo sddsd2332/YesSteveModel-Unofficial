@@ -5,22 +5,23 @@ import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.OreDictionary;
 
-import com.fox.ysmu.compat.BackhandCompat;
 import com.google.common.collect.Lists;
 
 
 public class ConditionalSwing {
 
     private static final String ID_PRE = "swing$";
-    private static final String OD_PRE = "swing#";
+    private static final String TAG_PRE = "swing#";
     private static final String EMPTY = "";
     private static final int PRE_SIZE = 6;
-    // 1.7.10: 使用String存储物品ID ("modid:name")
-    private final List<String> idTest = Lists.newArrayList();
+    private final List<ResourceLocation> idTest = Lists.newArrayList();
     // 1.7.10: 使用String存储矿物词典名称
-    private final List<String> oreDictTest = Lists.newArrayList();
+    private final List<String> tagTest = Lists.newArrayList();
 
     public void addTest(String name) {
         if (name.length() <= PRE_SIZE) {
@@ -30,49 +31,48 @@ public class ConditionalSwing {
         if (name.startsWith(ID_PRE)) {
             // 1.7.10: 简单验证格式即可，不再有 isValidResourceLocation 方法
             if (substring.contains(":")) {
-                idTest.add(substring);
+                idTest.add(new ResourceLocation(name.substring(PRE_SIZE)));
             }
         }
-        if (name.startsWith(OD_PRE)) {
+        if (name.startsWith(TAG_PRE)) {
             // 1.7.10: 这里处理的是矿物词典名称
-            oreDictTest.add(substring);
+            tagTest.add(substring);
         }
     }
 
-    public String doTest(EntityPlayer player, boolean isMainHand) {
-        if (BackhandCompat.getItemInHand(player, isMainHand).isEmpty()) {
+    public String doTest(EntityPlayer player, EnumHand hand) {
+        if (player.getHeldItem(hand).isEmpty()) {
             return EMPTY;
         }
-        String result = doIdTest(player, isMainHand);
+        String result = doIdTest(player, hand);
         if (result.isEmpty()) {
-            return doOreDictTest(player, isMainHand);
+            return doTagTest(player, hand);
         }
         return result;
     }
 
-    private String doIdTest(EntityPlayer player, boolean isMainHand) {
+    private String doIdTest(EntityPlayer player, EnumHand hand) {
         if (idTest.isEmpty()) {
             return EMPTY;
         }
-        ItemStack itemInHand = BackhandCompat.getItemInHand(player, isMainHand);
-        Item uid = Item.getItemById(Item.getIdFromItem(itemInHand.getItem()));
+        ItemStack itemInHand = player.getHeldItem(hand);
+        ResourceLocation registryName = ForgeRegistries.ITEMS.getKey(itemInHand.getItem());
         // 1.7.10: 使用 GameRegistry 获取物品的唯一标识符
      //   GameRegistry.UniqueIdentifier uid = GameRegistry.findUniqueIdentifierFor(itemInHand.getItem());
-        if (uid == null) {
+        if (registryName == null) {
             return EMPTY;
         }
-        String registryName = uid.toString(); // 格式为 "modid:name"
         if (idTest.contains(registryName)) {
             return ID_PRE + registryName;
         }
         return EMPTY;
     }
 
-    private String doOreDictTest(EntityPlayer player, boolean isMainHand) {
-        if (oreDictTest.isEmpty()) {
+    private String doTagTest(EntityPlayer player, EnumHand hand) {
+        if (tagTest.isEmpty()) {
             return EMPTY;
         }
-        ItemStack itemInHand = BackhandCompat.getItemInHand(player, isMainHand);
+        ItemStack itemInHand = player.getHeldItem(hand);
         // 获取物品堆栈对应的所有矿辞ID
         int[] oreIDs = OreDictionary.getOreIDs(itemInHand);
         if (oreIDs.length == 0) {
@@ -83,8 +83,8 @@ public class ConditionalSwing {
         for (int oreID : oreIDs) {
             String oreName = OreDictionary.getOreName(oreID);
             // 检查这个矿辞名称是否在我们需要测试的列表里
-            if (oreDictTest.contains(oreName)) {
-                return OD_PRE + oreName; // 找到匹配，返回结果
+            if (tagTest.contains(oreName)) {
+                return TAG_PRE + oreName; // 找到匹配，返回结果
             }
         }
 

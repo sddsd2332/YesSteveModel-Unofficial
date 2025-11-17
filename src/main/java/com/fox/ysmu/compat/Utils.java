@@ -1,8 +1,5 @@
 package com.fox.ysmu.compat;
 
-import org.joml.Quaternionf;
-import org.lwjgl.util.vector.Quaternion;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,12 +7,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class Utils {
-
-    public static Quaternion j2l(Quaternionf jomlQuat) {
-        Quaternion lwjglQuat = new Quaternion();
-        lwjglQuat.set(jomlQuat.x, jomlQuat.y, jomlQuat.z, jomlQuat.w);
-        return lwjglQuat;
-    }
 
     public static boolean isValidResourceLocation(String locationString) {
         if (locationString == null || locationString.isEmpty()) {
@@ -31,6 +22,7 @@ public class Utils {
 
     /**
      * 将指定的ZIP文件解压到目标目录。
+     *
      * @param zipFile 要解压的ZIP文件
      * @param destDir 解压的目标目录
      * @throws IOException 如果发生I/O错误

@@ -3,12 +3,14 @@ package com.fox.ysmu.util;
 import com.fox.ysmu.client.ClientProxy;
 import com.fox.ysmu.client.entity.CustomPlayerEntity;
 import com.fox.ysmu.client.renderer.CustomPlayerRenderer;
-import com.fox.ysmu.compat.Axis;
-import com.fox.ysmu.compat.Utils;
-import net.geckominecraft.client.renderer.GlStateManager;
+import com.fox.ysmu.geckolib3.core.IAnimatable;
+import com.fox.ysmu.geckolib3.core.IAnimatableModel;
+import com.fox.ysmu.geckolib3.core.event.predicate.AnimationEvent;
+import com.fox.ysmu.geckolib3.geo.GeoReplacedEntityRenderer;
+import com.fox.ysmu.geckolib3.geo.render.built.GeoModel;
+import com.fox.ysmu.geckolib3.model.AnimatedGeoModel;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
@@ -17,17 +19,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-
-import org.joml.Quaternionf;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
-import org.lwjgl.util.vector.Quaternion;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.IAnimatableModel;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.geo.GeoReplacedEntityRenderer;
-import software.bernie.geckolib3.geo.render.built.GeoModel;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
@@ -51,7 +42,7 @@ public final class RenderUtil {
                 entity.setTexture(textureId);
 
                 GlStateManager.pushMatrix();
-             //   GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+                //   GlStateManager.matrixMode(GL11.GL_MODELVIEW);
                 GlStateManager.translate(pPosX, pPosY, 1050.0D);
                 GlStateManager.scale(1.0F, 1.0F, -1.0F);
 
@@ -60,10 +51,12 @@ public final class RenderUtil {
                 GlStateManager.scale(pScale, pScale, pScale);
                 GlStateManager.translate(0, 0.8, 0);
 
-                Quaternionf zp = Axis.ZP.rotationDegrees(180.0F);
-                Quaternionf xp = Axis.XP.rotationDegrees(-10 + pitch);
-                zp.mul(xp);
-                GlStateManager.rotate(j2l(zp)); // poseStack.mulPose
+                GlStateManager.rotate(180 * ((float) Math.PI / 180F), 0, 0, 1);
+                GlStateManager.rotate((-10 + pitch) * ((float) Math.PI / 180F), 1, 0, 0);
+                //    Quaternionf zp = Axis.ZP.rotationDegrees(180.0F);
+                //  Quaternionf xp = Axis.XP.rotationDegrees(-10 + pitch);
+                //   zp.mul(xp);
+                //       GlStateManager.rotate(j2l(zp)); // poseStack.mulPose
 
                 // 保存玩家原始状态
                 float yBodyRot = player.renderYawOffset;
@@ -83,13 +76,14 @@ public final class RenderUtil {
                 RenderHelper.enableGUIStandardItemLighting();
                 RenderManager dispatcher = Minecraft.getMinecraft().getRenderManager();
 
-                xp.conjugate();
+                // xp.conjugate();
                 //dispatcher.overrideCameraOrientation(xp);
-                //dispatcher.setRenderShadow(false);
+                dispatcher.setRenderShadow(false);
 
                 GlStateManager.pushMatrix();
                 if (entity.hasPreviewAnimation("sleep")) {
-                    GlStateManager.rotate(j2l(Axis.YP.rotationDegrees(yaw - 90)));
+                    GlStateManager.rotate((yaw - 90) * ((float) Math.PI / 180F), 0, 1, 0);
+                    //  GlStateManager.rotate(j2l(Axis.YP.rotationDegrees(yaw - 90)));
                     GlStateManager.translate(0.5, 0.5625, 0);
                     // TODO sleep和sneak要处理下
                     // player.setPose(Pose.SLEEPING);
@@ -126,6 +120,7 @@ public final class RenderUtil {
                     renderGround(pScale, pitch, yaw);
                 }
 
+                dispatcher.setRenderShadow(true);
                 // 恢复玩家状态
                 player.renderYawOffset = yBodyRot;
                 player.rotationYaw = yRot;
@@ -149,12 +144,15 @@ public final class RenderUtil {
         GlStateManager.translate(0.0D, 0.0D, 1000.0D);
         GlStateManager.scale(scale, scale, scale);
         GlStateManager.translate(0, 0.8, 0);
-        Quaternionf zp = Axis.ZP.rotationDegrees(180.0F);
-        Quaternionf xp = Axis.XP.rotationDegrees(-10 + pitch);
-        zp.mul(xp);
-        GlStateManager.rotate(j2l(zp));
+        GlStateManager.rotate(180 * ((float) Math.PI / 180F), 0, 0, 1);
+        GlStateManager.rotate((-10 + pitch) * ((float) Math.PI / 180F), 1, 0, 0);
+        //  Quaternionf zp = Axis.ZP.rotationDegrees(180.0F);
+        //     Quaternionf xp = Axis.XP.rotationDegrees(-10 + pitch);
+        //     zp.mul(xp);
+        //    GlStateManager.rotate(j2l(zp));
 
-        GlStateManager.rotate(j2l(Axis.YP.rotationDegrees(yaw + 180)));
+        // GlStateManager.rotate(j2l(Axis.YP.rotationDegrees(yaw + 180)));
+        GlStateManager.rotate((yaw + 180) * ((float) Math.PI / 180F), 0, 1, 0);
         GlStateManager.translate(-0.5, 0, 0.5);
         // Minecraft.getInstance().getBlockRenderer().renderSingleBlock(Blocks.RED_BED.defaultBlockState(), poseStack,
         // bufferSource, 0xf000f0, OverlayTexture.NO_OVERLAY);
@@ -168,12 +166,15 @@ public final class RenderUtil {
         GlStateManager.translate(0.0D, 0.0D, 1000.0D);
         GlStateManager.scale(scale, scale, scale);
         GlStateManager.translate(0, 0.8, 0);
-        Quaternionf zp = Axis.ZP.rotationDegrees(180.0F);
-        Quaternionf xp = Axis.XP.rotationDegrees(-10 + pitch);
-        zp.mul(xp);
-        GlStateManager.rotate(j2l(zp));
+        GlStateManager.rotate(180 * ((float) Math.PI / 180F), 0, 0, 1);
+        GlStateManager.rotate((-10 + pitch) * ((float) Math.PI / 180F), 1, 0, 0);
+        //  Quaternionf zp = Axis.ZP.rotationDegrees(180.0F);
+        //   Quaternionf xp = Axis.XP.rotationDegrees(-10 + pitch);
+        //   zp.mul(xp);
+        //  GlStateManager.rotate(j2l(zp));
 
-        GlStateManager.rotate(j2l(Axis.YP.rotationDegrees(yaw)));
+        //    GlStateManager.rotate(j2l(Axis.YP.rotationDegrees(yaw)));
+        GlStateManager.rotate(yaw * ((float) Math.PI / 180F), 0, 1, 0);
         GlStateManager.translate(-1.5, -1, -2.5);
         Minecraft.getMinecraft().getRenderManager().renderEngine.bindTexture(new ResourceLocation("textures/atlas/blocks.png"));
         for (int i = 0; i < 3; i++) {
@@ -222,7 +223,8 @@ public final class RenderUtil {
 
     private static void renderExtraEntity(float yaw, EntityPlayer player, RenderManager dispatcher, Entity entity) {
         GlStateManager.pushMatrix();
-        GlStateManager.rotate(j2l(Axis.YP.rotationDegrees(yaw)));
+        GlStateManager.rotate(yaw * ((float) Math.PI / 180F), 0, 1, 0);
+        //  GlStateManager.rotate(j2l(Axis.YP.rotationDegrees(yaw)));
         double yOffset = -entity.getMountedYOffset();
         dispatcher.renderEntity(entity, 0, yOffset, 0, 0, 1.0f, false);
         GlStateManager.popMatrix();
@@ -254,19 +256,19 @@ public final class RenderUtil {
         });
     }
 
-    private static void renderModel(double pPosX, double pPosY, float pScale, EntityPlayer player,
-                                    ResourceLocation modelId, ResourceLocation textureId, GeoReplacedEntityRenderer renderer,
-                                    CustomPlayerEntity entity) {
+    private static void renderModel(double pPosX, double pPosY, float pScale, EntityPlayer player, ResourceLocation modelId, ResourceLocation textureId, GeoReplacedEntityRenderer renderer, CustomPlayerEntity entity) {
         entity.setMainModel(ModelIdUtil.getMainId(modelId));
         entity.setTexture(textureId);
 
-        GL11.glEnable(GL11.GL_COLOR_MATERIAL);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glPushMatrix();
-        GL11.glTranslatef((float) pPosX, (float) pPosY, 100.0F);
-        GL11.glScalef(pScale, pScale, -pScale);
-        GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F); // 将模型从倒置状态翻转过来
-        GL11.glRotatef(-25.0F, 0.4F, 0.8F, -0.08F); // 倾斜一点
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(pPosX, pPosY, 1050.0D);
+        GlStateManager.scale(1.0F, 1.0F, -1.0F);
+
+        GlStateManager.translate(0.0D, 0.0D, 1000.0D);
+
+        GlStateManager.scale(pScale, pScale, pScale);
+        GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F); // 将模型从倒置状态翻转过来
+        GlStateManager.rotate(-25.0F, 0.4F, 0.8F, -0.08F); // 倾斜一点
 
         // 保存玩家状态
         float yBodyRot = player.renderYawOffset;
@@ -291,18 +293,19 @@ public final class RenderUtil {
         player.prevRotationYawHead = player.rotationYaw;
 
         RenderHelper.enableStandardItemLighting();
+        RenderManager dispatcher = Minecraft.getMinecraft().getRenderManager();
+        dispatcher.setRenderShadow(false);
         AnimatedGeoModel provider = renderer.getGeoModelProvider();
         ResourceLocation modelLocation = provider.getModelLocation(entity);
         GeoModel model = provider.getModel(modelLocation);
         AnimationEvent<CustomPlayerEntity> predicate = new AnimationEvent<>(entity, 0, 0, 0, false, Collections.emptyList());
-        if (renderer.getGeoModelProvider() instanceof IAnimatableModel ) {
+        if (renderer.getGeoModelProvider() instanceof IAnimatableModel) {
             ((IAnimatableModel<CustomPlayerEntity>) renderer.getGeoModelProvider()).setLivingAnimations(entity, entity.hashCode(), predicate);
         }
         Minecraft.getMinecraft().getTextureManager().bindTexture(provider.getTextureLocation(entity));
         renderer.render(model, entity, 0, 1.0f, 1.0f, 1.0f, 1.0f);
-        RenderHelper.disableStandardItemLighting();
-        GL11.glPopMatrix();
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        dispatcher.setRenderShadow(true);
+
 
         // 恢复状态
         player.renderYawOffset = yBodyRot;
@@ -317,32 +320,32 @@ public final class RenderUtil {
             player.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, itemStack);
             i++;
         }
-    }
-
-    public static void renderPlayerEntity(EntityPlayer player, double posX, double posY, float scale, float yawOffset, double z) {
-        GL11.glEnable(GL11.GL_COLOR_MATERIAL);
-        GL11.glPushMatrix();
-        GL11.glTranslatef((float) (posX + scale * 0.5), (float) (posY + scale * 2), (float) z);
-        GL11.glScalef(-scale, scale, scale);
-        GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
-        GL11.glRotatef(player.rotationYaw + yawOffset, 0.0F, 1.0F, 0.0F);
-
-        GL11.glRotatef(135.0F, 0.0F, 1.0F, 0.0F);
-        RenderHelper.enableStandardItemLighting();
-        GL11.glRotatef(-135.0F, 0.0F, 1.0F, 0.0F);
-
-        GL11.glTranslatef(0.0F, 0.0F, 0.0F);
-        Minecraft.getMinecraft().getRenderManager().renderEntity(player, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, false);
-
-        GL11.glPopMatrix();
         RenderHelper.disableStandardItemLighting();
-        GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-        OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
+
+        GlStateManager.popMatrix();
+
     }
 
-    private static Quaternion j2l(Quaternionf jomlQuat) {
-        return Utils.j2l(jomlQuat);
+    public static void renderPlayerEntity(EntityPlayer player, double posX, double posY, float scale, float yawOffset, double z, float pPartialTick) {
+
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(posX + scale * 0.5, posY + scale * 2, z);
+        GlStateManager.scale(1, 1, -1);
+        GlStateManager.scale(scale, scale, scale);
+        GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
+        GlStateManager.rotate(player.rotationYaw + yawOffset, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotate(180, 0.0F, 1.0F, 0.0F);
+        RenderHelper.enableStandardItemLighting();
+
+        RenderManager renderDispatcher = Minecraft.getMinecraft().getRenderManager();
+        renderDispatcher.setRenderShadow(false);
+        Minecraft.getMinecraft().getRenderManager().renderEntity(player, 0.0D, 0.0D, 0.0D, 0.0F, pPartialTick, false);
+        renderDispatcher.setRenderShadow(true);
+        RenderHelper.disableStandardItemLighting();
+        GlStateManager.popMatrix();
+        GlStateManager.color(1, 1, 1, 1);
+
     }
+
+
 }

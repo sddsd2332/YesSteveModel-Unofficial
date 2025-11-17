@@ -3,7 +3,6 @@ package com.fox.ysmu.client.gui.button;
 import com.fox.ysmu.ysmu;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
 
 public class FlatIconButton extends FlatColorButton {
     private final static ResourceLocation ICON = new ResourceLocation(ysmu.MODID, "texture/icon.png");
@@ -25,7 +24,6 @@ public class FlatIconButton extends FlatColorButton {
         int startX = (this.width - 16) / 2;
         int startY = (this.height - 16) / 2;
         mc.getTextureManager().bindTexture(ICON);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.drawTexturedModalRect(this.x + startX, this.y + startY, textureX, textureY, 16, 16);
     }
 }

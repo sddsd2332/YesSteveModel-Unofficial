@@ -2,6 +2,7 @@ package com.fox.ysmu.client.animation.condition;
 
 import java.util.Map;
 
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 
 import com.google.common.collect.Maps;
@@ -17,10 +18,10 @@ public class ConditionManager {
 
     public static void addTest(ResourceLocation id, String name) {
         SWING.putIfAbsent(id, new ConditionalSwing());
-        USE_MAINHAND.putIfAbsent(id, new ConditionalUse(true)); // true表示主手
-        USE_OFFHAND.putIfAbsent(id, new ConditionalUse(false)); // false表示副手
-        HOLD_MAINHAND.putIfAbsent(id, new ConditionalHold(true));
-        HOLD_OFFHAND.putIfAbsent(id, new ConditionalHold(false));
+        USE_MAINHAND.putIfAbsent(id, new ConditionalUse(EnumHand.MAIN_HAND));
+        USE_OFFHAND.putIfAbsent(id, new ConditionalUse(EnumHand.OFF_HAND));
+        HOLD_MAINHAND.putIfAbsent(id, new ConditionalHold(EnumHand.MAIN_HAND));
+        HOLD_OFFHAND.putIfAbsent(id, new ConditionalHold(EnumHand.OFF_HAND));
         ARMOR.putIfAbsent(id, new ConditionArmor());
 
         ConditionalSwing conditionalSwing = SWING.get(id);

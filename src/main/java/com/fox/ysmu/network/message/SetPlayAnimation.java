@@ -1,7 +1,7 @@
 package com.fox.ysmu.network.message;
 
 import com.fox.ysmu.capabilities.Capabilities;
-import com.fox.ysmu.eep.ModelInfoCapability;
+import com.fox.ysmu.capabilities.ModelInfoCapability;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -46,8 +46,8 @@ public class SetPlayAnimation implements IMessage {
         }
 
         private void handleEEP(SetPlayAnimation message, EntityPlayerMP player) {
-            if (player.hasCapability(Capabilities.ModelInfo, null)) {
-                ModelInfoCapability modelIdEEP = player.getCapability(Capabilities.ModelInfo, null);
+            if (player.hasCapability(Capabilities.MODEL_INFO_CAP, null)) {
+                ModelInfoCapability modelIdEEP = player.getCapability(Capabilities.MODEL_INFO_CAP, null);
                 if (modelIdEEP != null) {
                     if (message.extraAnimationId == STOP) {
                         modelIdEEP.stopAnimation();

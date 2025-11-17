@@ -37,20 +37,20 @@ import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import it.unimi.dsi.fastutil.Pair;
-import software.bernie.geckolib3.core.builder.Animation;
-import software.bernie.geckolib3.core.molang.MolangParser;
-import software.bernie.geckolib3.file.AnimationFile;
-import software.bernie.geckolib3.file.GeckoJsonException;
-import software.bernie.geckolib3.geo.raw.pojo.Converter;
-import software.bernie.geckolib3.geo.raw.pojo.ExtraInfo;
-import software.bernie.geckolib3.geo.raw.pojo.FormatVersion;
-import software.bernie.geckolib3.geo.raw.pojo.RawGeoModel;
-import software.bernie.geckolib3.geo.raw.tree.RawGeometryTree;
-import software.bernie.geckolib3.geo.render.GeoBuilder;
-import software.bernie.geckolib3.geo.render.built.GeoModel;
-import software.bernie.geckolib3.resource.GeckoLibCache;
-import software.bernie.geckolib3.util.json.JsonAnimationUtils;
+import com.fox.ysmu.fastutil.Pair;
+import com.fox.ysmu.geckolib3.core.builder.Animation;
+import com.fox.ysmu.geckolib3.core.molang.MolangParser;
+import com.fox.ysmu.geckolib3.file.AnimationFile;
+import com.fox.ysmu.geckolib3.file.GeckoJsonException;
+import com.fox.ysmu.geckolib3.geo.raw.pojo.Converter;
+import com.fox.ysmu.geckolib3.geo.raw.pojo.ExtraInfo;
+import com.fox.ysmu.geckolib3.geo.raw.pojo.FormatVersion;
+import com.fox.ysmu.geckolib3.geo.raw.pojo.RawGeoModel;
+import com.fox.ysmu.geckolib3.geo.raw.tree.RawGeometryTree;
+import com.fox.ysmu.geckolib3.geo.render.GeoBuilder;
+import com.fox.ysmu.geckolib3.geo.render.built.GeoModel;
+import com.fox.ysmu.geckolib3.resource.GeckoLibCache;
+import com.fox.ysmu.geckolib3.util.json.JsonAnimationUtils;
 
 public class ClientModelManager {
 

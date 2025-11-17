@@ -1,9 +1,9 @@
 package com.fox.ysmu;
 
-import java.io.File;
-
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+
+import java.io.File;
 
 public class Config {
     private static Configuration configuration;
@@ -13,9 +13,10 @@ public class Config {
     public static boolean PRINT_ANIMATION_ROULETTE_MSG = true;
     public static boolean DISABLE_SELF_MODEL = false;
     public static boolean DISABLE_OTHER_MODEL = false;
-    public static boolean DISABLE_SELF_HANDS = false;
+    public static boolean DISABLE_SELF_HANDS = true;
     public static String DEFAULT_MODEL_ID = "default";
     public static String DEFAULT_MODEL_TEXTURE = "default.png";
+    public static boolean debugPrintStacktraces = false;
 
     // Extra Player Screen Config
     public static boolean DISABLE_PLAYER_RENDER = false;
@@ -26,6 +27,7 @@ public class Config {
 
     /**
      * 在 Mod preInit 阶段调用，用于初始化配置文件并进行首次加载。
+     *
      * @param configFile a suggested configuration file from the FMLPreInitializationEvent.
      */
     public static void init(File configFile) {
@@ -44,6 +46,7 @@ public class Config {
 
     /**
      * 根据参数决定加载或保存。
+     *
      * @param load 如果为 true，则从配置文件加载到静态变量；如果为 false，则从静态变量保存到配置文件。
      */
     private static void sync(boolean load) {
@@ -67,6 +70,7 @@ public class Config {
         PLAYER_SCALE = syncDouble("PlayerScale", "extra_player_render", PLAYER_SCALE, "Player scale in screen", 8.0, 360.0, load);
         PLAYER_YAW_OFFSET = syncDouble("PlayerYawOffset", "extra_player_render", PLAYER_YAW_OFFSET, "Player yaw offset in screen", load);
 
+        debugPrintStacktraces = syncBoolean("debugStacktraces", Configuration.CATEGORY_GENERAL, debugPrintStacktraces, "Print stacktraces for debugging", load);
         // 检查配置是否已更改，如果已更改，则保存
         if (configuration.hasChanged()) {
             configuration.save();

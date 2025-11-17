@@ -21,7 +21,7 @@ import com.fox.ysmu.compat.Utils;
 import com.fox.ysmu.model.ServerModelManager;
 import com.google.common.collect.Maps;
 
-import it.unimi.dsi.fastutil.Pair;
+import com.fox.ysmu.fastutil.Pair;
 import it.unimi.dsi.fastutil.bytes.ByteArrays;
 
 public final class YesModelUtils {

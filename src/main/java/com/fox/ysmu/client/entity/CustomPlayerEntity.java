@@ -2,6 +2,7 @@ package com.fox.ysmu.client.entity;
 
 import static com.fox.ysmu.util.ControllerUtils.*;
 
+import com.fox.ysmu.util.Keep;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.util.ResourceLocation;
@@ -11,22 +12,18 @@ import org.jetbrains.annotations.NotNull;
 
 import com.fox.ysmu.client.ClientModelManager;
 import com.fox.ysmu.client.animation.AnimationManager;
-import com.fox.ysmu.client.animation.condition.ConditionArmor;
 import com.fox.ysmu.client.model.CustomPlayerModel;
 
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.builder.ILoopType;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.resource.GeckoLibCache;
-import software.bernie.geckolib3.util.GeckoLibUtil;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.fox.ysmu.geckolib3.core.IAnimatable;
+import com.fox.ysmu.geckolib3.core.PlayState;
+import com.fox.ysmu.geckolib3.core.builder.AnimationBuilder;
+import com.fox.ysmu.geckolib3.core.builder.ILoopType;
+import com.fox.ysmu.geckolib3.core.controller.AnimationController;
+import com.fox.ysmu.geckolib3.core.event.predicate.AnimationEvent;
+import com.fox.ysmu.geckolib3.core.manager.AnimationData;
+import com.fox.ysmu.geckolib3.core.manager.AnimationFactory;
+import com.fox.ysmu.geckolib3.resource.GeckoLibCache;
+import com.fox.ysmu.geckolib3.util.GeckoLibUtil;
 
 public class CustomPlayerEntity implements IAnimatable {
 
@@ -54,37 +51,30 @@ public class CustomPlayerEntity implements IAnimatable {
         for (int i = 0; i < 8; i++) {
             String controllerName = String.format("pre_parallel_%d_controller", i);
             String animationName = String.format("pre_parallel%d", i);
-            data.addAnimationController(
-                new AnimationController<>(this, controllerName, 0, e -> manager.predicateParallel(e, animationName)));
+            data.addAnimationController(new AnimationController<>(this, controllerName, 0, e -> manager.predicateParallel(e, animationName)));
         }
         data.addAnimationController(new AnimationController(this, MAIN_CONTROLLER, 2, manager::predicateMain));
-        data.addAnimationController(
-            new AnimationController(this, HOLD_OFFHAND_CONTROLLER, 0, manager::predicateOffhandHold));
-        data.addAnimationController(
-            new AnimationController(this, HOLD_MAINHAND_CONTROLLER, 0, manager::predicateMainhandHold));
+        data.addAnimationController(new AnimationController(this, HOLD_OFFHAND_CONTROLLER, 0, manager::predicateOffhandHold));
+        data.addAnimationController(new AnimationController(this, HOLD_MAINHAND_CONTROLLER, 0, manager::predicateMainhandHold));
         data.addAnimationController(new AnimationController(this, SWING_CONTROLLER, 2, manager::predicateSwing));
         data.addAnimationController(new AnimationController(this, USE_CONTROLLER, 2, manager::predicateUse));
         for (int i = 0; i < 8; i++) {
             String controllerName = String.format("parallel_%d_controller", i);
             String animationName = String.format("parallel%d", i);
-            data.addAnimationController(
-                new AnimationController<>(this, controllerName, 0, e -> manager.predicateParallel(e, animationName)));
+            data.addAnimationController(new AnimationController<>(this, controllerName, 0, e -> manager.predicateParallel(e, animationName)));
         }
         // 为每个盔甲槽位注册控制器，使用1-4的索引值
-        EntityEquipmentSlot[] list = {EntityEquipmentSlot.HEAD,EntityEquipmentSlot.CHEST,EntityEquipmentSlot.LEGS,EntityEquipmentSlot.FEET};
-        for (EntityEquipmentSlot slotIndex : EntityEquipmentSlot.values()) {
-            String controllerName = String.format("%s_controller", ConditionArmor.getSlotNameFromIndex(slotIndex));
-            EntityEquipmentSlot finalSlotIndex = slotIndex;
-            data.addAnimationController(
-                new AnimationController(this, controllerName, 0, e -> manager.predicateArmor(e, finalSlotIndex)));
+        for (EntityEquipmentSlot slot : EntityEquipmentSlot.values()) {
+            if (slot.getSlotType() == EntityEquipmentSlot.Type.ARMOR) {
+                String controllerName = String.format("%s_controller", slot.getName());
+                data.addAnimationController(new AnimationController(this, controllerName, 0, e -> manager.predicateArmor(e, slot)));
+            }
         }
         data.addAnimationController(new AnimationController(this, CAP_CONTROLLER, 2, manager::predicateCap));
     }
 
     public ResourceLocation getMainModel() {
-        if (GeckoLibCache.getInstance()
-            .getGeoModels()
-            .containsKey(this.mainModel)) {
+        if (GeckoLibCache.getInstance().getGeoModels().containsKey(this.mainModel)) {
             return mainModel;
         }
         return CustomPlayerModel.DEFAULT_MAIN_MODEL;
@@ -95,9 +85,7 @@ public class CustomPlayerEntity implements IAnimatable {
     }
 
     public ResourceLocation getAnimation() {
-        if (GeckoLibCache.getInstance()
-            .getAnimations()
-            .containsKey(this.mainModel)) {
+        if (GeckoLibCache.getInstance().getAnimations().containsKey(this.mainModel)) {
             return mainModel;
         }
         return CustomPlayerModel.DEFAULT_MAIN_ANIMATION;
@@ -105,18 +93,14 @@ public class CustomPlayerEntity implements IAnimatable {
 
     public float getHeightScale() {
         if (ClientModelManager.SCALE_INFO.containsKey(this.mainModel)) {
-            return ClientModelManager.SCALE_INFO.get(this.mainModel)
-                .left()
-                .floatValue();
+            return ClientModelManager.SCALE_INFO.get(this.mainModel).left().floatValue();
         }
         return 0.7f;
     }
 
     public float getWidthScale() {
         if (ClientModelManager.SCALE_INFO.containsKey(this.mainModel)) {
-            return ClientModelManager.SCALE_INFO.get(this.mainModel)
-                .right()
-                .floatValue();
+            return ClientModelManager.SCALE_INFO.get(this.mainModel).right().floatValue();
         }
         return 0.7f;
     }
@@ -130,7 +114,7 @@ public class CustomPlayerEntity implements IAnimatable {
     }
 
     @Override
-
+    @Keep
     public AnimationFactory getFactory() {
         return this.factory;
     }

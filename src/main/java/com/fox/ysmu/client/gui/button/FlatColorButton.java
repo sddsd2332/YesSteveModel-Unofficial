@@ -33,16 +33,18 @@ public class FlatColorButton extends GuiButton {
         if (!this.visible) {
             return;
         }
-        FontRenderer font = mc.fontRenderer;
         this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
-        int backgroundColor = isSelect ? 0xff_1E90FF : 0xff_434242;
-        this.drawGradientRect(this.x, this.y, this.x + this.width, this.y + this.height, backgroundColor, backgroundColor);
-
+        FontRenderer font = mc.fontRenderer;
+        if (isSelect) {
+            drawGradientRect(this.x, this.y, this.x + this.width, this.y + this.height, 0xFF1E90FF, 0xFF1E90FF);
+        }else {
+            this.drawGradientRect(this.x, this.y, this.x + this.width, this.y + this.height, 0xFF434242, 0xFF434242);
+        }
         if (this.hovered) {
-            this.drawGradientRect(this.x, this.y + 1, this.x + 1, this.y + this.height - 1, 0xff_F3EFE0, 0xff_F3EFE0);
-            this.drawGradientRect(this.x, this.y, this.x + this.width, this.y + 1, 0xff_F3EFE0, 0xff_F3EFE0);
-            this.drawGradientRect(this.x + this.width - 1, this.y + 1, this.x + this.width, this.y + this.height - 1, 0xff_F3EFE0, 0xff_F3EFE0);
-            this.drawGradientRect(this.x, this.y + this.height - 1, this.y + this.width, this.y + this.height, 0xff_F3EFE0, 0xff_F3EFE0);
+            this.drawGradientRect(this.x, this.y + 1, this.x + 1, this.y + this.height - 1, 0xFFF3EFE0, 0xFFF3EFE0);
+            this.drawGradientRect(this.x, this.y, this.x + this.width, this.y + 1, 0xFFF3EFE0, 0xFFF3EFE0);
+            this.drawGradientRect(this.x + this.width - 1, this.y + 1, this.x + this.width, this.y + this.height - 1, 0xFFF3EFE0, 0xFFF3EFE0);
+            this.drawGradientRect(this.x, this.y + this.height - 1, this.y + this.width, this.y + this.height, 0xFFF3EFE0, 0xFFF3EFE0);
         }
         //GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.drawCenteredString(font, this.displayString, this.x + this.width / 2, this.y + (this.height - 8) / 2, 0xF3EFE0);

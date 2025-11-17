@@ -1,7 +1,7 @@
 package com.fox.ysmu.network.message;
 
 import com.fox.ysmu.capabilities.Capabilities;
-import com.fox.ysmu.eep.StarModelsCapability;
+import com.fox.ysmu.capabilities.StarModelsCapability;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
@@ -55,8 +55,8 @@ public class SetStarModel implements IMessage {
         }
 
         private void handleEEP(SetStarModel message, EntityPlayerMP player) {
-            if (player.hasCapability(Capabilities.StarModels, null)) {
-                StarModelsCapability eep = player.getCapability(Capabilities.StarModels, null);
+            if (player.hasCapability(Capabilities.STAR_MODELS_CAP, null)) {
+                StarModelsCapability eep = player.getCapability(Capabilities.STAR_MODELS_CAP, null);
                 if (eep != null) {
                     ResourceLocation modelLoc = message.modelId.isEmpty() ? null : new ResourceLocation(message.modelId);
                     if (message.isAdd) {

@@ -1,8 +1,8 @@
 package com.fox.ysmu.command.sub;
 
 import com.fox.ysmu.capabilities.Capabilities;
-import com.fox.ysmu.eep.AuthModelsCapability;
-import com.fox.ysmu.eep.ModelInfoCapability;
+import com.fox.ysmu.capabilities.AuthModelsCapability;
+import com.fox.ysmu.capabilities.ModelInfoCapability;
 import com.fox.ysmu.model.ServerModelManager;
 import com.fox.ysmu.model.format.ServerModelInfo;
 import com.fox.ysmu.util.ModelIdUtil;
@@ -87,11 +87,11 @@ public class ModelCommand extends CommandBase {
 
         List<EntityPlayerMP> players = server.getPlayerList().getPlayers();
         for (EntityPlayerMP player : players) {
-            if (player.hasCapability(Capabilities.AuthModels, null)) {
-                AuthModelsCapability ownModelsEEP = player.getCapability(Capabilities.AuthModels, null);
+            if (player.hasCapability(Capabilities.AUTH_MODELS_CAP, null)) {
+                AuthModelsCapability ownModelsEEP = player.getCapability(Capabilities.AUTH_MODELS_CAP, null);
                 if (ownModelsEEP != null) {
-                    if (player.hasCapability(Capabilities.ModelInfo, null)) {
-                        ModelInfoCapability modelIdEEP = player.getCapability(Capabilities.ModelInfo, null);
+                    if (player.hasCapability(Capabilities.MODEL_INFO_CAP, null)) {
+                        ModelInfoCapability modelIdEEP = player.getCapability(Capabilities.MODEL_INFO_CAP, null);
                         if (modelIdEEP != null) {
                             if (ServerModelManager.AUTH_MODELS.contains(modelIdEEP.getModelId().getPath()) && !ownModelsEEP.containModel(modelIdEEP.getModelId())) {
                                 ResourceLocation defaultModelId = new ResourceLocation(ysmu.MODID, "default");
@@ -142,19 +142,19 @@ public class ModelCommand extends CommandBase {
 
         for (EntityPlayerMP player : targets) {
             if (ignoreAuth) {
-                if (player.hasCapability(Capabilities.ModelInfo, null)) {
-                    ModelInfoCapability eep = player.getCapability(Capabilities.ModelInfo, null);
+                if (player.hasCapability(Capabilities.MODEL_INFO_CAP, null)) {
+                    ModelInfoCapability eep = player.getCapability(Capabilities.MODEL_INFO_CAP, null);
                     if (eep != null) {
                         eep.setModelAndTexture(modelId, textureId);
                         sender.sendMessage(new TextComponentTranslation("message.yes_steve_model.model.set.success", modelName, player.getName()));
                     }
                 }
             } else {
-                if (player.hasCapability(Capabilities.ModelInfo, null)) {
-                    ModelInfoCapability eep = player.getCapability(Capabilities.ModelInfo, null);
+                if (player.hasCapability(Capabilities.MODEL_INFO_CAP, null)) {
+                    ModelInfoCapability eep = player.getCapability(Capabilities.MODEL_INFO_CAP, null);
                     if (eep != null) {
-                        if (player.hasCapability(Capabilities.AuthModels, null)) {
-                            AuthModelsCapability authEEP = player.getCapability(Capabilities.AuthModels, null);
+                        if (player.hasCapability(Capabilities.AUTH_MODELS_CAP, null)) {
+                            AuthModelsCapability authEEP = player.getCapability(Capabilities.AUTH_MODELS_CAP, null);
                             if (authEEP != null) {
                                 if (!ServerModelManager.AUTH_MODELS.contains(modelName) || authEEP.containModel(modelId)) {
                                     eep.setModelAndTexture(modelId, textureId);

@@ -7,7 +7,7 @@ import net.minecraft.util.ResourceLocation;
 
 import com.google.common.collect.Maps;
 
-import it.unimi.dsi.fastutil.Pair;
+import com.fox.ysmu.fastutil.Pair;
 
 public final class NPCData {
 

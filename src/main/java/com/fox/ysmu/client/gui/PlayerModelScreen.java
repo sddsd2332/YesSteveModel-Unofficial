@@ -1,12 +1,12 @@
 package com.fox.ysmu.client.gui;
 
 import com.fox.ysmu.Tags;
+import com.fox.ysmu.capabilities.AuthModelsCapability;
 import com.fox.ysmu.capabilities.Capabilities;
+import com.fox.ysmu.capabilities.ModelInfoCapability;
+import com.fox.ysmu.capabilities.StarModelsCapability;
 import com.fox.ysmu.client.ClientModelManager;
 import com.fox.ysmu.client.gui.button.*;
-import com.fox.ysmu.eep.AuthModelsCapability;
-import com.fox.ysmu.eep.ModelInfoCapability;
-import com.fox.ysmu.eep.StarModelsCapability;
 import com.fox.ysmu.util.ModelIdUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -25,7 +25,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 import java.util.*;
@@ -58,11 +57,11 @@ public class PlayerModelScreen extends GuiScreen {
             this.models.putAll(ClientModelManager.MODELS);
         }
         if (this.category == Category.AUTH) {
-            if (player.hasCapability(Capabilities.AuthModels, null)) {
-                AuthModelsCapability eep = player.getCapability(Capabilities.AuthModels, null);
-                if (eep != null) {
+            if (player.hasCapability(Capabilities.AUTH_MODELS_CAP, null)) {
+                AuthModelsCapability cap = player.getCapability(Capabilities.AUTH_MODELS_CAP, null);
+                if (cap != null) {
                     for (ResourceLocation modelId : ClientModelManager.MODELS.keySet()) {
-                        if (eep.containModel(modelId) || !ClientModelManager.AUTH_MODELS.contains(modelId.getPath())) {
+                        if (cap.containModel(modelId) || !ClientModelManager.AUTH_MODELS.contains(modelId.getPath())) {
                             this.models.put(modelId, ClientModelManager.MODELS.get(modelId));
                         }
                     }
@@ -70,11 +69,11 @@ public class PlayerModelScreen extends GuiScreen {
             }
         }
         if (this.category == Category.STAR) {
-            if (player.hasCapability(Capabilities.StarModels, null)) {
-                StarModelsCapability eep = player.getCapability(Capabilities.StarModels, null);
-                if (eep != null) {
+            if (player.hasCapability(Capabilities.STAR_MODELS_CAP, null)) {
+                StarModelsCapability cap = player.getCapability(Capabilities.STAR_MODELS_CAP, null);
+                if (cap != null) {
                     for (ResourceLocation modelId : ClientModelManager.MODELS.keySet()) {
-                        if (eep.containModel(modelId)) {
+                        if (cap.containModel(modelId)) {
                             this.models.put(modelId, ClientModelManager.MODELS.get(modelId));
                         }
                     }
@@ -138,10 +137,10 @@ public class PlayerModelScreen extends GuiScreen {
             ResourceLocation id = modelOrderList.get(modelIndex);
             int xStart = x + 143 + 55 * (i % 5);
             int yStart = y + 28 + 93 * (i / 5);
-            if (player.hasCapability(Capabilities.AuthModels, null)) {
-                AuthModelsCapability eep = player.getCapability(Capabilities.AuthModels, null);
-                if (eep != null) {
-                    boolean needAuth = ClientModelManager.AUTH_MODELS.contains(id.getPath()) && !eep.containModel(id);
+            if (player.hasCapability(Capabilities.AUTH_MODELS_CAP, null)) {
+                AuthModelsCapability cap = player.getCapability(Capabilities.AUTH_MODELS_CAP, null);
+                if (cap != null) {
+                    boolean needAuth = ClientModelManager.AUTH_MODELS.contains(id.getPath()) && !cap.containModel(id);
                     this.buttonList.add(new ModelButton(buttonId++, xStart, yStart, needAuth, Pair.of(id, models.get(id)), ClientModelManager.EXTRA_INFO.get(ModelIdUtil.getMainId(id)), player));
                 }
             }
@@ -154,8 +153,8 @@ public class PlayerModelScreen extends GuiScreen {
             case 0:
                 break;
             case 1:
-                if (player.hasCapability(Capabilities.ModelInfo, null)) {
-                    ModelInfoCapability eep = player.getCapability(Capabilities.ModelInfo, null);
+                if (player.hasCapability(Capabilities.MODEL_INFO_CAP, null)) {
+                    ModelInfoCapability eep = player.getCapability(Capabilities.MODEL_INFO_CAP, null);
                     if (eep != null) {
                         List<ResourceLocation> textures = ClientModelManager.MODELS.get(eep.getModelId());
                         if (textures != null) {
@@ -166,8 +165,8 @@ public class PlayerModelScreen extends GuiScreen {
                 }
                 break;
             case 2:
-                if (button instanceof StarButton) {
-                    ((StarButton) button).doPress();
+                if (button instanceof StarButton starButton) {
+                    starButton.doPress();
                 }
                 break;
             case 3:
@@ -213,8 +212,8 @@ public class PlayerModelScreen extends GuiScreen {
                 }
                 break;
             default:
-                if (button instanceof ModelButton) {
-                    ((ModelButton) button).doPress();
+                if (button instanceof ModelButton modelButton) {
+                    modelButton.onPress();
                 }
                 break;
         }
@@ -225,9 +224,9 @@ public class PlayerModelScreen extends GuiScreen {
         // renderBackground(graphics) -> drawDefaultBackground()
         this.drawDefaultBackground();
 
-        this.drawGradientRect(x, y, x + 135, y + 235, 0xff_222222, 0xff_222222);
-        this.drawGradientRect(x + 138, y, x + 420, y + 235, 0xff_222222, 0xff_222222);
-        this.drawGradientRect(x + 351, y + 7, x + 352, y + 21, 0xFF_F3EFE0, 0xFF_F3EFE0);
+        this.drawGradientRect(x, y, x + 135, y + 235, 0xFF222222, 0xFF222222);
+        this.drawGradientRect(x + 138, y, x + 420, y + 235, 0xFF222222, 0xFF222222);
+        this.drawGradientRect(x + 351, y + 7, x + 352, y + 21, 0xFFF3EFE0, 0xFFF3EFE0);
         // textField.render -> textField.drawTextBox
         textField.drawTextBox();
 
@@ -236,15 +235,15 @@ public class PlayerModelScreen extends GuiScreen {
         int scissorY = mc.displayHeight - ((this.y + 200) * scale);
         int scissorW = 125 * scale;
         int scissorH = 171 * scale;
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GL11.glScissor(scissorX, scissorY, scissorW, scissorH);
+        //  GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        //    GL11.glScissor(scissorX, scissorY, scissorW, scissorH);
         // func_147046_a(x,y,scale,toMouseX,toMouseY,entity)
         GuiInventory.drawEntityOnScreen(x + 67, y + 190, 70, x + 67 - mouseX, y + 180 - 95 - mouseY, player);
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
-        if (player.hasCapability(Capabilities.ModelInfo, null)) {
-            ModelInfoCapability eep = player.getCapability(Capabilities.ModelInfo, null);
-            if (eep != null) {
-                String modelName = eep.getModelId().getPath();
+        //    GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        if (player.hasCapability(Capabilities.MODEL_INFO_CAP, null)) {
+            ModelInfoCapability cap = player.getCapability(Capabilities.MODEL_INFO_CAP, null);
+            if (cap != null) {
+                String modelName = cap.getModelId().getPath();
                 // font -> fontRendererObj
                 List<String> modelNameSplit = fontRenderer.listFormattedStringToWidth(modelName, 125);
                 int lineY = y + 205;
@@ -268,19 +267,8 @@ public class PlayerModelScreen extends GuiScreen {
         // super.render -> super.drawScreen, 这会绘制所有按钮
         super.drawScreen(mouseX, mouseY, partialTicks);
         // Render tooltips
-        for (Object button : this.buttonList) {
-            if (button instanceof FlatIconButton f) {
-                if (f.isMouseOver() && f.tooltips != null && !f.tooltips.isEmpty()) {
-                    this.drawHoveringText(f.tooltips, mouseX, mouseY);
-                }
-            }
-            if (button instanceof ModelButton m) {
-                if (m.isMouseOver() && m.tooltips != null && !m.tooltips.isEmpty()) {
-                    List<String> tooltipStrings = m.tooltips.stream().map(ITextComponent::getFormattedText).collect(Collectors.toList());
-                    this.drawHoveringText(tooltipStrings, mouseX, mouseY);
-                }
-            }
-        }
+        buttonList.stream().filter(button -> button instanceof FlatIconButton f && f.isMouseOver() && f.tooltips != null && !f.tooltips.isEmpty()).forEach(button -> drawHoveringText(((FlatIconButton) button).tooltips, mouseX, mouseY));
+        buttonList.stream().filter(button -> button instanceof ModelButton f && f.isMouseOver() && f.tooltips != null && !f.tooltips.isEmpty()).forEach(button -> drawHoveringText(((ModelButton) button).tooltips.stream().map(ITextComponent::getFormattedText).collect(Collectors.toList()), mouseX, mouseY));
     }
 
     // tick -> updateScreen

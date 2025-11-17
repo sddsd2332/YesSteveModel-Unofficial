@@ -10,7 +10,7 @@ import com.google.common.cache.CacheBuilder;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import software.bernie.geckolib3.core.IAnimatable;
+import com.fox.ysmu.geckolib3.core.IAnimatable;
 
 @SideOnly(Side.CLIENT)
 public final class AnimatableCacheUtil {

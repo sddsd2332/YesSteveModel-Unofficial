@@ -2,19 +2,19 @@ package com.fox.ysmu.client.gui;
 
 import com.fox.ysmu.Config;
 import com.fox.ysmu.capabilities.Capabilities;
+import com.fox.ysmu.capabilities.ModelInfoCapability;
 import com.fox.ysmu.client.ClientModelManager;
 import com.fox.ysmu.client.input.ExtraAnimationKey;
-import com.fox.ysmu.eep.ModelInfoCapability;
 import com.fox.ysmu.network.NetworkHandler;
 import com.fox.ysmu.network.message.SetPlayAnimation;
 import com.fox.ysmu.util.ModelIdUtil;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -38,20 +38,18 @@ public class AnimationRouletteScreen extends GuiScreen {
         this.x = width / 2;
         this.y = height / 2 - 8;
 
-        if (mc != null) {
-            EntityPlayer player = mc.player;
-            if (player != null) {
-                if (player.hasCapability(Capabilities.ModelInfo, null)) {
-                    ModelInfoCapability eep = player.getCapability(Capabilities.ModelInfo, null);
-                    if (eep != null) {
-                        ResourceLocation modelId = eep.getModelId();
-                        if (ClientModelManager.EXTRA_ANIMATION_NAME.containsKey(ModelIdUtil.getMainId(modelId))) {
-                            this.names = ClientModelManager.EXTRA_ANIMATION_NAME.get(ModelIdUtil.getMainId(modelId));
-                        }
+        if (mc != null && mc.player != null) {
+            if (mc.player.hasCapability(Capabilities.MODEL_INFO_CAP, null)) {
+                ModelInfoCapability cap = mc.player.getCapability(Capabilities.MODEL_INFO_CAP, null);
+                if (cap != null) {
+                    ResourceLocation modelId = cap.getModelId();
+                    if (ClientModelManager.EXTRA_ANIMATION_NAME.containsKey(ModelIdUtil.getMainId(modelId))) {
+                        this.names = ClientModelManager.EXTRA_ANIMATION_NAME.get(ModelIdUtil.getMainId(modelId));
                     }
                 }
             }
         }
+
     }
 
     @Override
@@ -95,21 +93,22 @@ public class AnimationRouletteScreen extends GuiScreen {
             int textX = (int) (x + r * MathHelper.cos(startDeg));
             int textY = (int) (y + r * MathHelper.sin(startDeg) - (float) this.fontRenderer.FONT_HEIGHT / 2);
             if (this.names != null && this.names.length > i && StringUtils.isNoneBlank(this.names[i])) {
-                this.drawCenteredString(fontRenderer, this.names[i], textX, textY - 8, 0xF3EFE0);
+                this.drawCenteredString(fontRenderer, this.names[i], textX, textY - 8, 0xFFF3EFE0);
             } else {
-                this.drawCenteredString(fontRenderer, String.valueOf(i), textX, textY - 8, 0xF3EFE0);
+                this.drawCenteredString(fontRenderer, String.valueOf(i), textX, textY - 8, 0xFFF3EFE0);
             }
-            this.drawCenteredString(fontRenderer, keyText.getFormattedText(), textX, textY + 4, 0xF3EFE0);
+            this.drawCenteredString(fontRenderer, keyText.getFormattedText(), textX, textY + 4, 0xFFF3EFE0);
             startDeg = (float) (startDeg + 2 * Math.PI / count);
         }
     }
 
     private void drawRoulette(int mouseX, int mouseY) {
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        Tessellator tessellator = Tessellator.getInstance();
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 
+        Tessellator tesselator = Tessellator.getInstance();
+        BufferBuilder bufferBuilder =  tesselator.getBuffer();
+        bufferBuilder.begin(GL11.GL_QUAD_STRIP, DefaultVertexFormats.POSITION);
         int count = 8;
         float theta = (float) Math.atan2(mouseY - y, mouseX - x);
         if (theta < 0) {
@@ -122,33 +121,28 @@ public class AnimationRouletteScreen extends GuiScreen {
             float startDeg = (float) ((2 * Math.PI / count) * i + spacingDeg);
             float endDeg = (float) ((2 * Math.PI / count) * (i + 1) - spacingDeg);
             if (startDeg < theta && theta < endDeg && 50 < distance && distance < 100) {
-                drawFan(tessellator, 25, 105, startDeg, endDeg, 0xf0FFB100);
+                drawFan(bufferBuilder, 25, 105, startDeg, endDeg, 0xF0FFB100);
                 isSelected = true;
                 this.selectId = i;
             } else {
-                drawFan(tessellator, 25, 105, startDeg, endDeg, 0x90000000);
+                drawFan(bufferBuilder, 25, 105, startDeg, endDeg, 0x90000000);
             }
         }
         if (!isSelected) {
             this.selectId = -1;
         }
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glDisable(GL11.GL_BLEND);
+        tesselator.draw();
+        GlStateManager.disableBlend();
     }
 
-    private void drawFan(Tessellator tessellator, float rIn, float rOut, float startDeg, float endDeg, int color) {
+    private void drawFan(BufferBuilder builder, float rIn, float rOut, float startDeg, float endDeg, int color) {
         float alpha = (color >> 24 & 255) / 255.0F;
         float red = (color >> 16 & 255) / 255.0F;
         float green = (color >> 8 & 255) / 255.0F;
         float blue = (color & 255) / 255.0F;
-        BufferBuilder bufferBuilder = tessellator.getBuffer();
-        bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-
-        bufferBuilder.color(red, green, blue, alpha);
-        bufferBuilder.pos(x + rOut * MathHelper.cos(startDeg), y + rOut * MathHelper.sin(startDeg), 0).endVertex();
-        bufferBuilder.pos(x + rIn * MathHelper.cos(startDeg), y + rIn * MathHelper.sin(startDeg), 0).endVertex();
-        bufferBuilder.pos(x + rIn * MathHelper.cos(endDeg), y + rIn * MathHelper.sin(endDeg), 0).endVertex();
-        bufferBuilder.pos(x + rOut * MathHelper.cos(endDeg), y + rOut * MathHelper.sin(endDeg), 0).endVertex();
-        tessellator.draw();
+        builder.pos(x + rOut * MathHelper.cos(startDeg), y + rOut * MathHelper.sin(startDeg), 0).color(red, green, blue, alpha).endVertex();
+        builder.pos(x + rIn * MathHelper.cos(startDeg), y + rIn * MathHelper.sin(startDeg), 0).color(red, green, blue, alpha).endVertex();
+        builder.pos(x + rIn * MathHelper.cos(endDeg), y + rIn * MathHelper.sin(endDeg), 0).color(red, green, blue, alpha).endVertex();
+        builder.pos(x + rOut * MathHelper.cos(endDeg), y + rOut * MathHelper.sin(endDeg), 0).color(red, green, blue, alpha).endVertex();
     }
 }

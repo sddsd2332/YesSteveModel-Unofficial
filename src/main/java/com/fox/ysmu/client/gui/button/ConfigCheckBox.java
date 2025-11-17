@@ -3,6 +3,7 @@ package com.fox.ysmu.client.gui.button;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.resources.I18n;
 
+//TODO:改用Checkbox
 public class ConfigCheckBox extends GuiButton {
     //移除 ForgeConfigSpec，这个按钮只负责UI状态，配置的读写应由使用它的Screen负责
     private boolean isChecked;

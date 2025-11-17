@@ -1,19 +1,19 @@
 package com.fox.ysmu.client.renderer.layer;
 
-import net.geckominecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHandSide;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.util.Color;
-import software.bernie.geckolib3.geo.GeoLayerRenderer;
-import software.bernie.geckolib3.geo.IGeoRenderer;
-import software.bernie.geckolib3.geo.render.built.GeoBone;
-import software.bernie.geckolib3.geo.render.built.GeoModel;
-import software.bernie.geckolib3.util.RenderUtils;
+import com.fox.ysmu.geckolib3.core.IAnimatable;
+import com.fox.ysmu.geckolib3.core.util.Color;
+import com.fox.ysmu.geckolib3.geo.GeoLayerRenderer;
+import com.fox.ysmu.geckolib3.geo.IGeoRenderer;
+import com.fox.ysmu.geckolib3.geo.render.built.GeoBone;
+import com.fox.ysmu.geckolib3.geo.render.built.GeoModel;
+import com.fox.ysmu.geckolib3.util.RenderUtils;
 
 
 public class CustomPlayerItemInHandLayer<T extends EntityLivingBase & IAnimatable> extends GeoLayerRenderer<T> {

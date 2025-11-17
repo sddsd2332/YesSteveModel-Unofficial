@@ -11,9 +11,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiSlot;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
-
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.opengl.GL11;
 
@@ -55,7 +53,7 @@ public class DownloadScreen extends GuiScreen {
     // 这个静态内部类负责管理文件列表的缓存、加载状态和网络请求
     // 这样可以确保数据只加载一次，并且与GUI实例的生命周期解耦
     private static class FileListCache {
-        private enum State { IDLE, LOADING, LOADED, ERROR }
+        private enum State {IDLE, LOADING, LOADED, ERROR}
 
         private static volatile State currentState = State.IDLE;
         private static volatile Map<String, List<FileInfo>> categorizedFiles = null;
@@ -319,13 +317,18 @@ public class DownloadScreen extends GuiScreen {
         }
 
         @Override
-        public int getListWidth() { return this.width; }
+        public int getListWidth() {
+            return this.width;
+        }
 
         @Override
-        protected int getScrollBarX() { return this.right - 6; }
+        protected int getScrollBarX() {
+            return this.right - 6;
+        }
 
         @Override
-        protected void drawBackground() {}
+        protected void drawBackground() {
+        }
     }
 
     class CategoryList extends ScissoredGuiSlot {
@@ -334,7 +337,9 @@ public class DownloadScreen extends GuiScreen {
         }
 
         @Override
-        protected int getSize() { return categoryNames.size(); }
+        protected int getSize() {
+            return categoryNames.size();
+        }
 
         @Override
         protected void elementClicked(int slotIndex, boolean isDoubleClick, int mouseX, int mouseY) {
@@ -346,7 +351,9 @@ public class DownloadScreen extends GuiScreen {
         }
 
         @Override
-        protected boolean isSelected(int slotIndex) { return slotIndex == selectedCategoryIndex; }
+        protected boolean isSelected(int slotIndex) {
+            return slotIndex == selectedCategoryIndex;
+        }
 
         @Override
         protected void drawSlot(int slotIndex, int xPos, int yPos, int heightIn, int mouseXIn, int mouseYIn, float partialTicks) {
@@ -363,7 +370,9 @@ public class DownloadScreen extends GuiScreen {
         }
 
         @Override
-        protected int getSize() { return filesForDisplay.size(); }
+        protected int getSize() {
+            return filesForDisplay.size();
+        }
 
         @Override
         protected void elementClicked(int slotIndex, boolean isDoubleClick, int mouseX, int mouseY) {
@@ -375,7 +384,9 @@ public class DownloadScreen extends GuiScreen {
         }
 
         @Override
-        protected boolean isSelected(int slotIndex) { return slotIndex == selectedFileIndex; }
+        protected boolean isSelected(int slotIndex) {
+            return slotIndex == selectedFileIndex;
+        }
 
         @Override
         protected void drawSlot(int slotIndex, int xPos, int yPos, int heightIn, int mouseXIn, int mouseYIn, float partialTicks) {

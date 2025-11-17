@@ -20,8 +20,8 @@ import com.fox.ysmu.util.Md5Utils;
 import com.fox.ysmu.util.YesModelUtils;
 import com.google.common.collect.Maps;
 
-import software.bernie.geckolib3.geo.raw.pojo.Converter;
-import software.bernie.geckolib3.geo.raw.pojo.RawGeoModel;
+import com.fox.ysmu.geckolib3.geo.raw.pojo.Converter;
+import com.fox.ysmu.geckolib3.geo.raw.pojo.RawGeoModel;
 
 public final class YsmFormat {
 

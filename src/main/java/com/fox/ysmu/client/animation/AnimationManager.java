@@ -1,25 +1,25 @@
 package com.fox.ysmu.client.animation;
 
 import com.fox.ysmu.capabilities.Capabilities;
+import com.fox.ysmu.capabilities.ModelInfoCapability;
 import com.fox.ysmu.client.animation.condition.*;
 import com.fox.ysmu.client.entity.CustomPlayerEntity;
-import com.fox.ysmu.compat.BackhandCompat;
-import com.fox.ysmu.eep.ModelInfoCapability;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.builder.ILoopType;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.resource.GeckoLibCache;
+import com.fox.ysmu.geckolib3.core.IAnimatable;
+import com.fox.ysmu.geckolib3.core.PlayState;
+import com.fox.ysmu.geckolib3.core.builder.AnimationBuilder;
+import com.fox.ysmu.geckolib3.core.builder.ILoopType;
+import com.fox.ysmu.geckolib3.core.event.predicate.AnimationEvent;
+import com.fox.ysmu.geckolib3.resource.GeckoLibCache;
 
 import java.util.LinkedList;
 
@@ -41,24 +41,20 @@ public final class AnimationManager {
     }
 
     @NotNull
-    private static <P extends IAnimatable> PlayState playAnimation(AnimationEvent<P> event, String animationName,
-                                                                   ILoopType loopType) {
-        event.getController()
-                .setAnimation(new AnimationBuilder().addAnimation(animationName, loopType));
+    private static <P extends IAnimatable> PlayState playAnimation(AnimationEvent<P> event, String animationName, ILoopType loopType) {
+        event.getController().setAnimation(new AnimationBuilder().addAnimation(animationName, loopType));
         return PlayState.CONTINUE;
     }
 
     @NotNull
     private static <P extends IAnimatable> PlayState playAnimation(AnimationEvent<P> event, String animationName) {
-        event.getController()
-                .setAnimation(new AnimationBuilder().addAnimation(animationName));
+        event.getController().setAnimation(new AnimationBuilder().addAnimation(animationName));
         return PlayState.CONTINUE;
     }
 
     public void register(AnimationState state) {
         if (data.containsKey(state.getPriority())) {
-            data.get(state.getPriority())
-                    .add(state);
+            data.get(state.getPriority()).add(state);
         } else {
             LinkedList<AnimationState> states = Lists.newLinkedList();
             states.add(state);
@@ -67,8 +63,7 @@ public final class AnimationManager {
     }
 
     public PlayState predicateParallel(AnimationEvent<CustomPlayerEntity> event, String animationName) {
-        if (Minecraft.getMinecraft()
-                .isGamePaused()) {
+        if (Minecraft.getMinecraft().isGamePaused()) {
             return PlayState.STOP;
         }
         return playLoopAnimation(event, animationName);
@@ -83,8 +78,8 @@ public final class AnimationManager {
             }
             return PlayState.STOP;
         }
-        if (player.hasCapability(Capabilities.ModelInfo, null)) {
-            ModelInfoCapability eep = player.getCapability(Capabilities.ModelInfo, null);
+        if (player.hasCapability(Capabilities.MODEL_INFO_CAP, null)) {
+            ModelInfoCapability eep = player.getCapability(Capabilities.MODEL_INFO_CAP, null);
             if (eep != null && eep.isPlayAnimation()) {
                 return playAnimation(event, eep.getAnimation());
             }
@@ -94,8 +89,7 @@ public final class AnimationManager {
 
     @NotNull
     public PlayState predicateMain(AnimationEvent<CustomPlayerEntity> event) {
-        EntityPlayer player = event.getAnimatable()
-                .getPlayer();
+        EntityPlayer player = event.getAnimatable().getPlayer();
         if (player == null) {
             return PlayState.STOP;
         }
@@ -122,15 +116,12 @@ public final class AnimationManager {
             return PlayState.STOP;
         }
 
-        // 修改为使用BackhandCompat兼容层
-        ItemStack offhandItem = player.getHeldItemOffhand();
-        if (!offhandItem.isEmpty() && checkSwingAndUse(player, false)) {
-            ResourceLocation id = event.getAnimatable()
-                    .getAnimation();
+        if (!player.getHeldItemOffhand().isEmpty() && checkSwingAndUse(player, EnumHand.OFF_HAND)) {
+            ResourceLocation id = event.getAnimatable().getAnimation();
             ConditionalHold conditionalHold = ConditionManager.getHoldOffhand(id);
             if (conditionalHold != null) {
                 // 为兼容性传递false表示副手
-                String name = conditionalHold.doTest(player, false);
+                String name = conditionalHold.doTest(player, EnumHand.OFF_HAND);
                 if (StringUtils.isNoneBlank(name)) {
                     return playAnimation(event, name, ILoopType.EDefaultLoopTypes.LOOP);
                 }
@@ -146,6 +137,7 @@ public final class AnimationManager {
             return PlayState.STOP;
         }
         if (!player.isSwingInProgress && !player.isHandActive()) {
+            //这块是弩，1.12.2没有这个
             // ItemStack mainHandItem = player.getHeldItem();
             // if (mainHandItem.is(Items.CROSSBOW) && CrossbowItem.isCharged(mainHandItem)) {
             // return playAnimation(event, "hold_mainhand:charged_crossbow", ILoopType.EDefaultLoopTypes.LOOP);
@@ -159,12 +151,11 @@ public final class AnimationManager {
             }
         }
 
-        if (!player.getHeldItemMainhand().isEmpty() && checkSwingAndUse(player, true)) {
-            ResourceLocation id = event.getAnimatable()
-                    .getAnimation();
+        if (!player.getHeldItemMainhand().isEmpty() && checkSwingAndUse(player, EnumHand.MAIN_HAND)) {
+            ResourceLocation id = event.getAnimatable().getAnimation();
             ConditionalHold conditionalHold = ConditionManager.getHoldMainhand(id);
             if (conditionalHold != null) {
-                String name = conditionalHold.doTest(player, true);
+                String name = conditionalHold.doTest(player, EnumHand.MAIN_HAND);
                 if (StringUtils.isNoneBlank(name)) {
                     return playAnimation(event, name, ILoopType.EDefaultLoopTypes.LOOP);
                 }
@@ -174,23 +165,19 @@ public final class AnimationManager {
     }
 
     public PlayState predicateSwing(AnimationEvent<CustomPlayerEntity> event) {
-        EntityPlayer player = event.getAnimatable()
-                .getPlayer();
+        EntityPlayer player = event.getAnimatable().getPlayer();
         if (player == null) {
             return PlayState.STOP;
         }
         if (player.isSwingInProgress && !player.isPlayerSleeping()) {
             if (player.swingProgressInt == 0) {
                 event.getController().shouldResetTick = true;
-                event.getController()
-                        .adjustTick(0);
+                event.getController().adjustTick(0);
             }
-            ResourceLocation id = event.getAnimatable()
-                    .getAnimation();
+            ResourceLocation id = event.getAnimatable().getAnimation();
             ConditionalSwing conditionalSwing = ConditionManager.getSwing(id);
             if (conditionalSwing != null) {
-                // 修改为使用兼容性方法
-                String name = conditionalSwing.doTest(player, BackhandCompat.swingingArm(player));
+                String name = conditionalSwing.doTest(player, player.swingingHand);
                 if (StringUtils.isNoneBlank(name)) {
                     return playAnimation(event, name, ILoopType.EDefaultLoopTypes.LOOP);
                 }
@@ -201,34 +188,30 @@ public final class AnimationManager {
     }
 
     public PlayState predicateUse(AnimationEvent<CustomPlayerEntity> event) {
-        EntityPlayer player = event.getAnimatable()
-                .getPlayer();
+        EntityPlayer player = event.getAnimatable().getPlayer();
         if (player == null) {
             return PlayState.STOP;
         }
         if (player.isHandActive() && !player.isPlayerSleeping()) {
-            if (player.getItemInUseCount() == 1) { // TODO getItemInUseCount可能与高版本逻辑相反
+            if (player.getItemInUseCount() == 1) {
                 event.getController().shouldResetTick = true;
-                event.getController()
-                        .adjustTick(0);
+                event.getController().adjustTick(0);
             }
-            if (BackhandCompat.getUsedItemHand(player)) { // 主手
-                ResourceLocation id = event.getAnimatable()
-                        .getAnimation();
+            if (player.getActiveHand() == EnumHand.MAIN_HAND) {
+                ResourceLocation id = event.getAnimatable().getAnimation();
                 ConditionalUse conditionalUse = ConditionManager.getUseMainhand(id);
                 if (conditionalUse != null) {
-                    String name = conditionalUse.doTest(player, true); // true表示主手
+                    String name = conditionalUse.doTest(player, EnumHand.MAIN_HAND);
                     if (StringUtils.isNoneBlank(name)) {
                         return playAnimation(event, name, ILoopType.EDefaultLoopTypes.LOOP);
                     }
                 }
                 return playAnimation(event, "use_mainhand", ILoopType.EDefaultLoopTypes.LOOP);
             } else {
-                ResourceLocation id = event.getAnimatable()
-                        .getAnimation();
+                ResourceLocation id = event.getAnimatable().getAnimation();
                 ConditionalUse conditionalUse = ConditionManager.getUseOffhand(id);
                 if (conditionalUse != null) {
-                    String name = conditionalUse.doTest(player, false); // false表示副手
+                    String name = conditionalUse.doTest(player, EnumHand.OFF_HAND);
                     if (StringUtils.isNoneBlank(name)) {
                         return playAnimation(event, name, ILoopType.EDefaultLoopTypes.LOOP);
                     }
@@ -239,43 +222,37 @@ public final class AnimationManager {
         return PlayState.STOP;
     }
 
-    public PlayState predicateArmor(AnimationEvent<CustomPlayerEntity> event, EntityEquipmentSlot slotIndex) {
-        EntityPlayer player = event.getAnimatable()
-                .getPlayer();
+    public PlayState predicateArmor(AnimationEvent<CustomPlayerEntity> event, EntityEquipmentSlot slot) {
+        EntityPlayer player = event.getAnimatable().getPlayer();
         if (player == null) {
             return PlayState.STOP;
         }
-        ItemStack itemBySlot = player.getItemStackFromSlot(slotIndex);
+        ItemStack itemBySlot = player.getItemStackFromSlot(slot);
         if (itemBySlot.isEmpty()) {
             return PlayState.STOP;
         }
 
-        ResourceLocation id = event.getAnimatable()
-                .getAnimation();
+        ResourceLocation id = event.getAnimatable().getAnimation();
         ConditionArmor conditionArmor = ConditionManager.getArmor(id);
         if (conditionArmor != null) {
-            String name = conditionArmor.doTest(player, slotIndex);
+            String name = conditionArmor.doTest(player, slot);
             if (StringUtils.isNoneBlank(name)) {
                 return playAnimation(event, name, ILoopType.EDefaultLoopTypes.LOOP);
             }
         }
 
-        ResourceLocation animation = event.getAnimatable()
-                .getAnimation();
-        String slotName = ConditionArmor.getSlotNameFromIndex(slotIndex);
-        String defaultName = slotName + ":default";
-        if (GeckoLibCache.getInstance()
-                .getAnimations()
-                .get(animation).animations.containsKey(defaultName)) {
+        ResourceLocation animation = event.getAnimatable().getAnimation();
+        String defaultName = slot.getName() + ":default";
+        if (GeckoLibCache.getInstance().getAnimations().get(animation).animations.containsKey(defaultName)) {
             return playAnimation(event, defaultName, ILoopType.EDefaultLoopTypes.LOOP);
         }
         return PlayState.STOP;
     }
 
-    private boolean checkSwingAndUse(EntityPlayer player, boolean isMainHand) {
-        if (player.isSwingInProgress && BackhandCompat.swingingArm(player) == isMainHand) {
+    private boolean checkSwingAndUse(EntityPlayer player, EnumHand hand) {
+        if (player.isSwingInProgress && player.swingingHand == hand) {
             return false;
         }
-        return !player.isHandActive() || BackhandCompat.getUsedItemHand(player) != isMainHand;
+        return !player.isHandActive() || player.getActiveHand() != hand;
     }
 }

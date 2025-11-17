@@ -1,7 +1,7 @@
 package com.fox.ysmu.command.sub;
 
 import com.fox.ysmu.capabilities.Capabilities;
-import com.fox.ysmu.eep.ModelInfoCapability;
+import com.fox.ysmu.capabilities.ModelInfoCapability;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -59,8 +59,8 @@ public class PlayAnimationCommand extends CommandBase {
 
     private void playAnimation(ICommandSender sender, List<EntityPlayerMP> targets, String animation) {
         for (EntityPlayerMP player : targets) {
-            if (player.hasCapability(Capabilities.ModelInfo, null)) {
-                ModelInfoCapability eep = player.getCapability(Capabilities.ModelInfo, null);
+            if (player.hasCapability(Capabilities.MODEL_INFO_CAP, null)) {
+                ModelInfoCapability eep = player.getCapability(Capabilities.MODEL_INFO_CAP, null);
                 if (eep != null) {
                     if (STOP.equals(animation)) {
                         eep.stopAnimation();

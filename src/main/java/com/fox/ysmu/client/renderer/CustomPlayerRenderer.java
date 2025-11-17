@@ -5,19 +5,19 @@ import com.fox.ysmu.client.entity.CustomPlayerEntity;
 import com.fox.ysmu.client.model.CustomPlayerModel;
 import com.fox.ysmu.client.renderer.layer.CustomPlayerItemInHandLayer;
 import com.fox.ysmu.data.NPCData;
-import com.fox.ysmu.eep.ModelInfoCapability;
+import com.fox.ysmu.capabilities.ModelInfoCapability;
 import com.fox.ysmu.event.api.SpecialPlayerRenderEvent;
 import com.fox.ysmu.util.ModelIdUtil;
-import it.unimi.dsi.fastutil.Pair;
+import com.fox.ysmu.fastutil.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.geo.GeoReplacedEntityRenderer;
-import software.bernie.geckolib3.geo.render.built.GeoModel;
-import software.bernie.geckolib3.resource.GeckoLibCache;
+import com.fox.ysmu.geckolib3.geo.GeoReplacedEntityRenderer;
+import com.fox.ysmu.geckolib3.geo.render.built.GeoModel;
+import com.fox.ysmu.geckolib3.resource.GeckoLibCache;
 
 public class CustomPlayerRenderer extends GeoReplacedEntityRenderer<CustomPlayerEntity> {
 
@@ -34,8 +34,8 @@ public class CustomPlayerRenderer extends GeoReplacedEntityRenderer<CustomPlayer
     public void doRender(EntityLivingBase entityObj, double x, double y, double z, float entityYaw,
                          float partialTicks) {
         if (this.animatable != null && entityObj instanceof EntityPlayer player) {
-            if (player.hasCapability(Capabilities.ModelInfo, null)) {
-                ModelInfoCapability eep = player.getCapability(Capabilities.ModelInfo, null);
+            if (player.hasCapability(Capabilities.MODEL_INFO_CAP, null)) {
+                ModelInfoCapability eep = player.getCapability(Capabilities.MODEL_INFO_CAP, null);
                 if (eep != null) {
                     this.animatable.setPlayer(player);
                     if (NPCData.contains(player.getUniqueID())) {

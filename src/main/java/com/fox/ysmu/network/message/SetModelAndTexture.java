@@ -1,8 +1,8 @@
 package com.fox.ysmu.network.message;
 
 import com.fox.ysmu.capabilities.Capabilities;
-import com.fox.ysmu.eep.AuthModelsCapability;
-import com.fox.ysmu.eep.ModelInfoCapability;
+import com.fox.ysmu.capabilities.AuthModelsCapability;
+import com.fox.ysmu.capabilities.ModelInfoCapability;
 import com.fox.ysmu.model.ServerModelManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -49,9 +49,9 @@ public class SetModelAndTexture implements IMessage {
         }
 
         private void handleEEP(SetModelAndTexture message, EntityPlayerMP player) {
-            if (player.hasCapability(Capabilities.ModelInfo, null) && player.hasCapability(Capabilities.AuthModels, null)) {
-                ModelInfoCapability modelIdEEP = player.getCapability(Capabilities.ModelInfo, null);
-                AuthModelsCapability ownModelsEEP = player.getCapability(Capabilities.AuthModels, null);
+            if (player.hasCapability(Capabilities.MODEL_INFO_CAP, null) && player.hasCapability(Capabilities.AUTH_MODELS_CAP, null)) {
+                ModelInfoCapability modelIdEEP = player.getCapability(Capabilities.MODEL_INFO_CAP, null);
+                AuthModelsCapability ownModelsEEP = player.getCapability(Capabilities.AUTH_MODELS_CAP, null);
                 if (modelIdEEP != null && ownModelsEEP != null) {
                     ResourceLocation modelLoc = message.modelId.isEmpty() ? null : new ResourceLocation(message.modelId);
                     ResourceLocation textureLoc = message.selectTexture.isEmpty() ? null

@@ -6,15 +6,15 @@ import com.fox.ysmu.client.animation.AnimationRegister;
 import com.fox.ysmu.client.entity.CustomPlayerEntity;
 import com.fox.ysmu.client.input.*;
 import com.fox.ysmu.client.renderer.CustomPlayerRenderer;
-import com.fox.ysmu.eep.AuthModelsCapability;
-import com.fox.ysmu.eep.StarModelsCapability;
+import com.fox.ysmu.capabilities.AuthModelsCapability;
+import com.fox.ysmu.capabilities.StarModelsCapability;
 import com.fox.ysmu.network.message.SyncAuthModels;
 import com.fox.ysmu.network.message.SyncStarModels;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import software.bernie.geckolib3.geo.GeoReplacedEntityRenderer;
+import com.fox.ysmu.geckolib3.geo.GeoReplacedEntityRenderer;
 
 public class ClientProxy extends CommonProxy {
 
@@ -45,8 +45,8 @@ public class ClientProxy extends CommonProxy {
         Minecraft mc = Minecraft.getMinecraft();
         EntityPlayer player = mc.player;
         if (player != null) {
-            if (player.hasCapability(Capabilities.AuthModels, null)) {
-                AuthModelsCapability eep = player.getCapability(Capabilities.AuthModels, null);
+            if (player.hasCapability(Capabilities.AUTH_MODELS_CAP, null)) {
+                AuthModelsCapability eep = player.getCapability(Capabilities.AUTH_MODELS_CAP, null);
                 if (eep != null) {
                     eep.setAuthModels(message.getAuthModels());
                 }
@@ -59,8 +59,8 @@ public class ClientProxy extends CommonProxy {
         Minecraft mc = Minecraft.getMinecraft();
         EntityPlayer player = mc.player;
         if (player != null) {
-            if (player.hasCapability(Capabilities.StarModels, null)) {
-                StarModelsCapability eep = player.getCapability(Capabilities.StarModels, null);
+            if (player.hasCapability(Capabilities.STAR_MODELS_CAP, null)) {
+                StarModelsCapability eep = player.getCapability(Capabilities.STAR_MODELS_CAP, null);
                 if (eep != null) {
                     eep.setStarModels(message.getStarModels());
                 }
