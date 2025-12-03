@@ -1,24 +1,26 @@
 package com.fox.ysmu.network.message;
 
-import java.util.Set;
-
-import net.minecraft.util.ResourceLocation;
-
-import com.fox.ysmu.ysmu;
+import com.fox.ysmu.capability.Capabilities;
 import com.google.common.collect.Sets;
-
-
+import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
-import io.netty.buffer.ByteBuf;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.Set;
 
 public class SyncAuthModels implements IMessage {
 
     private Set<ResourceLocation> authModels;
 
-    public SyncAuthModels() {}
+    public SyncAuthModels() {
+    }
 
     public SyncAuthModels(Set<ResourceLocation> authModels) {
         this.authModels = authModels;
@@ -28,26 +30,28 @@ public class SyncAuthModels implements IMessage {
     public void fromBytes(ByteBuf buf) {
         int size = buf.readInt();
         this.authModels = Sets.newHashSet();
+        PacketBuffer buffer = new PacketBuffer(buf);
         for (int i = 0; i < size; i++) {
-            String resourceLocationStr = readString(buf);
-            this.authModels.add(new ResourceLocation(resourceLocationStr));
+            this.authModels.add(buffer.readResourceLocation());
         }
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(this.authModels.size());
+        PacketBuffer buffer = new PacketBuffer(buf);
         for (ResourceLocation modelId : this.authModels) {
-            writeString(buf, modelId.toString());
+            buffer.writeResourceLocation(modelId);
         }
     }
+
 
     public static class Handler implements IMessageHandler<SyncAuthModels, IMessage> {
 
         @Override
         public IMessage onMessage(SyncAuthModels message, MessageContext ctx) {
-            if (ctx.side == Side.CLIENT) {
-                ysmu.proxy.handleAuthModels(message);
+            if (ctx.side.isClient()) {
+                handleCapability(message);
             }
             return null;
         }
@@ -57,19 +61,16 @@ public class SyncAuthModels implements IMessage {
         return authModels;
     }
 
-    private static String readString(ByteBuf buf) {
-        int length = buf.readInt();
-        char[] chars = new char[length];
-        for (int i = 0; i < length; i++) {
-            chars[i] = buf.readChar();
+
+    @SideOnly(Side.CLIENT)
+    private static void handleCapability(SyncAuthModels message) {
+        Minecraft mc = Minecraft.getMinecraft();
+        EntityPlayer player = mc.player;
+        if (player != null) {
+            Capabilities.getAuthModelsCap(player).ifPresent(cap -> {
+                cap.setAuthModels(message.authModels);
+            });
         }
-        return new String(chars);
     }
 
-    private static void writeString(ByteBuf buf, String str) {
-        buf.writeInt(str.length());
-        for (char c : str.toCharArray()) {
-            buf.writeChar(c);
-        }
-    }
 }

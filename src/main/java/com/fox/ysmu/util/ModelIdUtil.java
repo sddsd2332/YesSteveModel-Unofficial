@@ -1,10 +1,9 @@
 package com.fox.ysmu.util;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.util.ResourceLocation;
-
 import org.apache.commons.lang3.StringUtils;
+
+import javax.annotation.Nullable;
 
 public final class ModelIdUtil {
     public static ResourceLocation getSubModelId(ResourceLocation id, String subName) {

@@ -22,7 +22,7 @@ public class DebugAnimationKey {
     @SubscribeEvent
     public static void onKeyboardInput(InputEvent.KeyInputEvent event) {
       //  boolean isAltKeyDown = Keyboard.isKeyDown(Keyboard.KEY_LMENU) || Keyboard.isKeyDown(Keyboard.KEY_RMENU);
-        if (DEBUG_ANIMATION_KEY.isPressed()) {
+        if (DEBUG_ANIMATION_KEY.isKeyDown()) {
             DEBUG = !DEBUG;
             EntityPlayer player = Minecraft.getMinecraft().player;
             if (player == null) {

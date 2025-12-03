@@ -11,7 +11,7 @@ import com.fox.ysmu.geckolib3.core.IAnimatable;
 import com.fox.ysmu.geckolib3.core.util.Color;
 import com.fox.ysmu.geckolib3.model.provider.GeoModelProvider;
 
-public abstract class GeoLayerRenderer<T extends EntityLivingBase & IAnimatable> implements LayerRenderer<T> {
+public abstract class GeoLayerRenderer<T extends EntityLivingBase & IAnimatable> {
 
     protected final IGeoRenderer<T> entityRenderer;
 
@@ -28,19 +28,7 @@ public abstract class GeoLayerRenderer<T extends EntityLivingBase & IAnimatable>
             // modelParentIn.setModelAttributes(modelIn);
             modelIn.setLivingAnimations(entityIn, limbSwing, limbSwingAmount, partialTicks);
             modelIn.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, 1 / 16F, entityIn);
-            renderCutoutModel(
-                modelIn,
-                textureLocationIn,
-                entityIn,
-                limbSwing,
-                limbSwingAmount,
-                ageInTicks,
-                netHeadYaw,
-                headPitch,
-                1 / 16F,
-                red,
-                green,
-                blue);
+            renderCutoutModel(modelIn, textureLocationIn, entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, 1 / 16F, red, green, blue);
         }
     }
 
@@ -50,10 +38,6 @@ public abstract class GeoLayerRenderer<T extends EntityLivingBase & IAnimatable>
         GlStateManager.color(red, green, blue, 1f);
         modelIn.render(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
     }
-
-    @Override
-    public void doRenderLayer(T entityIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks,
-        float netHeadYaw, float headPitch, float scaleIn) {}
 
     public IGeoRenderer<T> getRenderer() {
         return this.entityRenderer;
@@ -68,6 +52,5 @@ public abstract class GeoLayerRenderer<T extends EntityLivingBase & IAnimatable>
         return this.entityRenderer.getTextureLocation(entityIn);
     }
 
-    public abstract void render(T entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks,
-        float ageInTicks, float netHeadYaw, float headPitch, Color renderColor);
+    public abstract void render(T entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, Color renderColor);
 }

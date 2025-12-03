@@ -1,19 +1,16 @@
 package com.fox.ysmu.client.gui.button;
 
-import com.fox.ysmu.capabilities.Capabilities;
-import com.fox.ysmu.capabilities.ModelInfoCapability;
-import com.fox.ysmu.capabilities.StarModelsCapability;
+import com.fox.ysmu.YesSteveModel;
+import com.fox.ysmu.capability.Capabilities;
+import com.fox.ysmu.capability.ModelInfoCapability;
+import com.fox.ysmu.capability.StarModelsCapability;
 import com.fox.ysmu.network.NetworkHandler;
-import com.fox.ysmu.network.message.OpenModelGuiMessage;
 import com.fox.ysmu.network.message.SetModelAndTexture;
-import com.fox.ysmu.network.message.SetNpcModelAndTexture;
 import com.fox.ysmu.util.RenderUtil;
-import com.fox.ysmu.ysmu;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
@@ -24,7 +21,7 @@ import org.lwjgl.opengl.GL11;
 import java.util.List;
 
 public class ModelButton extends GuiButton {
-    private final static ResourceLocation ICON = new ResourceLocation(ysmu.MODID, "texture/icon.png");
+    private final static ResourceLocation ICON = new ResourceLocation(YesSteveModel.MOD_ID, "texture/icon.png");
     private final Pair<ResourceLocation, List<ResourceLocation>> modelInfo;
     private final boolean needAuth;
     private final int color;
@@ -51,8 +48,6 @@ public class ModelButton extends GuiButton {
             }
             if (player.equals(Minecraft.getMinecraft().player)) {
                 NetworkHandler.CHANNEL.sendToServer(new SetModelAndTexture(modelInfo.getLeft(), modelInfo.getRight().get(0)));
-            } else {
-                NetworkHandler.CHANNEL.sendToServer(new SetNpcModelAndTexture(modelInfo.getLeft(), modelInfo.getRight().get(0), OpenModelGuiMessage.CURRENT_NPC_ID));
             }
         }
     }

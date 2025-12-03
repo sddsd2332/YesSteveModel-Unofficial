@@ -110,8 +110,7 @@ public class MatrixStack {
             this.tempNormalMatrix.m11 = y < 0 ? -1 : 1;
             this.tempNormalMatrix.m22 = z < 0 ? -1 : 1;
 
-            this.normal.peek()
-                .mul(this.tempNormalMatrix);
+            this.normal.peek().mul(this.tempNormalMatrix);
         }
     }
 

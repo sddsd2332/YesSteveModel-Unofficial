@@ -1,16 +1,15 @@
 package com.fox.ysmu.util;
 
-import java.util.concurrent.TimeUnit;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.util.ResourceLocation;
-
+import com.fox.ysmu.geckolib3.core.IAnimatable;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-
+import net.minecraft.entity.Entity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import com.fox.ysmu.geckolib3.core.IAnimatable;
+
+
+import java.util.concurrent.TimeUnit;
 
 @SideOnly(Side.CLIENT)
 public final class AnimatableCacheUtil {

@@ -1,22 +1,17 @@
 package com.fox.ysmu.client.gui.button;
 
 
-import com.fox.ysmu.capabilities.Capabilities;
-import com.fox.ysmu.capabilities.ModelInfoCapability;
+import com.fox.ysmu.capability.Capabilities;
 import com.fox.ysmu.network.NetworkHandler;
-import com.fox.ysmu.network.message.OpenModelGuiMessage;
 import com.fox.ysmu.network.message.SetModelAndTexture;
-import com.fox.ysmu.network.message.SetNpcModelAndTexture;
 import com.fox.ysmu.util.Keep;
 import com.fox.ysmu.util.ModelIdUtil;
 import com.fox.ysmu.util.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 
@@ -36,17 +31,12 @@ public class TextureButton extends GuiButton {
 
     @Keep
     public void onPress() {
-        if (player.hasCapability(Capabilities.MODEL_INFO_CAP, null)) {
-            ModelInfoCapability cap = player.getCapability(Capabilities.MODEL_INFO_CAP, null);
-            if (cap != null) {
-                cap.setModelAndTexture(modelId, textureId);
-            }
+        Capabilities.getModelInfoCap(player).ifPresent(cap -> {
+            cap.setModelAndTexture(modelId, textureId);
             if (player.equals(Minecraft.getMinecraft().player)) {
                 NetworkHandler.CHANNEL.sendToServer(new SetModelAndTexture(modelId, textureId));
-            } else {
-                NetworkHandler.CHANNEL.sendToServer(new SetNpcModelAndTexture(modelId, textureId, OpenModelGuiMessage.CURRENT_NPC_ID));
             }
-        }
+        });
     }
 
     @Override

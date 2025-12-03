@@ -1,8 +1,7 @@
 package com.fox.ysmu.util;
 
-import java.io.*;
-
 import javax.annotation.Nullable;
+import java.io.*;
 
 public final class ObjectStreamUtil {
     public static byte[] toByteArray(Object object) {

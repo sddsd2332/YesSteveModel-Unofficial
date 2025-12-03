@@ -1,13 +1,12 @@
 package com.fox.ysmu.client;
 
 import com.fox.ysmu.Config;
-import com.fox.ysmu.capabilities.Capabilities;
-import com.fox.ysmu.capabilities.ModelInfoCapability;
+import com.fox.ysmu.YesSteveModel;
+import com.fox.ysmu.capability.Capabilities;
+import com.fox.ysmu.capability.ModelInfoCapability;
 import com.fox.ysmu.client.entity.CustomPlayerEntity;
-import com.fox.ysmu.client.gui.button.ExtraPlayerScreen;
+import com.fox.ysmu.client.gui.ExtraPlayerScreen;
 import com.fox.ysmu.client.renderer.CustomPlayerRenderer;
-import com.fox.ysmu.client.renderer.ReplacePlayerHandRenderEvent;
-import com.fox.ysmu.data.NPCData;
 import com.fox.ysmu.event.api.SpecialPlayerRenderEvent;
 import com.fox.ysmu.network.NetworkHandler;
 import com.fox.ysmu.network.message.RequestLoadModel;
@@ -17,42 +16,27 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
-import net.minecraftforge.client.event.RenderSpecificHandEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-@Mod.EventBusSubscriber(value = Side.CLIENT)
+@Mod.EventBusSubscriber(value = Side.CLIENT, modid = YesSteveModel.MOD_ID)
 public class ClientEventHandler {
 
-    public static int DEBUG_BG_WIDTH = 1000;
-    private static final Pattern INT_REG = Pattern.compile("^[0-9]*$");
-
-    private static ModelBiped MODEL_BIPED;
 
     private static final String BACKGROUND_BONE = "Background";
-
 
     @SubscribeEvent
     public static void onTextureStitchEventPost(TextureStitchEvent.Post event) {
         ClientModelManager.loadDefaultModel();
         ClientModelManager.CACHE_MD5.forEach(RequestLoadModel::loadModel);
-        Matcher matcher = INT_REG.matcher(I18n.format("molang.yes_steve_model.bg_width"));
-        if (matcher.matches()) {
-            DEBUG_BG_WIDTH = Integer.parseInt(I18n.format("molang.yes_steve_model.bg_width"));
-        }
     }
 
     @SubscribeEvent
@@ -90,43 +74,10 @@ public class ClientEventHandler {
         }
     }
 
-    @SubscribeEvent
-    public static void onRender3rdPersonHand(RenderPlayerEvent.Specials.Post event) {
-        MODEL_BIPED = event.getRenderer().getMainModel();
-    }
-
-    @SubscribeEvent
-    public static void onRenderHand(RenderSpecificHandEvent event) {
-        ReplacePlayerHandRenderEvent.renderHand(event);
-    }
-
 
     @SubscribeEvent
     public static void onRenderScreen(RenderGameOverlayEvent.Post event) {
         ExtraPlayerScreen.render(event);
-        /*
-        if (event.getType() != RenderGameOverlayEvent.ElementType.DEBUG) {
-            return;
-        }
-        if (Config.DISABLE_PLAYER_RENDER) {
-            return;
-        }
-        Minecraft mc = Minecraft.getMinecraft();
-        EntityPlayer player = mc.player;
-        if (player == null) {
-            return;
-        }
-        if (mc.currentScreen instanceof ExtraPlayerConfigScreen) {
-            return;
-        }
-        double posX = Config.PLAYER_POS_X;
-        double posY = Config.PLAYER_POS_Y;
-        float scale = (float) Config.PLAYER_SCALE;
-        float yawOffset = (float) Config.PLAYER_YAW_OFFSET;
-        EXTRA_PLAYER = true;
-        RenderUtil.renderPlayerEntity(player, posX, posY, scale, yawOffset, -500);
-        EXTRA_PLAYER = false;
-         */
     }
 
     @SubscribeEvent
@@ -142,14 +93,6 @@ public class ClientEventHandler {
         }
     }
 
-    @SubscribeEvent
-    public static void onPlayerLeave(PlayerEvent.PlayerLoggedOutEvent event) {
-        NPCData.clear();
-    }
-
-    public static ModelBiped getModelBiped() {
-        return MODEL_BIPED;
-    }
 
     private static boolean isVanillaPlayer(ResourceLocation modelId) {
         return modelId.getNamespace().equals("steve");

@@ -1,7 +1,6 @@
 package com.fox.ysmu.network.message;
 
-import com.fox.ysmu.capabilities.Capabilities;
-import com.fox.ysmu.capabilities.ModelInfoCapability;
+import com.fox.ysmu.capability.Capabilities;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -38,24 +37,25 @@ public class SetPlayAnimation implements IMessage {
 
         @Override
         public IMessage onMessage(SetPlayAnimation message, MessageContext ctx) {
-            EntityPlayerMP sender = ctx.getServerHandler().player;
-            if (sender != null && STOP <= message.extraAnimationId && message.extraAnimationId < 8) {
-                handleEEP(message, sender);
+            if (ctx.side.isServer()) {
+                EntityPlayerMP sender = ctx.getServerHandler().player;
+                if (sender != null) {
+                    if (STOP <= message.extraAnimationId && message.extraAnimationId < 8) {
+                        handleCapability(message, sender);
+                    }
+                }
             }
             return null;
         }
 
-        private void handleEEP(SetPlayAnimation message, EntityPlayerMP player) {
-            if (player.hasCapability(Capabilities.MODEL_INFO_CAP, null)) {
-                ModelInfoCapability modelIdEEP = player.getCapability(Capabilities.MODEL_INFO_CAP, null);
-                if (modelIdEEP != null) {
-                    if (message.extraAnimationId == STOP) {
-                        modelIdEEP.stopAnimation();
-                    } else {
-                        modelIdEEP.playAnimation("extra" + message.extraAnimationId);
-                    }
+        private void handleCapability(SetPlayAnimation message, EntityPlayerMP player) {
+            Capabilities.getModelInfoCap(player).ifPresent(modelIdCap -> {
+                if (message.extraAnimationId == STOP) {
+                    modelIdCap.stopAnimation();
+                } else {
+                    modelIdCap.playAnimation("extra" + message.extraAnimationId);
                 }
-            }
+            });
         }
     }
 }

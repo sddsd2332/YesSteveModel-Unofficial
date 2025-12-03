@@ -1,4 +1,4 @@
-package com.fox.ysmu.capabilities;
+package com.fox.ysmu.capability;
 
 import com.google.common.collect.Sets;
 import net.minecraft.nbt.NBTBase;

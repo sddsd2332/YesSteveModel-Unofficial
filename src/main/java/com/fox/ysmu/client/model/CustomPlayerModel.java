@@ -11,7 +11,7 @@ import net.minecraft.util.ResourceLocation;
 import com.fox.ysmu.client.animation.AnimationRegister;
 import com.fox.ysmu.client.entity.CustomPlayerEntity;
 import com.fox.ysmu.util.ModelIdUtil;
-import com.fox.ysmu.ysmu;
+import com.fox.ysmu.YesSteveModel;
 
 import com.fox.ysmu.geckolib3.core.IAnimatable;
 import com.fox.ysmu.geckolib3.core.event.predicate.AnimationEvent;
@@ -25,11 +25,9 @@ import com.fox.ysmu.geckolib3.resource.GeckoLibCache;
 @SuppressWarnings("all")
 public class CustomPlayerModel extends AnimatedGeoModel {
 
-    public static final ResourceLocation DEFAULT_MAIN_MODEL = ModelIdUtil
-        .getMainId(new ResourceLocation(ysmu.MODID, "default"));
-    public static final ResourceLocation DEFAULT_MAIN_ANIMATION = ModelIdUtil
-        .getMainId(new ResourceLocation(ysmu.MODID, "default"));
-    public static final ResourceLocation DEFAULT_TEXTURE = new ResourceLocation(ysmu.MODID, "default/default.png");
+    public static final ResourceLocation DEFAULT_MAIN_MODEL = ModelIdUtil.getMainId(new ResourceLocation(YesSteveModel.MOD_ID, "default"));
+    public static final ResourceLocation DEFAULT_MAIN_ANIMATION = ModelIdUtil.getMainId(new ResourceLocation(YesSteveModel.MOD_ID, "default"));
+    public static final ResourceLocation DEFAULT_TEXTURE = new ResourceLocation(YesSteveModel.MOD_ID, "default/default.png");
     public static float FIRST_PERSON_HEAD_POS;
 
     @Override

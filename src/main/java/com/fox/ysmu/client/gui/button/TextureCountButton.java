@@ -1,8 +1,8 @@
 package com.fox.ysmu.client.gui.button;
 
-import com.fox.ysmu.capabilities.Capabilities;
+import com.fox.ysmu.capability.Capabilities;
+import com.fox.ysmu.capability.ModelInfoCapability;
 import com.fox.ysmu.client.ClientModelManager;
-import com.fox.ysmu.capabilities.ModelInfoCapability;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;

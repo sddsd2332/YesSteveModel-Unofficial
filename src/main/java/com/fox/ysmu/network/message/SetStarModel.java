@@ -1,37 +1,36 @@
 package com.fox.ysmu.network.message;
 
-import com.fox.ysmu.capabilities.Capabilities;
-import com.fox.ysmu.capabilities.StarModelsCapability;
+import com.fox.ysmu.capability.Capabilities;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class SetStarModel implements IMessage {
 
-    private String modelId;
+    private ResourceLocation modelId;
     private boolean isAdd;
 
     public SetStarModel() {
     }
 
     private SetStarModel(ResourceLocation modelId, boolean isAdd) {
-        this.modelId = modelId.toString();
+        this.modelId = modelId;
         this.isAdd = isAdd;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        this.modelId = ByteBufUtils.readUTF8String(buf);
+        this.modelId = new PacketBuffer(buf).readResourceLocation();
         this.isAdd = buf.readBoolean();
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        ByteBufUtils.writeUTF8String(buf, this.modelId);
+        new PacketBuffer(buf).writeResourceLocation(modelId);
         buf.writeBoolean(this.isAdd);
     }
 
@@ -47,25 +46,23 @@ public class SetStarModel implements IMessage {
 
         @Override
         public IMessage onMessage(SetStarModel message, MessageContext ctx) {
-            EntityPlayerMP sender = ctx.getServerHandler().player;
-            if (sender != null) {
-                handleEEP(message, sender);
+            if (ctx.side.isServer()) {
+                EntityPlayerMP sender = ctx.getServerHandler().player;
+                if (sender != null) {
+                    handleCapability(message, sender);
+                }
             }
             return null;
         }
 
-        private void handleEEP(SetStarModel message, EntityPlayerMP player) {
-            if (player.hasCapability(Capabilities.STAR_MODELS_CAP, null)) {
-                StarModelsCapability eep = player.getCapability(Capabilities.STAR_MODELS_CAP, null);
-                if (eep != null) {
-                    ResourceLocation modelLoc = message.modelId.isEmpty() ? null : new ResourceLocation(message.modelId);
-                    if (message.isAdd) {
-                        eep.addModel(modelLoc);
-                    } else {
-                        eep.removeModel(modelLoc);
-                    }
+        private void handleCapability(SetStarModel message, EntityPlayerMP player) {
+            Capabilities.getStarModelsCap(player).ifPresent(cap -> {
+                if (message.isAdd) {
+                    cap.addModel(message.modelId);
+                } else {
+                    cap.removeModel(message.modelId);
                 }
-            }
+            });
         }
     }
 }

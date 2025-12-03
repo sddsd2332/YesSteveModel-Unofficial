@@ -1,15 +1,15 @@
-package com.fox.ysmu.capabilities;
+package com.fox.ysmu.capability;
 
 import com.fox.ysmu.Config;
-import com.fox.ysmu.ysmu;
+import com.fox.ysmu.YesSteveModel;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.INBTSerializable;
 
 public class ModelInfoCapability implements INBTSerializable<NBTTagCompound> {
 
-    private ResourceLocation modelId = new ResourceLocation(ysmu.MODID, Config.DEFAULT_MODEL_ID);
-    private ResourceLocation selectTexture = new ResourceLocation(ysmu.MODID, Config.DEFAULT_MODEL_ID + "/" + Config.DEFAULT_MODEL_TEXTURE);
+    private ResourceLocation modelId = new ResourceLocation(YesSteveModel.MOD_ID, Config.DEFAULT_MODEL_ID);
+    private ResourceLocation selectTexture = new ResourceLocation(YesSteveModel.MOD_ID, Config.DEFAULT_MODEL_ID + "/" + Config.DEFAULT_MODEL_TEXTURE);
     private String animation = "idle";
     private boolean playAnimation = false;
     private boolean dirty;

@@ -1,69 +1,63 @@
 package com.fox.ysmu.network.message;
 
-import com.fox.ysmu.capabilities.Capabilities;
-import com.fox.ysmu.capabilities.AuthModelsCapability;
-import com.fox.ysmu.capabilities.ModelInfoCapability;
+import com.fox.ysmu.capability.Capabilities;
 import com.fox.ysmu.model.ServerModelManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class SetModelAndTexture implements IMessage {
 
-    private String modelId;
-    private String selectTexture;
+    private ResourceLocation modelId;
+    private ResourceLocation selectTexture;
 
     public SetModelAndTexture() {
     }
 
     public SetModelAndTexture(ResourceLocation modelId, ResourceLocation selectTexture) {
-        this.modelId = modelId.toString();
-        this.selectTexture = selectTexture.toString();
+        this.modelId = modelId;
+        this.selectTexture = selectTexture;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        this.modelId = ByteBufUtils.readUTF8String(buf);
-        this.selectTexture = ByteBufUtils.readUTF8String(buf);
+        PacketBuffer buffer = new PacketBuffer(buf);
+        this.modelId = buffer.readResourceLocation();
+        this.selectTexture = buffer.readResourceLocation();
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        ByteBufUtils.writeUTF8String(buf, this.modelId);
-        ByteBufUtils.writeUTF8String(buf, this.selectTexture);
+        PacketBuffer buffer = new PacketBuffer(buf);
+        buffer.writeResourceLocation(modelId);
+        buffer.writeResourceLocation(selectTexture);
     }
 
     public static class Handler implements IMessageHandler<SetModelAndTexture, IMessage> {
 
         @Override
         public IMessage onMessage(SetModelAndTexture message, MessageContext ctx) {
-            EntityPlayerMP sender = ctx.getServerHandler().player;
-            if (sender != null) {
-                handleEEP(message, sender);
+            if (ctx.side.isServer()) {
+                EntityPlayerMP sender = ctx.getServerHandler().player;
+                if (sender != null) {
+                    handleCapability(message, sender);
+                }
             }
             return null;
         }
 
-        private void handleEEP(SetModelAndTexture message, EntityPlayerMP player) {
-            if (player.hasCapability(Capabilities.MODEL_INFO_CAP, null) && player.hasCapability(Capabilities.AUTH_MODELS_CAP, null)) {
-                ModelInfoCapability modelIdEEP = player.getCapability(Capabilities.MODEL_INFO_CAP, null);
-                AuthModelsCapability ownModelsEEP = player.getCapability(Capabilities.AUTH_MODELS_CAP, null);
-                if (modelIdEEP != null && ownModelsEEP != null) {
-                    ResourceLocation modelLoc = message.modelId.isEmpty() ? null : new ResourceLocation(message.modelId);
-                    ResourceLocation textureLoc = message.selectTexture.isEmpty() ? null
-                            : new ResourceLocation(message.selectTexture);
-
-                    if (modelLoc == null || !ServerModelManager.AUTH_MODELS.contains(modelLoc.getPath())
-                            || ownModelsEEP.containModel(modelLoc)) {
-                        modelIdEEP.setModelAndTexture(modelLoc, textureLoc);
-                    }
+        private void handleCapability(SetModelAndTexture message, EntityPlayerMP player) {
+            Capabilities.getModelInfoCap(player).ifPresent(modelIdCap -> Capabilities.getAuthModelsCap(player).ifPresent(ownModelsCap -> {
+                if (!ServerModelManager.AUTH_MODELS.contains(message.modelId.getPath()) || ownModelsCap.containModel(message.modelId)) {
+                    modelIdCap.setModelAndTexture(message.modelId, message.selectTexture);
                 }
-            }
+            }));
         }
     }
+
 
 }

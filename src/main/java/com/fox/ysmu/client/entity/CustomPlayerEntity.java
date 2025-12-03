@@ -8,7 +8,6 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.util.ResourceLocation;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 
 import com.fox.ysmu.client.ClientModelManager;
 import com.fox.ysmu.client.animation.AnimationManager;
@@ -25,6 +24,8 @@ import com.fox.ysmu.geckolib3.core.manager.AnimationFactory;
 import com.fox.ysmu.geckolib3.resource.GeckoLibCache;
 import com.fox.ysmu.geckolib3.util.GeckoLibUtil;
 
+import javax.annotation.Nonnull;
+
 public class CustomPlayerEntity implements IAnimatable {
 
     private final AnimationFactory factory = GeckoLibUtil.createFactory(this, true);
@@ -33,10 +34,9 @@ public class CustomPlayerEntity implements IAnimatable {
     private String previewAnimation = "";
     private EntityPlayer player = null;
 
-    @NotNull
+    @Nonnull
     private static <P extends IAnimatable> PlayState playLoopAnimation(AnimationEvent<P> event, String animationName) {
-        event.getController()
-            .setAnimation(new AnimationBuilder().addAnimation(animationName, ILoopType.EDefaultLoopTypes.LOOP));
+        event.getController().setAnimation(new AnimationBuilder().addAnimation(animationName, ILoopType.EDefaultLoopTypes.LOOP));
         return PlayState.CONTINUE;
     }
 
@@ -44,7 +44,7 @@ public class CustomPlayerEntity implements IAnimatable {
      * 越往后优先级越高
      */
     @Override
-
+    @Keep
     @SuppressWarnings("all")
     public void registerControllers(AnimationData data) {
         AnimationManager manager = AnimationManager.getInstance();
@@ -63,7 +63,6 @@ public class CustomPlayerEntity implements IAnimatable {
             String animationName = String.format("parallel%d", i);
             data.addAnimationController(new AnimationController<>(this, controllerName, 0, e -> manager.predicateParallel(e, animationName)));
         }
-        // 为每个盔甲槽位注册控制器，使用1-4的索引值
         for (EntityEquipmentSlot slot : EntityEquipmentSlot.values()) {
             if (slot.getSlotType() == EntityEquipmentSlot.Type.ARMOR) {
                 String controllerName = String.format("%s_controller", slot.getName());

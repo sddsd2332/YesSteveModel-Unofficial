@@ -1,12 +1,11 @@
 package com.fox.ysmu.util;
 
+import com.fox.ysmu.YesSteveModel;
+import org.apache.commons.io.FileUtils;
+
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
-
-import org.apache.commons.io.FileUtils;
-
-import com.fox.ysmu.ysmu;
 
 public final class GetJarResources {
     private GetJarResources() {
@@ -20,7 +19,7 @@ public final class GetJarResources {
      * @param fileName 复制后的文件名
      */
     public static void copyYesSteveModelFile(String filePath, Path destPath, String fileName) {
-        URL url = ysmu.class.getResource(filePath);
+        URL url = YesSteveModel.class.getResource(filePath);
         if (url == null) {
             return;
         }
@@ -31,4 +30,3 @@ public final class GetJarResources {
         }
     }
 }
-

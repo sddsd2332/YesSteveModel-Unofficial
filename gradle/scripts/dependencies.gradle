@@ -28,6 +28,7 @@ repositories {
             includeGroup 'maven.modrinth'
         }
     }
+    maven { url 'https://maven.aliyun.com/repository/public'}
     mavenLocal() // Must be last for caching to work
 }
 
@@ -62,19 +63,11 @@ dependencies {
     // implementation ('com.google.code.gson:gson:2.8.6') {
     //     transitive = false
     // }
-    compileOnly "org.jetbrains:annotations:17.0.0"
+   compileOnly "org.jetbrains:annotations:17.0.0"
 
-   //implementation rfg.deobf("curse.maven:geckolib-388172:4020277")
-
-
-//   implementation("com.fasterxml.jackson.core:jackson-databind:2.9.0")
-   // implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.0")
+  //  implementation rfg.deobf("curse.maven:geckolib-388172:4020277")
+    embed("com.github.promeg:tinypinyin:2.0.3")
     embed("com.fasterxml.jackson.core:jackson-databind:2.9.0")
- //   compileOnly("com.fasterxml.jackson.core:jackson-databind:2.9.0")
- //   compileOnly("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.0")
-
-    //需要打包？
-   // implementation("org.joml:joml:1.10.8")
 
     runtimeOnly 'curse.maven:ftb-library-237167:2985811'
     runtimeOnly 'curse.maven:ftb-utilities-237102:3157548'

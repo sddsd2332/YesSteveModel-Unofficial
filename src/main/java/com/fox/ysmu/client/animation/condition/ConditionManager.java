@@ -8,7 +8,6 @@ import net.minecraft.util.ResourceLocation;
 import com.google.common.collect.Maps;
 
 public class ConditionManager {
-
     public static Map<ResourceLocation, ConditionalSwing> SWING = Maps.newHashMap();
     public static Map<ResourceLocation, ConditionalUse> USE_MAINHAND = Maps.newHashMap();
     public static Map<ResourceLocation, ConditionalUse> USE_OFFHAND = Maps.newHashMap();
@@ -43,9 +42,6 @@ public class ConditionManager {
         SWING.clear();
         USE_MAINHAND.clear();
         USE_OFFHAND.clear();
-        HOLD_MAINHAND.clear();
-        HOLD_OFFHAND.clear();
-        ARMOR.clear();
     }
 
     public static ConditionalSwing getSwing(ResourceLocation id) {

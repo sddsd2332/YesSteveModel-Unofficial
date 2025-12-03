@@ -16,13 +16,12 @@ import com.fox.ysmu.util.AESUtil;
 import com.fox.ysmu.util.ByteInteger;
 import com.fox.ysmu.util.DeflateUtil;
 import com.fox.ysmu.util.Md5Utils;
-import com.fox.ysmu.ysmu;
+import com.fox.ysmu.YesSteveModel;
 import com.google.common.collect.Maps;
 
 import it.unimi.dsi.fastutil.bytes.ByteArrays;
 
 public final class EncryptTools {
-
     /**
      * 二进制文件的头部幻数
      * YSGP 的 ASCII 码
@@ -90,10 +89,10 @@ public final class EncryptTools {
     /**
      * 将附加信息和加密文件块组合成二进制文件
      * -----------------------------------------
-     * 59 53 47 50 幻数
-     * 00 00 00 01 版本号
+     * 59 53 47 50                        幻数
+     * 00 00 00 01                      版本号
      * 00 00 00 00 00 00 00 00
-     * 00 00 00 00 00 00 00 00 文件 MD5
+     * 00 00 00 00 00 00 00 00        文件 MD5
      * -----------------------------------------
      * 加密文件块
      */
@@ -107,6 +106,7 @@ public final class EncryptTools {
         stream.write(encryptModelBytes);
         return stream.toByteArray();
     }
+
 
     /**
      * 将模型、材质、动画组合成加密、压缩、二进制数据
@@ -144,8 +144,7 @@ public final class EncryptTools {
             writeMapData(tmp, data.getAnimation());
 
             byte[] output = DeflateUtil.compressBytes(tmp.toByteArray());
-            return AESUtil.encrypt(SECRET_KEY, IV, output)
-                .toByteArray();
+            return AESUtil.encrypt(SECRET_KEY, IV, output).toByteArray();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -183,15 +182,13 @@ public final class EncryptTools {
     public static byte[] encryptPassword(byte[] uuid, byte[] input) throws Exception {
         SecretKeySpec secretKey = new SecretKeySpec(uuid, ENCRYPTION_METHOD);
         IvParameterSpec iv = new IvParameterSpec(uuid);
-        return AESUtil.encrypt(secretKey, iv, input)
-            .toByteArray();
+        return AESUtil.encrypt(secretKey, iv, input).toByteArray();
     }
 
     private static byte[] decryptPassword(byte[] uuid, byte[] input) throws Exception {
         SecretKeySpec secretKey = new SecretKeySpec(uuid, ENCRYPTION_METHOD);
         IvParameterSpec iv = new IvParameterSpec(uuid);
-        byte[] rawPassword = AESUtil.decrypt(secretKey, iv, input)
-            .toByteArray();
+        byte[] rawPassword = AESUtil.decrypt(secretKey, iv, input).toByteArray();
         if (ByteInteger.bytes2Int(rawPassword, 0) != HEAD) {
             return ByteArrays.EMPTY_ARRAY;
         }
@@ -219,8 +216,8 @@ public final class EncryptTools {
             byte[] encryptModelData = ByteArrays.copy(modelRawData, 24, modelRawData.length - 24);
             String dataMd5 = Md5Utils.md5Hex(encryptModelData);
             if (!md5.equals(dataMd5)) {
-                // TODO: 2023/7/11 很奇怪，这一块会出现不一致的问题
-                ysmu.LOG.warn("Check values are not equal {} / {}", md5, dataMd5);
+                // FIXME: 2023/7/11 很奇怪，这一块会出现不一致的问题
+                YesSteveModel.LOGGER.warn("Check values are not equal {} / {}", md5, dataMd5);
             }
 
             byte[] passwordBytes = ByteArrays.copy(rawPassword, 8, 16);
@@ -254,8 +251,7 @@ public final class EncryptTools {
     }
 
     @SuppressWarnings("all")
-    private static Map<String, byte[]> readMapData(ByteArrayInputStream tmp, Map<String, Integer> modelMapDataInfo)
-        throws IOException {
+    private static Map<String, byte[]> readMapData(ByteArrayInputStream tmp, Map<String, Integer> modelMapDataInfo) throws IOException {
         Map<String, byte[]> output = Maps.newHashMap();
         for (String name : modelMapDataInfo.keySet()) {
             int size = modelMapDataInfo.get(name);

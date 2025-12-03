@@ -30,14 +30,13 @@ import java.util.function.BiPredicate;
 public class AnimationRegister {
 
     private static final double MIN_SPEED = 0.05;
-    private static final String FIRST_PERSON_MOD_ID = "firstpersonmod";
 
     public static void registerAnimationState() {
         register("death", ILoopType.EDefaultLoopTypes.PLAY_ONCE, Priority.HIGHEST, (player, event) -> !player.isEntityAlive());
         //三叉戟动画
         // register("riptide", Priority.HIGHEST, (player, event) -> player.isAutoSpinAttack());
         register("sleep", Priority.HIGHEST, (player, event) -> player.isPlayerSleeping());
-        register("swim", Priority.HIGHEST, (player, event) -> player.isInWater() && !player.capabilities.isFlying && !player.isSpectator());
+        register("swim", Priority.HIGHEST, (player, event) -> player.isInWater() && !player.isPushedByWater() && !player.isSpectator());
         register("climb", Priority.HIGHEST, (player, event) -> player.isInWater() && Math.abs(event.getLimbSwingAmount()) > MIN_SPEED);
         register("climbing", Priority.HIGHEST, (player, event) -> player.isInWater());
 
@@ -139,7 +138,7 @@ public class AnimationRegister {
         parser.register(new LazyVariable("ysm.hurt_time", 0));
         parser.register(new LazyVariable("ysm.food_level", 20));
 
-        // parser.register(new LazyVariable("ysm.first_person_mod_hide", MolangUtils.FALSE));
+        //  parser.register(new LazyVariable("ysm.first_person_mod_hide", MolangUtils.FALSE));
     }
 
     public static void setParserValue(AnimationEvent<CustomPlayerEntity> animationEvent, MolangParser parser,
@@ -149,6 +148,7 @@ public class AnimationRegister {
             return;
         }
         parser.setValue("query.actor_count", () -> mc.world.loadedEntityList.size());
+
         parser.setValue("query.body_x_rotation", () -> player.rotationPitch);
         parser.setValue("query.body_y_rotation", () -> MathHelper.wrapDegrees(player.rotationYaw));
         parser.setValue("query.cardinal_facing_2d", () -> player.getHorizontalFacing().getIndex());
@@ -172,7 +172,6 @@ public class AnimationRegister {
         parser.setValue("query.is_jumping", () -> MolangUtils.booleanToFloat(!player.capabilities.isFlying && !player.isRiding() && !player.onGround && !player.isInWater()));
         parser.setValue("query.is_on_fire", () -> MolangUtils.booleanToFloat(player.isBurning()));
         parser.setValue("query.is_on_ground", () -> MolangUtils.booleanToFloat(player.onGround));
-        ;
         parser.setValue("query.is_playing_dead", () -> MolangUtils.booleanToFloat(!player.isEntityAlive()));
         parser.setValue("query.is_riding", () -> MolangUtils.booleanToFloat(player.isRiding()));
         parser.setValue("query.is_sleeping", () -> MolangUtils.booleanToFloat(player.isPlayerSleeping()));
@@ -237,6 +236,7 @@ public class AnimationRegister {
         parser.setValue("ysm.armor_value", player::getTotalArmorValue);
         parser.setValue("ysm.hurt_time", () -> player.hurtTime);
         parser.setValue("ysm.food_level", () -> player.getFoodStats().getFoodLevel());
+
     }
 
     public static float getViewYRot(EntityPlayer player, float pPartialTicks) {

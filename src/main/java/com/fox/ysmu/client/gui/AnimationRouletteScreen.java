@@ -1,8 +1,7 @@
 package com.fox.ysmu.client.gui;
 
 import com.fox.ysmu.Config;
-import com.fox.ysmu.capabilities.Capabilities;
-import com.fox.ysmu.capabilities.ModelInfoCapability;
+import com.fox.ysmu.capability.Capabilities;
 import com.fox.ysmu.client.ClientModelManager;
 import com.fox.ysmu.client.input.ExtraAnimationKey;
 import com.fox.ysmu.network.NetworkHandler;
@@ -37,19 +36,14 @@ public class AnimationRouletteScreen extends GuiScreen {
     public void initGui() {
         this.x = width / 2;
         this.y = height / 2 - 8;
-
         if (mc != null && mc.player != null) {
-            if (mc.player.hasCapability(Capabilities.MODEL_INFO_CAP, null)) {
-                ModelInfoCapability cap = mc.player.getCapability(Capabilities.MODEL_INFO_CAP, null);
-                if (cap != null) {
-                    ResourceLocation modelId = cap.getModelId();
-                    if (ClientModelManager.EXTRA_ANIMATION_NAME.containsKey(ModelIdUtil.getMainId(modelId))) {
-                        this.names = ClientModelManager.EXTRA_ANIMATION_NAME.get(ModelIdUtil.getMainId(modelId));
-                    }
+            Capabilities.getModelInfoCap(mc.player).ifPresent(cap -> {
+                ResourceLocation modelId = cap.getModelId();
+                if (ClientModelManager.EXTRA_ANIMATION_NAME.containsKey(ModelIdUtil.getMainId(modelId))) {
+                    this.names = ClientModelManager.EXTRA_ANIMATION_NAME.get(ModelIdUtil.getMainId(modelId));
                 }
-            }
+            });
         }
-
     }
 
     @Override
@@ -87,25 +81,27 @@ public class AnimationRouletteScreen extends GuiScreen {
             if (keyMapping.getKeyCode() == Keyboard.KEY_NONE) {
                 keyText.appendSibling(new TextComponentTranslation("key.yes_steve_model.extra_animation.none"));
             } else {
-                keyText.appendSibling(new TextComponentString(keyMapping.getKeyDescription()));
+                String keyName = Keyboard.getKeyName(keyMapping.getKeyCode());
+                keyText.appendSibling(new TextComponentString(keyName));
             }
             keyText.appendSibling(new TextComponentString(" ]"));
             int textX = (int) (x + r * MathHelper.cos(startDeg));
             int textY = (int) (y + r * MathHelper.sin(startDeg) - (float) this.fontRenderer.FONT_HEIGHT / 2);
             if (this.names != null && this.names.length > i && StringUtils.isNoneBlank(this.names[i])) {
-                this.drawCenteredString(fontRenderer, this.names[i], textX, textY - 8, 0xFFF3EFE0);
+                drawCenteredString(fontRenderer, this.names[i], textX, textY - 8, 0xF3EFE0);
             } else {
-                this.drawCenteredString(fontRenderer, String.valueOf(i), textX, textY - 8, 0xFFF3EFE0);
+                drawCenteredString(fontRenderer, String.valueOf(i), textX, textY - 8, 0xF3EFE0);
             }
-            this.drawCenteredString(fontRenderer, keyText.getFormattedText(), textX, textY + 4, 0xFFF3EFE0);
+            drawCenteredString(fontRenderer, keyText.getFormattedText(), textX, textY + 4, 0xF3EFE0);
             startDeg = (float) (startDeg + 2 * Math.PI / count);
         }
     }
 
     private void drawRoulette(int mouseX, int mouseY) {
+        GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         Tessellator tesselator = Tessellator.getInstance();
         BufferBuilder bufferBuilder =  tesselator.getBuffer();
         bufferBuilder.begin(GL11.GL_QUAD_STRIP, DefaultVertexFormats.POSITION);
@@ -133,6 +129,7 @@ public class AnimationRouletteScreen extends GuiScreen {
         }
         tesselator.draw();
         GlStateManager.disableBlend();
+        GlStateManager.enableTexture2D();
     }
 
     private void drawFan(BufferBuilder builder, float rIn, float rOut, float startDeg, float endDeg, int color) {

@@ -386,6 +386,11 @@
 					"rotation": [-30, 0, 0]
 				},
 				{
+					"name": "ViewLocator",
+					"parent": "UpBody",
+					"pivot": [13, 32.65, 8]
+				},
+				{
 					"name": "DownBody",
 					"parent": "AllBody",
 					"pivot": [0, 20.65, 0]

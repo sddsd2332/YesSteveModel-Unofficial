@@ -10,6 +10,7 @@ import com.fox.ysmu.geckolib3.geo.GeoReplacedEntityRenderer;
 import com.fox.ysmu.geckolib3.geo.render.built.GeoModel;
 import com.fox.ysmu.geckolib3.model.AnimatedGeoModel;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -27,12 +28,11 @@ import java.util.function.Consumer;
 @SuppressWarnings("all")
 public final class RenderUtil {
 
-    public static void renderTextureScreenEntity(float pPosX, float pPosY, float pScale, float pitch, float yaw, EntityPlayer player, ResourceLocation modelId, ResourceLocation textureId, boolean showGround, Consumer<CustomPlayerEntity> consumer) {
+    public static void renderTextureScreenEntity(float pPosX, float pPosY, float pScale, float pitch, float yaw, EntityPlayerSP player, ResourceLocation modelId, ResourceLocation textureId, boolean showGround, Consumer<CustomPlayerEntity> consumer) {
         if (player == null) {
             return;
         }
         try {
-            //TODO
             CustomPlayerRenderer renderer = ClientProxy.getInstance();
             IAnimatable animatable = AnimatableCacheUtil.TEXTURE_GUI_CACHE.get(modelId, CustomPlayerEntity::new);
             if (animatable instanceof CustomPlayerEntity entity) {
@@ -106,7 +106,9 @@ public final class RenderUtil {
                 if (entity.hasPreviewAnimation("boat")) {
                     GlStateManager.translate(0, -0.45, 0);
                 }
-                // renderer.doRender();
+                GlStateManager.rotate(180,1,0,0);
+                GlStateManager.rotate(180,0,1,0);
+                renderer.doRender(player,0, 0, 0, player.rotationYaw, 1.0F);
                 try {
                     renderExtraEntity(yaw, player, entity, dispatcher);
                 } catch (ExecutionException e) {
@@ -327,7 +329,7 @@ public final class RenderUtil {
     }
 
     public static void renderPlayerEntity(EntityPlayer player, double posX, double posY, float scale, float yawOffset, double z, float pPartialTick) {
-
+        if (player != Minecraft.getMinecraft().player) return;
         GlStateManager.pushMatrix();
         GlStateManager.translate(posX + scale * 0.5, posY + scale * 2, z);
         GlStateManager.scale(1, 1, -1);

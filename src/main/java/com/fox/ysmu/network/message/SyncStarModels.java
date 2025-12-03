@@ -1,25 +1,26 @@
 package com.fox.ysmu.network.message;
 
-import java.util.Set;
-
-import net.minecraft.util.ResourceLocation;
-
-import com.fox.ysmu.ysmu;
+import com.fox.ysmu.capability.Capabilities;
 import com.google.common.collect.Sets;
-
-
-import net.minecraftforge.fml.common.network.ByteBufUtils;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
-import io.netty.buffer.ByteBuf;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.Set;
 
 public class SyncStarModels implements IMessage {
 
     private Set<ResourceLocation> starModels;
 
-    public SyncStarModels() {}
+    public SyncStarModels() {
+    }
 
     public SyncStarModels(Set<ResourceLocation> starModels) {
         this.starModels = starModels;
@@ -27,19 +28,21 @@ public class SyncStarModels implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        int size = buf.readInt();
-        this.starModels = Sets.newHashSet();
+        PacketBuffer packetBuffer = new PacketBuffer(buf);
+        int size = packetBuffer.readVarInt();
+        Set<ResourceLocation> tmp = Sets.newHashSet();
         for (int i = 0; i < size; i++) {
-            String modelIdStr = ByteBufUtils.readUTF8String(buf);
-            this.starModels.add(new ResourceLocation(modelIdStr));
+            tmp.add(packetBuffer.readResourceLocation());
         }
+        starModels = tmp;
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(this.starModels.size());
-        for (ResourceLocation modelId : this.starModels) {
-            ByteBufUtils.writeUTF8String(buf, modelId.toString());
+        PacketBuffer packetBuffer = new PacketBuffer(buf);
+        packetBuffer.writeVarInt(starModels.size());
+        for (ResourceLocation modelId : starModels) {
+            packetBuffer.writeResourceLocation(modelId);
         }
     }
 
@@ -47,14 +50,23 @@ public class SyncStarModels implements IMessage {
 
         @Override
         public IMessage onMessage(SyncStarModels message, MessageContext ctx) {
-            if (ctx.side == Side.CLIENT) {
-                ysmu.proxy.handleStarModels(message);
+            if (ctx.side.isClient()) {
+                handleCapability(message);
             }
             return null;
         }
     }
 
-    public Set<ResourceLocation> getStarModels() {
-        return starModels;
+
+    @SideOnly(Side.CLIENT)
+    private static void handleCapability(SyncStarModels message) {
+        Minecraft mc = Minecraft.getMinecraft();
+        EntityPlayer player = mc.player;
+        if (player != null) {
+            Capabilities.getStarModelsCap(player).ifPresent(cap -> {
+                cap.setStarModels(message.starModels);
+            });
+        }
     }
+
 }

@@ -1,9 +1,14 @@
 package com.fox.ysmu.client.animation;
 
-import com.fox.ysmu.capabilities.Capabilities;
-import com.fox.ysmu.capabilities.ModelInfoCapability;
+import com.fox.ysmu.capability.Capabilities;
 import com.fox.ysmu.client.animation.condition.*;
 import com.fox.ysmu.client.entity.CustomPlayerEntity;
+import com.fox.ysmu.geckolib3.core.IAnimatable;
+import com.fox.ysmu.geckolib3.core.PlayState;
+import com.fox.ysmu.geckolib3.core.builder.AnimationBuilder;
+import com.fox.ysmu.geckolib3.core.builder.ILoopType;
+import com.fox.ysmu.geckolib3.core.event.predicate.AnimationEvent;
+import com.fox.ysmu.geckolib3.resource.GeckoLibCache;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
@@ -14,12 +19,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import com.fox.ysmu.geckolib3.core.IAnimatable;
-import com.fox.ysmu.geckolib3.core.PlayState;
-import com.fox.ysmu.geckolib3.core.builder.AnimationBuilder;
-import com.fox.ysmu.geckolib3.core.builder.ILoopType;
-import com.fox.ysmu.geckolib3.core.event.predicate.AnimationEvent;
-import com.fox.ysmu.geckolib3.resource.GeckoLibCache;
 
 import java.util.LinkedList;
 
@@ -78,13 +77,12 @@ public final class AnimationManager {
             }
             return PlayState.STOP;
         }
-        if (player.hasCapability(Capabilities.MODEL_INFO_CAP, null)) {
-            ModelInfoCapability eep = player.getCapability(Capabilities.MODEL_INFO_CAP, null);
-            if (eep != null && eep.isPlayAnimation()) {
-                return playAnimation(event, eep.getAnimation());
+        return Capabilities.getModelInfoCap(player).map(cap -> {
+            if (cap.isPlayAnimation()) {
+                return playAnimation(event, cap.getAnimation());
             }
-        }
-        return PlayState.STOP;
+            return PlayState.STOP;
+        }).orElse(PlayState.STOP);
     }
 
     @NotNull
@@ -137,15 +135,24 @@ public final class AnimationManager {
             return PlayState.STOP;
         }
         if (!player.isSwingInProgress && !player.isHandActive()) {
+            /*
+            ItemStack mainHandItem = player.getHeldItem(EnumHand.MAIN_HAND);
             //这块是弩，1.12.2没有这个
-            // ItemStack mainHandItem = player.getHeldItem();
-            // if (mainHandItem.is(Items.CROSSBOW) && CrossbowItem.isCharged(mainHandItem)) {
-            // return playAnimation(event, "hold_mainhand:charged_crossbow", ILoopType.EDefaultLoopTypes.LOOP);
-            // }
-            // ItemStack offhandItem = BackhandCompat.getOffhandItem(player);
-            // if (offhandItem != null && offhandItem.is(Items.CROSSBOW) && CrossbowItem.isCharged(offhandItem)) {
-            // return playAnimation(event, "hold_offhand:charged_crossbow", ILoopType.EDefaultLoopTypes.LOOP);
-            // }
+            if (mainHandItem.getItem() == Items.CROSSBOW && CrossbowItem.isCharged(mainHandItem)) {
+                return playAnimation(event, "hold_mainhand:charged_crossbow", ILoopType.EDefaultLoopTypes.LOOP);
+            }
+
+            //这块是TAC的枪
+            if (Loader.isModLoaded(TAC_ID) && TacGunRenderer.isGun(mainHandItem)) {
+                return TacGunRenderer.playGunHoldAnimation(event, mainHandItem);
+            }
+
+          //  ItemStack offhandItem = player.getHeldItem(EnumHand.OFF_HAND);
+             //这块是弩，1.12.2没有这个
+            if (offhandItem.getItem() == Items.CROSSBOW && CrossbowItem.isCharged(offhandItem)) {
+                return playAnimation(event, "hold_offhand:charged_crossbow", ILoopType.EDefaultLoopTypes.LOOP);
+            }
+            */
             if (player.fishEntity != null) {
                 return playAnimation(event, "hold_mainhand:fishing", ILoopType.EDefaultLoopTypes.LOOP);
             }

@@ -3,7 +3,6 @@ package com.fox.ysmu.client.gui.button;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 
 import java.util.Collections;
@@ -37,7 +36,7 @@ public class FlatColorButton extends GuiButton {
         FontRenderer font = mc.fontRenderer;
         if (isSelect) {
             drawGradientRect(this.x, this.y, this.x + this.width, this.y + this.height, 0xFF1E90FF, 0xFF1E90FF);
-        }else {
+        } else {
             this.drawGradientRect(this.x, this.y, this.x + this.width, this.y + this.height, 0xFF434242, 0xFF434242);
         }
         if (this.hovered) {

@@ -66,6 +66,5 @@ public class ConfigScreen extends GuiScreen {
     @Override
     public void onGuiClosed() {
         Config.save();
-
     }
 }

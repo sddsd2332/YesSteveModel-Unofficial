@@ -210,8 +210,7 @@ public class AnimationController<T extends IAnimatable> {
         /// END ADDED
         IAnimatableModel<T> model = getModel(this.animatable);
         if (model != null) {
-            if (builder == null || builder.getRawAnimationList()
-                .size() == 0) {
+            if (builder == null || builder.getRawAnimationList().size() == 0) {
                 animationState = AnimationState.Stopped;
             } else if (!builder.getRawAnimationList()
                 .equals(currentAnimationBuilder.getRawAnimationList()) || needsAnimationReload) {
@@ -223,16 +222,14 @@ public class AnimationController<T extends IAnimatable> {
                         .map((rawAnimation) -> {
                             Animation animation = model.getAnimation(rawAnimation.animationName, animatable);
                             if (animation == null) {
-                                System.out
-                                    .printf("Could not load animation: %s. Is it missing?", rawAnimation.animationName);
+                                System.out.printf("Could not load animation: %s. Is it missing?", rawAnimation.animationName);
                                 encounteredError.set(true);
                             }
                             if (animation != null && rawAnimation.loopType != null) {
                                 animation.loop = rawAnimation.loopType;
                             }
                             return animation;
-                        })
-                        .collect(Collectors.toCollection(LinkedList::new));
+                        }).collect(Collectors.toCollection(LinkedList::new));
 
                     if (encounteredError.get()) {
                         return;

@@ -1,36 +1,34 @@
 package com.fox.ysmu.model;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import net.minecraft.entity.player.EntityPlayer;
-
-import org.apache.commons.io.FileUtils;
-
+import com.fox.ysmu.YesSteveModel;
 import com.fox.ysmu.client.ClientModelManager;
 import com.fox.ysmu.data.EncryptTools;
 import com.fox.ysmu.model.format.FolderFormat;
 import com.fox.ysmu.model.format.ServerModelInfo;
 import com.fox.ysmu.model.format.YsmFormat;
-import com.fox.ysmu.model.format.ZipFormat;
 import com.fox.ysmu.network.NetworkHandler;
 import com.fox.ysmu.network.message.RequestSyncModel;
 import com.fox.ysmu.util.GetJarResources;
-import com.fox.ysmu.ysmu;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.management.PlayerList;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Map;
+import java.util.Set;
 
 public final class ServerModelManager {
-
     /**
      * 配置相关文件夹
      */
-    public static final Path FOLDER = Paths.get("config", ysmu.MODID);
+    public static final Path FOLDER = Paths.get("config", YesSteveModel.MOD_ID);
 
     /**
      * 自定义模型所放置的文件夹
@@ -70,9 +68,10 @@ public final class ServerModelManager {
     public static final String MAIN_ANIMATION_FILE_NAME = "main.animation.json";
     public static final String ARM_ANIMATION_FILE_NAME = "arm.animation.json";
     public static final String EXTRA_ANIMATION_FILE_NAME = "extra.animation.json";
+    public static final String TAC_ANIMATION_FILE_NAME = "tac.animation.json";
 
-    public static void sendRequestSyncModelMessage(List<EntityPlayer> playerList) {
-        for (EntityPlayer player : playerList) {
+    public static void sendRequestSyncModelMessage(PlayerList playerList) {
+        for (EntityPlayerMP player : playerList.getPlayers()) {
             NetworkHandler.sendToClientPlayer(new RequestSyncModel(), player);
         }
     }
@@ -111,94 +110,62 @@ public final class ServerModelManager {
         Path defaultPath = CUSTOM.resolve("default");
         createFolder(defaultPath);
 
-        GetJarResources
-            .copyYesSteveModelFile(getCustomFiles("custom/default/main.json"), defaultPath, MAIN_MODEL_FILE_NAME);
-        GetJarResources
-            .copyYesSteveModelFile(getCustomFiles("custom/default/arm.json"), defaultPath, ARM_MODEL_FILE_NAME);
+        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/default/main.json"), defaultPath, MAIN_MODEL_FILE_NAME);
+        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/default/arm.json"), defaultPath, ARM_MODEL_FILE_NAME);
         GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/default/default.png"), defaultPath, "default.png");
         GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/default/blue.png"), defaultPath, "blue.png");
-        GetJarResources.copyYesSteveModelFile(
-            getCustomFiles("custom/default/main.animation.json"),
-            defaultPath,
-            MAIN_ANIMATION_FILE_NAME);
-        GetJarResources.copyYesSteveModelFile(
-            getCustomFiles("custom/default/arm.animation.json"),
-            defaultPath,
-            ARM_ANIMATION_FILE_NAME);
-        GetJarResources.copyYesSteveModelFile(
-            getCustomFiles("custom/default/extra.animation.json"),
-            defaultPath,
-            EXTRA_ANIMATION_FILE_NAME);
+        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/default/main.animation.json"), defaultPath, MAIN_ANIMATION_FILE_NAME);
+        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/default/arm.animation.json"), defaultPath, ARM_ANIMATION_FILE_NAME);
+        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/default/extra.animation.json"), defaultPath, EXTRA_ANIMATION_FILE_NAME);
+        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/default/tac.animation.json"), defaultPath, TAC_ANIMATION_FILE_NAME);
 
         Path defaultBoyPath = CUSTOM.resolve("default_boy");
         createFolder(defaultBoyPath);
 
-        GetJarResources.copyYesSteveModelFile(
-            getCustomFiles("custom/default_boy/main.json"),
-            defaultBoyPath,
-            MAIN_MODEL_FILE_NAME);
-        GetJarResources
-            .copyYesSteveModelFile(getCustomFiles("custom/default_boy/arm.json"), defaultBoyPath, ARM_MODEL_FILE_NAME);
+        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/default_boy/main.json"), defaultBoyPath, MAIN_MODEL_FILE_NAME);
+        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/default_boy/arm.json"), defaultBoyPath, ARM_MODEL_FILE_NAME);
         GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/default_boy/red.png"), defaultBoyPath, "red.png");
-        GetJarResources
-            .copyYesSteveModelFile(getCustomFiles("custom/default_boy/blue.png"), defaultBoyPath, "blue.png");
-        GetJarResources.copyYesSteveModelFile(
-            getCustomFiles("custom/default_boy/main.animation.json"),
-            defaultBoyPath,
-            MAIN_ANIMATION_FILE_NAME);
-    }
-
-    private static void copyVanillaModel() {
-        Path stevePath = CUSTOM.resolve("steve");
-        createFolder(stevePath);
-        GetJarResources
-            .copyYesSteveModelFile(getCustomFiles("custom/steve/main.json"), stevePath, MAIN_MODEL_FILE_NAME);
-        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/steve/arm.json"), stevePath, ARM_MODEL_FILE_NAME);
-        GetJarResources
-            .copyYesSteveModelFile(getCustomFiles("custom/steve/tartaric_acid.png"), stevePath, "tartaric_acid.png");
-        GetJarResources.copyYesSteveModelFile(
-            getCustomFiles("custom/steve/main.animation.json"),
-            stevePath,
-            MAIN_ANIMATION_FILE_NAME);
-
-        Path alexPath = CUSTOM.resolve("alex");
-        createFolder(alexPath);
-        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/alex/main.json"), alexPath, MAIN_MODEL_FILE_NAME);
-        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/alex/arm.json"), alexPath, ARM_MODEL_FILE_NAME);
-        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/alex/gsl.png"), alexPath, "gsl.png");
-        GetJarResources.copyYesSteveModelFile(
-            getCustomFiles("custom/alex/main.animation.json"),
-            alexPath,
-            MAIN_ANIMATION_FILE_NAME);
-
-        Path qinglukaPath = CUSTOM.resolve("qingluka");
-        createFolder(qinglukaPath);
-        GetJarResources
-            .copyYesSteveModelFile(getCustomFiles("custom/qingluka/main.json"), qinglukaPath, MAIN_MODEL_FILE_NAME);
-        GetJarResources
-            .copyYesSteveModelFile(getCustomFiles("custom/qingluka/arm.json"), qinglukaPath, ARM_MODEL_FILE_NAME);
-        GetJarResources
-            .copyYesSteveModelFile(getCustomFiles("custom/qingluka/texture.png"), qinglukaPath, "texture.png");
+        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/default_boy/blue.png"), defaultBoyPath, "blue.png");
+        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/default_boy/main.animation.json"), defaultBoyPath, MAIN_ANIMATION_FILE_NAME);
+        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/default_boy/tac.animation.json"), defaultBoyPath, TAC_ANIMATION_FILE_NAME);
     }
 
     private static void copyWineFoxModel() {
         Path wineFoxPath = CUSTOM.resolve("wine_fox");
         createFolder(wineFoxPath);
 
-        GetJarResources
-            .copyYesSteveModelFile(getCustomFiles("custom/wine_fox/main.json"), wineFoxPath, MAIN_MODEL_FILE_NAME);
-        GetJarResources
-            .copyYesSteveModelFile(getCustomFiles("custom/wine_fox/arm.json"), wineFoxPath, ARM_MODEL_FILE_NAME);
+        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/wine_fox/main.json"), wineFoxPath, MAIN_MODEL_FILE_NAME);
+        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/wine_fox/arm.json"), wineFoxPath, ARM_MODEL_FILE_NAME);
         GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/wine_fox/skin.png"), wineFoxPath, "skin.png");
-        GetJarResources.copyYesSteveModelFile(
-            getCustomFiles("custom/wine_fox/main.animation.json"),
-            wineFoxPath,
-            MAIN_ANIMATION_FILE_NAME);
+        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/wine_fox/main.animation.json"), wineFoxPath, MAIN_ANIMATION_FILE_NAME);
+    }
+
+    private static void copyVanillaModel() {
+        Path stevePath = CUSTOM.resolve("steve");
+        createFolder(stevePath);
+        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/steve/main.json"), stevePath, MAIN_MODEL_FILE_NAME);
+        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/steve/arm.json"), stevePath, ARM_MODEL_FILE_NAME);
+        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/steve/tartaric_acid.png"), stevePath, "tartaric_acid.png");
+        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/steve/main.animation.json"), stevePath, MAIN_ANIMATION_FILE_NAME);
+        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/steve/tac.animation.json"), stevePath, TAC_ANIMATION_FILE_NAME);
+
+        Path alexPath = CUSTOM.resolve("alex");
+        createFolder(alexPath);
+        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/alex/main.json"), alexPath, MAIN_MODEL_FILE_NAME);
+        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/alex/arm.json"), alexPath, ARM_MODEL_FILE_NAME);
+        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/alex/gsl.png"), alexPath, "gsl.png");
+        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/alex/main.animation.json"), alexPath, MAIN_ANIMATION_FILE_NAME);
+        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/alex/tac.animation.json"), alexPath, TAC_ANIMATION_FILE_NAME);
+
+        Path qinglukaPath = CUSTOM.resolve("qingluka");
+        createFolder(qinglukaPath);
+        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/qingluka/main.json"), qinglukaPath, MAIN_MODEL_FILE_NAME);
+        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/qingluka/arm.json"), qinglukaPath, ARM_MODEL_FILE_NAME);
+        GetJarResources.copyYesSteveModelFile(getCustomFiles("custom/qingluka/texture.png"), qinglukaPath, "texture.png");
     }
 
     private static void cacheAllModels(Path rootPath) {
         YsmFormat.cacheAllModels(rootPath);
-        ZipFormat.cacheAllModels(rootPath);
         FolderFormat.cacheAllModels(rootPath);
     }
 
@@ -217,7 +184,7 @@ public final class ServerModelManager {
     }
 
     private static String getCustomFiles(String path) {
-        return String.format("/assets/%s/%s", ysmu.MODID, path);
+        return String.format("/assets/%s/%s", YesSteveModel.MOD_ID, path);
     }
 
     private static void createFolder(Path path) {
@@ -237,5 +204,48 @@ public final class ServerModelManager {
             fileName = fileName.substring(0, lastIndex);
         }
         return fileName;
+    }
+
+    public static boolean isValidResourceLocation(String pResourceName) {
+        String[] decompose = decompose(pResourceName, ':');
+        return isValidNamespace(StringUtils.isEmpty(decompose[0]) ? "minecraft" : decompose[0]) && isValidPath(decompose[1]);
+    }
+
+    private static String[] decompose(String res, char split) {
+        String[] strings = new String[]{"minecraft", res};
+        int i = res.indexOf(split);
+        if (i >= 0) {
+            strings[1] = res.substring(i + 1);
+            if (i >= 1) {
+                strings[0] = res.substring(0, i);
+            }
+        }
+        return strings;
+    }
+
+    private static boolean isValidNamespace(String pNamespace) {
+        for (int i = 0; i < pNamespace.length(); ++i) {
+            if (!validNamespaceChar(pNamespace.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean validNamespaceChar(char pCharValue) {
+        return pCharValue == '_' || pCharValue == '-' || pCharValue >= 'a' && pCharValue <= 'z' || pCharValue >= '0' && pCharValue <= '9' || pCharValue == '.';
+    }
+
+    private static boolean isValidPath(String pPath) {
+        for (int i = 0; i < pPath.length(); ++i) {
+            if (!validPathChar(pPath.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean validPathChar(char pCharValue) {
+        return pCharValue == '_' || pCharValue == '-' || pCharValue >= 'a' && pCharValue <= 'z' || pCharValue >= '0' && pCharValue <= '9' || pCharValue == '/' || pCharValue == '.';
     }
 }

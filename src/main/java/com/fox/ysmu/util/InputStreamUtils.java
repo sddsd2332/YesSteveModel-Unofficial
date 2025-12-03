@@ -15,4 +15,3 @@ public final class InputStreamUtils {
         return output.toByteArray();
     }
 }
-

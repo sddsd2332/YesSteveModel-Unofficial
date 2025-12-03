@@ -6,15 +6,13 @@ import com.fox.ysmu.model.format.ServerModelInfo;
 import com.fox.ysmu.model.format.Type;
 
 public final class ModelData {
-
     private final String modelId;
     private final Map<String, byte[]> model;
     private final Map<String, byte[]> texture;
     private final Map<String, byte[]> animation;
     private final ServerModelInfo info;
 
-    public ModelData(String modelId, boolean isAuth, Type type, Map<String, byte[]> geo, Map<String, byte[]> texture,
-        Map<String, byte[]> animation) {
+    public ModelData(String modelId, boolean isAuth, Type type, Map<String, byte[]> geo, Map<String, byte[]> texture, Map<String, byte[]> animation) {
         this.modelId = modelId;
         this.model = geo;
         this.texture = texture;
@@ -39,7 +37,7 @@ public final class ModelData {
     }
 
     public boolean isAuth() {
-        return this.info.isNeedAuth();
+        return false;
     }
 
     public void setMd5(String md5) {

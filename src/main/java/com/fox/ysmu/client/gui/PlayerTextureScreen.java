@@ -1,7 +1,6 @@
 package com.fox.ysmu.client.gui;
 
-import com.fox.ysmu.capabilities.Capabilities;
-import com.fox.ysmu.capabilities.ModelInfoCapability;
+import com.fox.ysmu.capability.Capabilities;
 import com.fox.ysmu.client.ClientModelManager;
 import com.fox.ysmu.client.gui.button.FlatColorButton;
 import com.fox.ysmu.client.gui.button.FlatIconButton;
@@ -12,6 +11,7 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
@@ -19,6 +19,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -101,9 +102,7 @@ public class PlayerTextureScreen extends GuiScreen {
             String key = String.format("gui.yes_steve_model.texture.button.%s", name.replaceAll("\\:", "."));
             String keyDesc = String.format("gui.yes_steve_model.texture.button.%s.desc", name.replaceAll("\\:", "."));
             FlatColorButton sideButton = new FlatColorButton(a++, x + 5, yStart, 80, 16, I18n.format(key));
-            sideButton.setTooltips(Lists.newArrayList(
-                    TextFormatting.GOLD + I18n.format(keyDesc),
-                    TextFormatting.GRAY + I18n.format("gui.yes_steve_model.texture.button.animation_name", name)
+            sideButton.setTooltips(Lists.newArrayList(TextFormatting.GOLD + I18n.format(keyDesc), TextFormatting.GRAY + I18n.format("gui.yes_steve_model.texture.button.animation_name", name)
             ));
             this.buttonList.add(sideButton);
         }
@@ -170,7 +169,7 @@ public class PlayerTextureScreen extends GuiScreen {
                         this.animation = this.animations.get(animationIndex);
                     }
                 }
-                if (button instanceof TextureButton textureButton) {
+                    if (button instanceof TextureButton textureButton) {
                     textureButton.onPress();
                 }
                 break;
@@ -183,24 +182,13 @@ public class PlayerTextureScreen extends GuiScreen {
         this.drawGradientRect(x, y + 22, x + 90, y + 235, 0XFF222222, 0XFF222222);
         this.drawGradientRect(x + 93, y, x + 299, y + 235, 0XFF222222, 0XFF222222);
         this.drawGradientRect(x + 302, y, x + 420, y + 235, 0XFF222222, 0XFF222222);
-        if (player.hasCapability(Capabilities.MODEL_INFO_CAP, null)) {
-            ModelInfoCapability cap = player.getCapability(Capabilities.MODEL_INFO_CAP, null);
-            if (cap != null) {
-                int guiScale = new ScaledResolution(mc).getScaleFactor();
-                int scissorX = (this.x + 93) * guiScale;
-                int scissorY = mc.displayHeight - ((this.y + 235) * guiScale);
-                int scissorW = 206 * guiScale;
-                int scissorH = 235 * guiScale;
-                //    GL11.glEnable(GL11.GL_SCISSOR_TEST);
-                //   GL11.glScissor(scissorX, scissorY, scissorW, scissorH);
-                RenderUtil.renderTextureScreenEntity(this.x + 299 / 2.0F + 40 + posX, this.y + 235 / 2.0F + 80 + posY, scale, pitch, yaw, player, modelId, cap.getSelectTexture(), showGround, entity -> {
-                    if (!entity.hasPreviewAnimation(animation)) {
-                        entity.setPreviewAnimation(animation);
-                    }
-                });
-                //    GL11.glDisable(GL11.GL_SCISSOR_TEST);
-            }
-        }
+        Capabilities.getModelInfoCap(player).ifPresent(cap -> {
+            RenderUtil.renderTextureScreenEntity(this.x + 299 / 2.0F + 40 + posX, this.y + 235 / 2.0F + 80 + posY, scale, pitch, yaw, mc.player, modelId, cap.getSelectTexture(), showGround, entity -> {
+                if (!entity.hasPreviewAnimation(animation)) {
+                    entity.setPreviewAnimation(animation);
+                }
+            });
+        });
 
         String texturePageInfo = String.format("%d/%d", texturePage + 1, this.maxTexturePage + 1);
         this.drawString(fontRenderer, texturePageInfo, x + 302 + (118 - fontRenderer.getStringWidth(texturePageInfo)) / 2, y + 223 - fontRenderer.FONT_HEIGHT / 2, 0xF3EFE0);

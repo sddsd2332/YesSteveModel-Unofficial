@@ -1,35 +1,6 @@
 package com.fox.ysmu.geckolib3.geo;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.annotation.Nullable;
-
 import com.fox.ysmu.Config;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
-
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityHanging;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumFacing;
-
-import net.minecraft.util.ResourceLocation;
-
-import com.fox.ysmu.mclib.utils.Interpolations;
-import com.google.common.collect.Lists;
-import com.mojang.realmsclient.gui.ChatFormatting;
-
-import net.minecraft.util.math.MathHelper;
 import com.fox.ysmu.geckolib3.core.IAnimatable;
 import com.fox.ysmu.geckolib3.core.IAnimatableModel;
 import com.fox.ysmu.geckolib3.core.controller.AnimationController;
@@ -38,11 +9,39 @@ import com.fox.ysmu.geckolib3.core.util.Color;
 import com.fox.ysmu.geckolib3.geo.render.built.GeoModel;
 import com.fox.ysmu.geckolib3.model.AnimatedGeoModel;
 import com.fox.ysmu.geckolib3.model.provider.data.EntityModelData;
+import com.fox.ysmu.mclib.utils.Interpolations;
+import com.google.common.collect.Lists;
+import com.mojang.realmsclient.gui.ChatFormatting;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityHanging;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends Render<EntityLivingBase>
-    implements IGeoRenderer {
+        implements IGeoRenderer {
 
     protected final AnimatedGeoModel<T> modelProvider;
     protected T animatable;
@@ -51,6 +50,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
     protected float widthScale = 1;
     protected float heightScale = 1;
     private static Map<Class<? extends IAnimatable>, GeoReplacedEntityRenderer> renderers = new ConcurrentHashMap<>();
+
 
     static {
         AnimationController.addModelFetcher((IAnimatable object) -> {
@@ -66,7 +66,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
     }
 
     public static void registerReplacedEntity(Class<? extends IAnimatable> itemClass,
-        GeoReplacedEntityRenderer renderer) {
+                                              GeoReplacedEntityRenderer renderer) {
         renderers.put(itemClass, renderer);
     }
 
@@ -82,7 +82,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
 
             // TODO: entity.isPassenger() looks redundant here
             boolean shouldSit = /* entity.isPassenger() && */ (entity.ridingEntity != null
-                && entity.ridingEntity.shouldRiderSit());
+                    && entity.ridingEntity.shouldRiderSit());
             EntityModelData entityModelData = new EntityModelData();
             entityModelData.isSitting = shouldSit;
             entityModelData.isChild = entity.isChild();
@@ -97,7 +97,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
             if (shouldSit && entity.ridingEntity instanceof EntityLivingBase) {
                 EntityLivingBase livingentity = (EntityLivingBase) entity.ridingEntity;
                 f = Interpolations
-                    .lerpYaw(livingentity.prevRenderYawOffset, livingentity.renderYawOffset, partialTicks);
+                        .lerpYaw(livingentity.prevRenderYawOffset, livingentity.renderYawOffset, partialTicks);
                 netHeadYaw = f1 - f;
                 float f3 = MathHelper.wrapDegrees(netHeadYaw);
                 if (f3 < -85.0F) {
@@ -145,16 +145,16 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
             entityModelData.netHeadYaw = -netHeadYaw;
 
             AnimationEvent predicate = new AnimationEvent(
-                animatable,
-                limbSwing,
-                limbSwingAmount,
-                partialTicks,
-                !(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F),
-                Collections.singletonList(entityModelData));
+                    animatable,
+                    limbSwing,
+                    limbSwingAmount,
+                    partialTicks,
+                    !(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F),
+                    Collections.singletonList(entityModelData));
             GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(animatable));
             if (modelProvider instanceof IAnimatableModel) {
                 ((IAnimatableModel<T>) modelProvider)
-                    .setLivingAnimations(animatable, this.getUniqueID(entity), predicate);
+                        .setLivingAnimations(animatable, this.getUniqueID(entity), predicate);
             }
 
             GlStateManager.pushMatrix();
@@ -164,31 +164,23 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
                 Color renderColor = getRenderColor(entity, partialTicks);
 
                 if (!entity.isInvisibleToPlayer(Minecraft.getMinecraft().player)) render(
-                    model,
-                    entity,
-                    partialTicks,
-                    (float) renderColor.getRed() / 255f,
-                    (float) renderColor.getGreen() / 255f,
-                    (float) renderColor.getBlue() / 255f,
-                    (float) renderColor.getAlpha() / 255);
+                        model,
+                        entity,
+                        partialTicks,
+                        (float) renderColor.getRed() / 255f,
+                        (float) renderColor.getGreen() / 255f,
+                        (float) renderColor.getBlue() / 255f,
+                        (float) renderColor.getAlpha() / 255);
 
                 if (entity instanceof EntityPlayer) {
                     for (GeoLayerRenderer layerRenderer : this.layerRenderers) {
-                        layerRenderer.doRenderLayer(
-                            entity,
-                            limbSwing,
-                            limbSwingAmount,
-                            partialTicks,
-                            f7,
-                            netHeadYaw,
-                            headPitch,
-                            1 / 16F);
+                        layerRenderer.render(entity, limbSwing, limbSwingAmount, partialTicks, f7, netHeadYaw, headPitch, renderColor);
                     }
                 }
-                if (entity instanceof EntityLiving) {
-                    Entity leashHolder = ((EntityLiving) entity).getLeashHolder();
+                if (entity instanceof EntityLiving base) {
+                    Entity leashHolder = base.getLeashHolder();
                     if (leashHolder != null) {
-                        this.renderLeash((EntityLiving) entity, x, y, z, entityYaw, partialTicks);
+                        this.renderLeash(base, x, y, z, entityYaw, partialTicks);
                     }
                 }
             } catch (Exception e) {
@@ -209,7 +201,8 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
         // super.doRender(entity, x, y, z, entityYaw, partialTicks);
     }
 
-    protected void preRenderCallback(EntityLivingBase entitylivingbaseIn, float partialTickTime) {}
+    protected void preRenderCallback(EntityLivingBase entitylivingbaseIn, float partialTickTime) {
+    }
 
     @Nullable
     @Override
@@ -232,8 +225,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
         return this.heightScale;
     }
 
-    protected void applyRotations(EntityLivingBase entityLiving, float ageInTicks, float rotationYaw,
-        float partialTicks) {
+    protected void applyRotations(EntityLivingBase entityLiving, float ageInTicks, float rotationYaw, float partialTicks) {
         if (!entityLiving.isPlayerSleeping()) {
             GlStateManager.rotate(180.0F - rotationYaw, 0, 1, 0);
         }
@@ -244,30 +236,35 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
             if (f > 1.0F) {
                 f = 1.0F;
             }
-
             GlStateManager.rotate(f * this.getDeathMaxRotation(entityLiving), 0, 0, 1);
+        }else if (entityLiving.isPlayerSleeping()) {
+            EnumFacing bedOrientation = getBedOrientation(entityLiving);
+            GlStateManager.rotate((bedOrientation != null ? getFacingAngle(bedOrientation) : rotationYaw),0.0F, 1.0F, 0.0F);
+            GlStateManager.rotate(getDeathMaxRotation(entityLiving),0.0F, 0.0F, 1.0F);
+            GlStateManager.rotate(270f,0.0F, 1.0F, 0.0F);
         }
-        /*
-         * TODO: probably doesn't exist in 1.12.2 as well else if
-         * (entityLiving.isSpinAttacking()) {
-         * matrixStackIn.rotate(Vector3f.XP.rotationDegrees(-90.0F -
-         * entityLiving.rotationPitch));
-         * matrixStackIn.rotate(Vector3f.YP.rotationDegrees(((float)
-         * entityLiving.ticksExisted + partialTicks) * -75.0F)); } else if (pose ==
-         * Pose.SLEEPING) { Direction direction = entityLiving.getBedDirection(); float
-         * f1 = direction != null ? getFacingAngle(direction) : rotationYaw;
-         * matrixStackIn.rotate(Vector3f.YP.rotationDegrees(f1));
-         * matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(this.getDeathMaxRotation(
-         * entityLiving))); matrixStackIn.rotate(Vector3f.YP.rotationDegrees(270.0F)); }
-         */
+
         else if (entityLiving.hasCustomName() || entityLiving instanceof EntityPlayer) {
-                String s = ChatFormatting.stripFormatting(entityLiving.getName());
-                if (("Dinnerbone".equals(s) || "Grumm".equals(s)) && (!(entityLiving instanceof EntityPlayer))) {
-                    GlStateManager.translate(0.0D, (double) (entityLiving.height + 0.1F), 0.0D);
-                    GlStateManager.rotate(180, 0, 0, 1);
-                }
+            String s = ChatFormatting.stripFormatting(entityLiving.getName());
+            if (("Dinnerbone".equals(s) || "Grumm".equals(s)) && (!(entityLiving instanceof EntityPlayer))) {
+                GlStateManager.translate(0.0D, (double) (entityLiving.height + 0.1F), 0.0D);
+                GlStateManager.rotate(180, 0, 0, 1);
             }
+        }
     }
+
+    @Nullable
+    @SideOnly(Side.CLIENT)
+    public EnumFacing getBedOrientation(EntityLivingBase base) {
+        if (base instanceof EntityPlayer player) {
+            BlockPos blockpos = player.getBedLocation();
+            if (blockpos == null) return EnumFacing.UP;
+            IBlockState state = player.world.getBlockState(blockpos);
+            return !state.getBlock().isBed(state, player.world, blockpos, player) ? EnumFacing.UP : state.getBlock().getBedDirection(state, player.world, blockpos);
+        }
+        return null;
+    }
+
 
     protected boolean isVisible(EntityLivingBase livingEntityIn) {
         return !livingEntityIn.isInvisible();
@@ -313,7 +310,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
     }
 
     protected void renderLeash(EntityLiving entityLivingIn, double x, double y, double z, float entityYaw,
-        float partialTicks) {
+                               float partialTicks) {
         Entity entity = entityLivingIn.getLeashHolder();
 
         if (entity != null) {
@@ -321,13 +318,13 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder bufferbuilder = tessellator.getBuffer();
             double d0 = this.interpolateValue(
-                (double) entity.prevRotationYaw,
-                (double) entity.rotationYaw,
-                (double) (partialTicks * 0.5F)) * 0.01745329238474369D;
+                    (double) entity.prevRotationYaw,
+                    (double) entity.rotationYaw,
+                    (double) (partialTicks * 0.5F)) * 0.01745329238474369D;
             double d1 = this.interpolateValue(
-                (double) entity.prevRotationPitch,
-                (double) entity.rotationPitch,
-                (double) (partialTicks * 0.5F)) * 0.01745329238474369D;
+                    (double) entity.prevRotationPitch,
+                    (double) entity.rotationPitch,
+                    (double) (partialTicks * 0.5F)) * 0.01745329238474369D;
             double d2 = Math.cos(d0);
             double d3 = Math.sin(d0);
             double d4 = Math.sin(d1);
@@ -340,24 +337,24 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
 
             double d5 = Math.cos(d1);
             double d6 = this.interpolateValue(entity.prevPosX, entity.posX, (double) partialTicks) - d2 * 0.7D
-                - d3 * 0.5D * d5;
+                    - d3 * 0.5D * d5;
             double d7 = this.interpolateValue(
-                entity.prevPosY + (double) entity.getEyeHeight() * 0.7D,
-                entity.posY + (double) entity.getEyeHeight() * 0.7D,
-                (double) partialTicks) - d4 * 0.5D - 0.25D;
+                    entity.prevPosY + (double) entity.getEyeHeight() * 0.7D,
+                    entity.posY + (double) entity.getEyeHeight() * 0.7D,
+                    (double) partialTicks) - d4 * 0.5D - 0.25D;
             double d8 = this.interpolateValue(entity.prevPosZ, entity.posZ, (double) partialTicks) - d3 * 0.7D
-                + d2 * 0.5D * d5;
+                    + d2 * 0.5D * d5;
             double d9 = this.interpolateValue(
-                (double) entityLivingIn.prevRenderYawOffset,
-                (double) entityLivingIn.renderYawOffset,
-                (double) partialTicks) * 0.01745329238474369D + (Math.PI / 2D);
+                    (double) entityLivingIn.prevRenderYawOffset,
+                    (double) entityLivingIn.renderYawOffset,
+                    (double) partialTicks) * 0.01745329238474369D + (Math.PI / 2D);
             d2 = Math.cos(d9) * (double) entityLivingIn.width * 0.4D;
             d3 = Math.sin(d9) * (double) entityLivingIn.width * 0.4D;
             double d10 = this.interpolateValue(entityLivingIn.prevPosX, entityLivingIn.posX, (double) partialTicks)
-                + d2;
+                    + d2;
             double d11 = this.interpolateValue(entityLivingIn.prevPosY, entityLivingIn.posY, (double) partialTicks);
             double d12 = this.interpolateValue(entityLivingIn.prevPosZ, entityLivingIn.posZ, (double) partialTicks)
-                + d3;
+                    + d3;
             x = x + d2;
             z = z + d3;
             double d13 = (double) ((float) (d6 - d10));
@@ -381,14 +378,15 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
 
                 float f3 = (float) j / 24.0F;
                 bufferbuilder.color(f, f1, f2, 1.0F)
-                .pos(
-                    x + d13 * (double) f3 + 0.0D,
-                    y + d14 * (double) (f3 * f3 + f3) * 0.5D + (double) ((24.0F - (float) j) / 18.0F + 0.125F),
-                    z + d15 * (double) f3).endVertex();
+                        .pos(
+                                x + d13 * (double) f3 + 0.0D,
+                                y + d14 * (double) (f3 * f3 + f3) * 0.5D + (double) ((24.0F - (float) j) / 18.0F + 0.125F),
+                                z + d15 * (double) f3).endVertex();
                 bufferbuilder.color(f, f1, f2, 1.0F).pos(
-                    x + d13 * (double) f3 + 0.025D,
-                    y + d14 * (double) (f3 * f3 + f3) * 0.5D + (double) ((24.0F - (float) j) / 18.0F + 0.125F) + 0.025D,
-                    z + d15 * (double) f3).endVertex();;
+                        x + d13 * (double) f3 + 0.025D,
+                        y + d14 * (double) (f3 * f3 + f3) * 0.5D + (double) ((24.0F - (float) j) / 18.0F + 0.125F) + 0.025D,
+                        z + d15 * (double) f3).endVertex();
+                ;
             }
             tessellator.draw();
             bufferbuilder.begin(5, DefaultVertexFormats.POSITION_COLOR);
@@ -406,13 +404,13 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
 
                 float f7 = (float) k / 24.0F;
                 bufferbuilder.color(f4, f5, f6, 1.0F).pos(
-                    x + d13 * (double) f7 + 0.0D,
-                    y + d14 * (double) (f7 * f7 + f7) * 0.5D + (double) ((24.0F - (float) k) / 18.0F + 0.125F) + 0.025D,
-                    z + d15 * (double) f7).endVertex();
+                        x + d13 * (double) f7 + 0.0D,
+                        y + d14 * (double) (f7 * f7 + f7) * 0.5D + (double) ((24.0F - (float) k) / 18.0F + 0.125F) + 0.025D,
+                        z + d15 * (double) f7).endVertex();
                 bufferbuilder.color(f4, f5, f6, 1.0F).pos(
-                    x + d13 * (double) f7 + 0.025D,
-                    y + d14 * (double) (f7 * f7 + f7) * 0.5D + (double) ((24.0F - (float) k) / 18.0F + 0.125F),
-                    z + d15 * (double) f7 + 0.025D).endVertex();
+                        x + d13 * (double) f7 + 0.025D,
+                        y + d14 * (double) (f7 * f7 + f7) * 0.5D + (double) ((24.0F - (float) k) / 18.0F + 0.125F),
+                        z + d15 * (double) f7 + 0.025D).endVertex();
             }
 
             tessellator.draw();

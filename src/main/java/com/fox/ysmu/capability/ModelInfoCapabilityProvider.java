@@ -1,10 +1,8 @@
-package com.fox.ysmu.capabilities;
+package com.fox.ysmu.capability;
 
-import com.fox.ysmu.ysmu;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
@@ -13,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class ModelInfoCapabilityProvider implements ICapabilitySerializable<NBTTagCompound> {
 
-    public static final ResourceLocation EXT_PROP_NAME = new ResourceLocation(ysmu.MODID, "ModelInfo");
     private final ModelInfoCapability defaultImpl = new ModelInfoCapability();
 
     public static void register() {

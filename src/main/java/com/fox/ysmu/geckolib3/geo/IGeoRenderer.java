@@ -1,16 +1,16 @@
 package com.fox.ysmu.geckolib3.geo;
 
 import com.fox.ysmu.Config;
-import com.fox.ysmu.geckolib3.geo.render.built.GeoCube;
+import com.fox.ysmu.geckolib3.core.util.Color;
+import com.fox.ysmu.geckolib3.geo.render.built.*;
+import com.fox.ysmu.geckolib3.model.provider.GeoModelProvider;
+import com.fox.ysmu.geckolib3.util.MatrixStack;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
-import com.fox.ysmu.geckolib3.core.util.Color;
-import com.fox.ysmu.geckolib3.model.provider.GeoModelProvider;
-import com.fox.ysmu.geckolib3.util.MatrixStack;
 
 import javax.annotation.Nullable;
 import javax.vecmath.Vector3f;
@@ -21,7 +21,7 @@ public interface IGeoRenderer<T> {
 
     public static MatrixStack MATRIX_STACK = new MatrixStack();
 
-    default void render(com.fox.ysmu.geckolib3.geo.render.built.GeoModel model, T animatable, float partialTicks, float red, float green, float blue,
+    default void render(GeoModel model, T animatable, float partialTicks, float red, float green, float blue,
                         float alpha) {
         GlStateManager.disableCull();
         GlStateManager.enableRescaleNormal();
@@ -36,7 +36,7 @@ public interface IGeoRenderer<T> {
         builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
         //tess.startDrawing(GL11.GL_QUADS);// , DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
         // Render all top level bones
-        for (com.fox.ysmu.geckolib3.geo.render.built.GeoBone group : model.topLevelBones) {
+        for (GeoBone group : model.topLevelBones) {
             renderRecursively(builder, animatable, group, red, green, blue, alpha);
         }
 
@@ -48,15 +48,15 @@ public interface IGeoRenderer<T> {
         GlStateManager.enableCull();
     }
 
-    default boolean isBoneRenderOverriden(T animatable, com.fox.ysmu.geckolib3.geo.render.built.GeoBone bone) {
+    default boolean isBoneRenderOverriden(T animatable, GeoBone bone) {
         return false;
     }
 
-    default void drawOverridenBone(T animatable, com.fox.ysmu.geckolib3.geo.render.built.GeoBone bone) {
+    default void drawOverridenBone(T animatable, GeoBone bone) {
 
     }
 
-    default void renderRecursively(BufferBuilder builder, T animatable, com.fox.ysmu.geckolib3.geo.render.built.GeoBone bone, float red, float green, float blue,
+    default void renderRecursively(BufferBuilder builder, T animatable, GeoBone bone, float red, float green, float blue,
                                    float alpha) {
         MATRIX_STACK.push();
 
@@ -73,7 +73,7 @@ public interface IGeoRenderer<T> {
         }
 
         if (!bone.isHidden()) {
-            for (com.fox.ysmu.geckolib3.geo.render.built.GeoCube cube : bone.childCubes) {
+            for (GeoCube cube : bone.childCubes) {
                 MATRIX_STACK.push();
                 GlStateManager.pushMatrix();
                 try {
@@ -89,7 +89,7 @@ public interface IGeoRenderer<T> {
             }
         }
         if (!bone.childBonesAreHiddenToo()) {
-            for (com.fox.ysmu.geckolib3.geo.render.built.GeoBone childBone : bone.childBones) {
+            for (GeoBone childBone : bone.childBones) {
                 renderRecursively(builder, animatable, childBone, red, green, blue, alpha);
             }
         }
@@ -108,7 +108,7 @@ public interface IGeoRenderer<T> {
             GlStateManager.doPolygonOffset(-1.0F, -10.0F);
         }
 
-        for (com.fox.ysmu.geckolib3.geo.render.built.GeoQuad quad : cube.quads) {
+        for (GeoQuad quad : cube.quads) {
             if (quad == null) continue;
             Vector3f normal = new Vector3f(quad.normal.getX(), quad.normal.getY(), quad.normal.getZ());
 
@@ -128,7 +128,7 @@ public interface IGeoRenderer<T> {
                 normal.z *= -1;
             }
 
-            for (com.fox.ysmu.geckolib3.geo.render.built.GeoVertex vertex : quad.vertices) {
+            for (GeoVertex vertex : quad.vertices) {
                 Vector4f vector4f = new Vector4f(vertex.position.x, vertex.position.y, vertex.position.z, 1.0F);
 
                 MATRIX_STACK.getModelMatrix().transform(vector4f);
@@ -159,11 +159,11 @@ public interface IGeoRenderer<T> {
     ResourceLocation getTextureLocation(T instance);
 
     @Nullable
-    default com.fox.ysmu.geckolib3.geo.render.built.GeoModel getGeoModel() {
+    default GeoModel getGeoModel() {
         return null;
     }
 
-    default void renderEarly(com.fox.ysmu.geckolib3.geo.render.built.GeoModel model, T animatable, float ticks, float red, float green, float blue,
+    default void renderEarly(GeoModel model, T animatable, float ticks, float red, float green, float blue,
                              float alpha) {
         float width = getWidthScale(animatable);
         float height = getHeightScale(animatable);
@@ -171,11 +171,11 @@ public interface IGeoRenderer<T> {
         MATRIX_STACK.scale(width, height, width);
     }
 
-    default void renderLate(com.fox.ysmu.geckolib3.geo.render.built.GeoModel model, T animatable, float ticks, float red, float green, float blue,
+    default void renderLate(GeoModel model, T animatable, float ticks, float red, float green, float blue,
                             float alpha) {
     }
 
-    default void renderAfter(com.fox.ysmu.geckolib3.geo.render.built.GeoModel model, T animatable, float ticks, float red, float green, float blue,
+    default void renderAfter(GeoModel model, T animatable, float ticks, float red, float green, float blue,
                              float alpha) {
         MATRIX_STACK.pop();
     }
@@ -188,13 +188,13 @@ public interface IGeoRenderer<T> {
         return animatable.hashCode();
     }
 
-    default com.fox.ysmu.geckolib3.geo.render.built.GeoBone[] getPathFromRoot(com.fox.ysmu.geckolib3.geo.render.built.GeoBone bone) {
-        ArrayList<com.fox.ysmu.geckolib3.geo.render.built.GeoBone> bones = new ArrayList<>();
+    default GeoBone[] getPathFromRoot(GeoBone bone) {
+        ArrayList<GeoBone> bones = new ArrayList<>();
         while (bone != null) {
             bones.add(0, bone);
             bone = bone.parent;
         }
-        return bones.toArray(new com.fox.ysmu.geckolib3.geo.render.built.GeoBone[0]);
+        return bones.toArray(new GeoBone[0]);
     }
 
     default float getWidthScale(T animatable) {

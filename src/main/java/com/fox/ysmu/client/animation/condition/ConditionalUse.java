@@ -1,12 +1,12 @@
 package com.fox.ysmu.client.animation.condition;
 
+import com.fox.ysmu.util.ResourceLocationHelp;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.Arrays;
@@ -22,7 +22,6 @@ public class ConditionalUse {
     private final String tagPre;
     private final String extraPre;
     private final List<ResourceLocation> idTest = Lists.newArrayList();
-    // 1.7.10: 使用String存储矿物词典名称
     private final List<String> tagTest = Lists.newArrayList();
     // 1.7.10: 使用EnumAction替代UseAnim
     private final List<EnumAction> extraTest = Lists.newArrayList();
@@ -46,21 +45,17 @@ public class ConditionalUse {
             return;
         }
         String substring = name.substring(preSize);
-        if (name.startsWith(idPre)) {
-            if (substring.contains(":")) {
-                idTest.add(new ResourceLocation(substring));
-            }
+        if (name.startsWith(idPre) && ResourceLocationHelp.isValidResourceLocation(substring)) {
+            idTest.add(new ResourceLocation(substring));
         }
-        if (name.startsWith(substring)) {
-            // 1.7.10: 这里处理的是矿物词典名称
+        if (name.startsWith(substring) && ResourceLocationHelp.isValidResourceLocation(substring)) {
+            //TODO
             tagTest.add(substring);
         }
         if (name.startsWith(extraPre)) {
-            // 1.7.10: 使用EnumAction替代UseAnim
             if (substring.equals(EnumAction.NONE.name().toLowerCase(Locale.US))) {
                 return;
             }
-            // 1.7.10: 使用传统方式查找EnumAction
             Arrays.stream(EnumAction.values()).filter(a -> a.name().toLowerCase(Locale.US).equals(substring)).findFirst().ifPresent(extraTest::add);
         }
     }
@@ -85,7 +80,7 @@ public class ConditionalUse {
             return EMPTY;
         }
         ItemStack itemInHand = player.getHeldItem(hand);
-        ResourceLocation registryName = ForgeRegistries.ITEMS.getKey(itemInHand.getItem());
+        ResourceLocation registryName = itemInHand.getItem().getRegistryName();
         if (registryName == null) {
             return EMPTY;
         }
@@ -118,14 +113,11 @@ public class ConditionalUse {
         return EMPTY; // 未找到匹配
     }
 
-    // 1.7.10: 使用EnumAction替代UseAnim
     private String doExtraTest(EntityPlayer player, EnumHand hand) {
         if (extraTest.isEmpty()) {
             return EMPTY;
         }
-        // 1.7.10: 使用getItemUseAction替代getUseAnimation
         EnumAction anim = player.getHeldItem(hand).getItemUseAction();
-
         if (this.extraTest.contains(anim)) {
             return extraPre + anim.name().toLowerCase(Locale.US);
         }

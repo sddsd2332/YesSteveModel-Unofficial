@@ -1,13 +1,13 @@
 package com.fox.ysmu.event;
 
 
-import com.fox.ysmu.capabilities.*;
+import com.fox.ysmu.YesSteveModel;
+import com.fox.ysmu.capability.*;
 import com.fox.ysmu.model.ServerModelManager;
 import com.fox.ysmu.network.NetworkHandler;
 import com.fox.ysmu.network.message.SyncAuthModels;
 import com.fox.ysmu.network.message.SyncModelInfo;
 import com.fox.ysmu.network.message.SyncStarModels;
-import com.fox.ysmu.ysmu;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -18,16 +18,11 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
+
+import java.util.Optional;
 
 
 public class CommonEventHandler {
-    // WARNING:If you don't know what this does,DO NOT CHANGE IT
-    // TODO不安全的实现方法
-    // public static final DataParameter<Byte> MOTION_DATAWATCHER_ID = EntityDataManager.<Byte>createKey(EntityPlayer.class, DataSerializers.BYTE);
-    // public static final int MOTION_DATAWATCHER_ID = 28;
-    // public static final int ON_GROUND = 0x01;
-    // public static final int IS_FLYING = 0x02;
 
     public CommonEventHandler() {
         MinecraftForge.EVENT_BUS.register(this);
@@ -41,107 +36,78 @@ public class CommonEventHandler {
         }
     }
 
-    /*
-    @SubscribeEvent
-    public static void onEntityConstructing(EntityEvent.EntityConstructing event) {
-        if (event.getEntity() instanceof EntityPlayer player) {
-            player.getDataManager().register(MOTION_DATAWATCHER_ID, (byte) 0);
-        }
-    }
 
-     */
+    private static final ResourceLocation MODEL_INFO_CAP = new ResourceLocation(YesSteveModel.MOD_ID, "model_id");
+    private static final ResourceLocation AUTH_MODELS_CAP = new ResourceLocation(YesSteveModel.MOD_ID, "own_models");
+    private static final ResourceLocation STAR_MODELS_CAP = new ResourceLocation(YesSteveModel.MOD_ID, "star_models");
 
     @SubscribeEvent
     public void attachCaps(AttachCapabilitiesEvent<Entity> event) {
-        if (event.getObject() instanceof EntityPlayer) {
-            event.addCapability(AuthModelsCapabilityProvider.EXT_PROP_NAME, new AuthModelsCapabilityProvider());
-            event.addCapability(ModelInfoCapabilityProvider.EXT_PROP_NAME, new ModelInfoCapabilityProvider());
-            event.addCapability(StarModelsCapabilityProvider.EXT_PROP_NAME, new StarModelsCapabilityProvider());
+        if (event.getObject() instanceof EntityPlayer player) {
+            if (!player.hasCapability(Capabilities.MODEL_INFO_CAP, null) && !event.getCapabilities().containsKey(MODEL_INFO_CAP)) {
+                event.addCapability(MODEL_INFO_CAP, new ModelInfoCapabilityProvider());
+            }
+            if (!player.hasCapability(Capabilities.AUTH_MODELS_CAP, null) && !event.getCapabilities().containsKey(AUTH_MODELS_CAP)) {
+                event.addCapability(AUTH_MODELS_CAP, new AuthModelsCapabilityProvider());
+            }
+            if (!player.hasCapability(Capabilities.STAR_MODELS_CAP, null) && !event.getCapabilities().containsKey(STAR_MODELS_CAP)) {
+                event.addCapability(STAR_MODELS_CAP, new StarModelsCapabilityProvider());
+            }
         }
     }
 
     @SubscribeEvent
     public static void onPlayerClone(net.minecraftforge.event.entity.player.PlayerEvent.Clone event) {
-        EntityPlayer oldPlayer = event.getOriginal();
-        EntityPlayer player = event.getEntityPlayer();
-        if (event.isWasDeath()) { // TODO 跨维度？
-            // 复制 AuthModels 数据
-            if (oldPlayer.hasCapability(Capabilities.AUTH_MODELS_CAP, null)) {
-                AuthModelsCapability oldAuthProps = oldPlayer.getCapability(Capabilities.AUTH_MODELS_CAP, null);
-                if (oldAuthProps != null) {
-                    if (player.hasCapability(Capabilities.AUTH_MODELS_CAP, null)) {
-                        player.getCapability(Capabilities.AUTH_MODELS_CAP, null).copyFrom(oldAuthProps);
-                    }
-                }
-            }
 
-            if (oldPlayer.hasCapability(Capabilities.MODEL_INFO_CAP, null)) {
-                ModelInfoCapability oldAuthProps = oldPlayer.getCapability(Capabilities.MODEL_INFO_CAP, null);
-                if (oldAuthProps != null) {
-                    if (player.hasCapability(Capabilities.MODEL_INFO_CAP, null)) {
-                        player.getCapability(Capabilities.MODEL_INFO_CAP, null).copyFrom(oldAuthProps);
-                    }
-                }
-            }
+        Optional<ModelInfoCapability> oldModelInfoCap = Capabilities.getModelInfoCap(event.getOriginal());
+        Optional<AuthModelsCapability> oldAuthModelsCap = Capabilities.getAuthModelsCap(event.getOriginal());
+        Optional<StarModelsCapability> oldStarModelsCap = Capabilities.getStarModelsCap(event.getOriginal());
 
-            if (oldPlayer.hasCapability(Capabilities.STAR_MODELS_CAP, null)) {
-                StarModelsCapability oldAuthProps = oldPlayer.getCapability(Capabilities.STAR_MODELS_CAP, null);
-                if (oldAuthProps != null) {
-                    if (player.hasCapability(Capabilities.STAR_MODELS_CAP, null)) {
-                        player.getCapability(Capabilities.STAR_MODELS_CAP, null).copyFrom(oldAuthProps);
-                    }
-                }
-            }
-        }
+        Optional<ModelInfoCapability> newModelInfoCap = Capabilities.getModelInfoCap(event.getEntityPlayer());
+        Optional<AuthModelsCapability> newAuthModelsCap = Capabilities.getAuthModelsCap(event.getEntityPlayer());
+        Optional<StarModelsCapability> newStarModelsCap = Capabilities.getStarModelsCap(event.getEntityPlayer());
+
+        newModelInfoCap.ifPresent((newModelInfo) -> oldModelInfoCap.ifPresent(newModelInfo::copyFrom));
+        newAuthModelsCap.ifPresent((newAuthModels) -> oldAuthModelsCap.ifPresent(newAuthModels::copyFrom));
+        newStarModelsCap.ifPresent((newStarModels) -> oldStarModelsCap.ifPresent(newStarModels::copyFrom));
     }
 
     @SubscribeEvent
     public static void onStartTracking(PlayerEvent.StartTracking event) {
         if (event.getTarget() instanceof EntityPlayer trackPlayer) {
             EntityPlayer player = event.getEntityPlayer();
-            if (player.hasCapability(Capabilities.MODEL_INFO_CAP, null)) {
-                ModelInfoCapability eep = player.getCapability(Capabilities.MODEL_INFO_CAP, null);
-                if (eep != null) {
-                    SyncModelInfo syncMsg = new SyncModelInfo(trackPlayer.getEntityId(), eep);
-                    NetworkHandler.sendToClientPlayer(syncMsg, player);
-                }
-            }
+            Capabilities.getModelInfoCap(trackPlayer).ifPresent(cap -> {
+                SyncModelInfo syncMsg = new SyncModelInfo(trackPlayer.getEntityId(), cap);
+                NetworkHandler.sendToClientPlayer(syncMsg, player);
+            });
         }
     }
 
     @SubscribeEvent
     public static void onEntityJoinWorld(EntityJoinWorldEvent event) {
         if (event.getEntity() instanceof EntityPlayer player) {
-            if (player.hasCapability(Capabilities.MODEL_INFO_CAP, null)) {
-                ModelInfoCapability modelInfoEEP = player.getCapability(Capabilities.MODEL_INFO_CAP, null);
-                if (modelInfoEEP != null) {
-                    if (player instanceof EntityPlayerMP serverPlayer) {
-                        if (player.hasCapability(Capabilities.AUTH_MODELS_CAP, null)) {
-                            AuthModelsCapability authModelsEEP = player.getCapability(Capabilities.AUTH_MODELS_CAP, null);
-                            if (authModelsEEP != null) {
-                                NetworkHandler.sendToClientPlayer(new SyncAuthModels(authModelsEEP.getAuthModels()), serverPlayer);
-                                if (ServerModelManager.AUTH_MODELS.contains(modelInfoEEP.getModelId().getPath()) && !authModelsEEP.containModel(modelInfoEEP.getModelId())) {
-                                    ResourceLocation defaultModelId = new ResourceLocation(ysmu.MODID, "default");
-                                    ResourceLocation defaultTextureId = new ResourceLocation(ysmu.MODID, "default/default.png");
-                                    modelInfoEEP.setModelAndTexture(defaultModelId, defaultTextureId);
-                                }
-                            }
-                            SyncModelInfo syncMsg = new SyncModelInfo(serverPlayer.getEntityId(), modelInfoEEP);
-                            NetworkHandler.sendToClientPlayer(syncMsg, serverPlayer);
-                        } else {
-                            modelInfoEEP.markDirty();
+            Capabilities.getModelInfoCap(player).ifPresent(modelInfoCap -> {
+                if (player instanceof EntityPlayerMP serverPlayer) {
+                    Capabilities.getAuthModelsCap(player).ifPresent(authModelsCap -> {
+                        NetworkHandler.sendToClientPlayer(new SyncAuthModels(authModelsCap.getAuthModels()), serverPlayer);
+                        if (ServerModelManager.AUTH_MODELS.contains(modelInfoCap.getModelId().getPath()) && !authModelsCap.containModel(modelInfoCap.getModelId())) {
+                            ResourceLocation defaultModelId = new ResourceLocation(YesSteveModel.MOD_ID, "default");
+                            ResourceLocation defaultTextureId = new ResourceLocation(YesSteveModel.MOD_ID, "default/default.png");
+                            modelInfoCap.setModelAndTexture(defaultModelId, defaultTextureId);
                         }
-                    }
-                    if (player.hasCapability(Capabilities.STAR_MODELS_CAP, null)) {
-                        StarModelsCapability starModelsEEP = player.getCapability(Capabilities.STAR_MODELS_CAP, null);
-                        if (starModelsEEP != null) {
-                            if (player instanceof EntityPlayerMP serverPlayer) {
-                                NetworkHandler.sendToClientPlayer(new SyncStarModels(starModelsEEP.getStarModels()), serverPlayer);
-                            }
-                        }
-                    }
+                    });
+                    SyncModelInfo syncMsg = new SyncModelInfo(serverPlayer.getEntityId(), modelInfoCap);
+                    NetworkHandler.sendToClientPlayer(syncMsg, serverPlayer);
+                } else {
+                    modelInfoCap.markDirty();
                 }
-            }
+            });
+
+            Capabilities.getStarModelsCap(player).ifPresent(starModelCap -> {
+                if (player instanceof EntityPlayerMP serverPlayer) {
+                    NetworkHandler.sendToClientPlayer(new SyncStarModels(starModelCap.getStarModels()), serverPlayer);
+                }
+            });
         }
     }
 
@@ -152,49 +118,18 @@ public class CommonEventHandler {
         }
         EntityPlayer player = event.player;
         if (event.side.isServer() && event.phase == TickEvent.Phase.END) {
-            // updateData(player);
-            if (player.hasCapability(Capabilities.MODEL_INFO_CAP, null)) {
-                ModelInfoCapability eep = player.getCapability(Capabilities.MODEL_INFO_CAP, null);
-                if (eep != null && eep.isDirty()) {
-                    SyncModelInfo syncMsg = new SyncModelInfo(player.getEntityId(), eep);
-                    NetworkRegistry.TargetPoint targetPoint = new NetworkRegistry.TargetPoint(
-                            player.dimension,
-                            player.posX,
-                            player.posY,
-                            player.posZ,
-                            64.0D // 64个方块的范围，这是一个常用值
-                    );
-                    NetworkHandler.CHANNEL.sendToAllAround(syncMsg, targetPoint);
-                    eep.setDirty(false);
+            Capabilities.getModelInfoCap(player).ifPresent(cap -> {
+                if (cap.isDirty()){
+                    SyncModelInfo syncMsg = new SyncModelInfo(player.getEntityId(), cap);
+                    if (player.getServer() == null) {
+                        return;
+                    }
+                    player.getServer().getPlayerList().getPlayers().forEach(p -> NetworkHandler.sendToClientPlayer(syncMsg, p));
+                    cap.setDirty(false);
                 }
-            }
+            });
+
         }
     }
 
-    /*
-    private static void updateData(EntityPlayer player) {
-        byte oldData = player.getDataManager().get(MOTION_DATAWATCHER_ID);
-        byte newData;
-        boolean oldOnGround = (oldData & ON_GROUND) != 0;
-        boolean oldIsFlying = (oldData & IS_FLYING) != 0;
-        boolean currentOnGround = player.onGround;
-        boolean currentIsFlying = player.capabilities.isFlying;
-        if (oldOnGround != currentOnGround) {
-            if (currentOnGround) {
-                newData = (byte) (oldData | ON_GROUND);
-            } else {
-                newData = (byte) (oldData & ~ON_GROUND);
-            }
-            player.getDataManager().set(MOTION_DATAWATCHER_ID, newData);
-        }
-        if (oldIsFlying != currentIsFlying) {
-            if (currentIsFlying) {
-                newData = (byte) (oldData | IS_FLYING);
-            } else {
-                newData = (byte) (oldData & ~IS_FLYING);
-            }
-            player.getDataManager().set(MOTION_DATAWATCHER_ID, newData);
-        }
-    }
-     */
 }

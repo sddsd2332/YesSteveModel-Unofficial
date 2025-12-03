@@ -1,16 +1,14 @@
 package com.fox.ysmu.client.animation.condition;
 
-import java.util.List;
-
+import com.fox.ysmu.util.ResourceLocationHelp;
+import com.google.common.collect.Lists;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.OreDictionary;
 
-import com.google.common.collect.Lists;
+import java.util.List;
 
 
 public class ConditionalSwing {
@@ -28,14 +26,12 @@ public class ConditionalSwing {
             return;
         }
         String substring = name.substring(PRE_SIZE);
-        if (name.startsWith(ID_PRE)) {
-            // 1.7.10: 简单验证格式即可，不再有 isValidResourceLocation 方法
-            if (substring.contains(":")) {
-                idTest.add(new ResourceLocation(name.substring(PRE_SIZE)));
-            }
+        if (name.startsWith(ID_PRE) && ResourceLocationHelp.isValidResourceLocation(substring)) {
+            idTest.add(new ResourceLocation(name.substring(PRE_SIZE)));
         }
-        if (name.startsWith(TAG_PRE)) {
+        if (name.startsWith(TAG_PRE) && ResourceLocationHelp.isValidResourceLocation(substring)) {
             // 1.7.10: 这里处理的是矿物词典名称
+            //TODO
             tagTest.add(substring);
         }
     }
@@ -56,9 +52,7 @@ public class ConditionalSwing {
             return EMPTY;
         }
         ItemStack itemInHand = player.getHeldItem(hand);
-        ResourceLocation registryName = ForgeRegistries.ITEMS.getKey(itemInHand.getItem());
-        // 1.7.10: 使用 GameRegistry 获取物品的唯一标识符
-     //   GameRegistry.UniqueIdentifier uid = GameRegistry.findUniqueIdentifierFor(itemInHand.getItem());
+        ResourceLocation registryName = itemInHand.getItem().getRegistryName();
         if (registryName == null) {
             return EMPTY;
         }

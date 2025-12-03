@@ -1,6 +1,6 @@
 package com.fox.ysmu;
 
-import com.fox.ysmu.capabilities.Capabilities;
+import com.fox.ysmu.capability.Capabilities;
 import com.fox.ysmu.event.CommonEventHandler;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -15,12 +15,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-@Mod(modid = ysmu.MODID, version = Tags.VERSION, name = "ysmu", acceptedMinecraftVersions = "[1.12.2]")
+@Mod(modid = YesSteveModel.MOD_ID, version = Tags.VERSION, name = "ysmu", acceptedMinecraftVersions = "[1.12.2]")
 @Mod.EventBusSubscriber()
-public class ysmu {
+public class YesSteveModel {
 
-    public static final String MODID = "ysmu";
-    public static final Logger LOG = LogManager.getLogger(MODID);
+    public static final String MOD_ID = "ysmu";
+    public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
     public static final Gson GSON = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
 
     @SidedProxy(clientSide = "com.fox.ysmu.client.ClientProxy", serverSide = "com.fox.ysmu.CommonProxy")
@@ -37,8 +37,8 @@ public class ysmu {
     @Mod.EventHandler
     // load "Do your mod setup. Build whatever data structures you care about. Register recipes." (Remove if not needed)
     public void init(FMLInitializationEvent event) {
-        MinecraftForge.EVENT_BUS.register(new CommonEventHandler());
         MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(new CommonEventHandler());
         proxy.init(event);
     }
 

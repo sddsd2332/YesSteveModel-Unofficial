@@ -24,8 +24,7 @@ public class GeoModel implements Serializable {
     public ModelProperties properties;
 
     public boolean hasTopLevelBone(String name) {
-        return topLevelBones.stream()
-            .anyMatch(bone -> bone.name.equals(name));
+        return topLevelBones.stream().anyMatch(bone -> bone.name.equals(name));
     }
 
     public Optional<GeoBone> getTopLevelBone(String name) {

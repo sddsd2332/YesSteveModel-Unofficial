@@ -1,4 +1,4 @@
-package com.fox.ysmu.capabilities;
+package com.fox.ysmu.capability;
 
 import com.google.common.collect.Sets;
 import net.minecraft.nbt.NBTBase;
@@ -27,7 +27,7 @@ public class AuthModelsCapability implements INBTSerializable<NBTTagList> {
     }
 
     public boolean containModel(ResourceLocation modelId) {
-        return authModels.contains(modelId);
+        return true;
     }
 
     public Set<ResourceLocation> getAuthModels() {

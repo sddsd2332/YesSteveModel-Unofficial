@@ -31,7 +31,7 @@ import com.fox.ysmu.network.message.SyncModelFiles;
 import com.fox.ysmu.util.GsonHelper;
 import com.fox.ysmu.util.ModelIdUtil;
 import com.fox.ysmu.util.ThreadTools;
-import com.fox.ysmu.ysmu;
+import com.fox.ysmu.YesSteveModel;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
@@ -64,7 +64,7 @@ public class ClientModelManager {
     public static byte[] PASSWORD;
 
     public static void registerAll(ModelData data) {
-        ResourceLocation modelId = new ResourceLocation(ysmu.MODID, data.getModelId());
+        ResourceLocation modelId = new ResourceLocation(YesSteveModel.MOD_ID, data.getModelId());
         if (data.isAuth()) {
             AUTH_MODELS.add(data.getModelId());
         }
@@ -82,7 +82,7 @@ public class ClientModelManager {
 
     private static void registerGeo(ResourceLocation id, byte[] data) {
         Map<ResourceLocation, GeoModel> geoModels = GeckoLibCache.getInstance()
-            .getGeoModels();
+                .getGeoModels();
         try {
             // 直接从字节数组解析JSON，而不是尝试反序列化对象
             String modelJson = new String(data, StandardCharsets.UTF_8);
@@ -91,14 +91,14 @@ public class ClientModelManager {
             if (rawModel.getFormatVersion() == FormatVersion.VERSION_1_12_0) {
                 RawGeometryTree rawGeometryTree = RawGeometryTree.parseHierarchy(rawModel);
                 GeoModel geoModel = GeoBuilder.getGeoBuilder(id.getNamespace())
-                    .constructGeoModel(rawGeometryTree);
+                        .constructGeoModel(rawGeometryTree);
                 SCALE_INFO.put(
-                    id,
-                    Pair.of(rawGeometryTree.properties.getHeightScale(), rawGeometryTree.properties.getWidthScale()));
+                        id,
+                        Pair.of(rawGeometryTree.properties.getHeightScale(), rawGeometryTree.properties.getWidthScale()));
                 ExtraInfo extraInfo = rawGeometryTree.properties.getExtraInfo();
                 EXTRA_INFO.put(id, handleExtraInfo(id, extraInfo));
                 if (extraInfo != null && extraInfo.getExtraAnimationNames() != null
-                    && extraInfo.getExtraAnimationNames().length > 0) {
+                        && extraInfo.getExtraAnimationNames().length > 0) {
                     EXTRA_ANIMATION_NAME.put(id, extraInfo.getExtraAnimationNames());
                 }
                 geoModels.put(id, geoModel);
@@ -129,8 +129,7 @@ public class ClientModelManager {
     }
 
     private static void registerAnimations(ResourceLocation id, Map<String, byte[]> mapData) {
-        Map<ResourceLocation, AnimationFile> animations = GeckoLibCache.getInstance()
-            .getAnimations();
+        Map<ResourceLocation, AnimationFile> animations = GeckoLibCache.getInstance().getAnimations();
         AnimationFile main = new AnimationFile();
         mapData.forEach((name, bytes) -> {
             AnimationFile other = getAnimationFile(new String(bytes, StandardCharsets.UTF_8));
@@ -148,7 +147,7 @@ public class ClientModelManager {
     private static AnimationFile getAnimationFile(String file) {
         AnimationFile animationFile = new AnimationFile();
         MolangParser parser = GeckoLibCache.getInstance().parser;
-        JsonObject jsonObject = GsonHelper.fromJson(ysmu.GSON, file, JsonObject.class);
+        JsonObject jsonObject = GsonHelper.fromJson(YesSteveModel.GSON, file, JsonObject.class);
         if (jsonObject != null) {
             for (Map.Entry<String, JsonElement> entry : JsonAnimationUtils.getAnimations(jsonObject)) {
                 String animationName = entry.getKey();
@@ -173,10 +172,9 @@ public class ClientModelManager {
     public static void loadDefaultModel() {
         try {
             ModelData data = FolderFormat.getModelData(ServerModelManager.CUSTOM, "default", false);
-            data.getAnimation()
-                .forEach((name, bytes) -> {
-                    AnimationFile animationFile = getAnimationFile(new String(bytes, StandardCharsets.UTF_8));
-                    mergeAnimationFile(DEFAULT_ANIMATION_FILE, animationFile);
+            data.getAnimation().forEach((name, bytes) -> {
+                AnimationFile animationFile = getAnimationFile(new String(bytes, StandardCharsets.UTF_8));
+                mergeAnimationFile(DEFAULT_ANIMATION_FILE, animationFile);
                 });
             ClientModelManager.registerAll(data);
         } catch (IOException e) {

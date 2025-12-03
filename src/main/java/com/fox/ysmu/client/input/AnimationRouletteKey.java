@@ -17,7 +17,7 @@ public class AnimationRouletteKey {
 
     @SubscribeEvent
     public static void onKeyboardInput(InputEvent.KeyInputEvent event) {
-        if (ANIMATION_ROULETTE_KEY.isPressed()) {
+        if (ANIMATION_ROULETTE_KEY.isKeyDown()) {
             Minecraft.getMinecraft().displayGuiScreen(new AnimationRouletteScreen());
         }
     }

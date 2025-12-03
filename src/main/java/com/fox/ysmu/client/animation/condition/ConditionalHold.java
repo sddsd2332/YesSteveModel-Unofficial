@@ -1,11 +1,11 @@
 package com.fox.ysmu.client.animation.condition;
 
+import com.fox.ysmu.util.ResourceLocationHelp;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.List;
@@ -38,13 +38,12 @@ public class ConditionalHold {
             return;
         }
         String substring = name.substring(preSize);
-        if (name.startsWith(idPre)) {
-            if (substring.contains(":")) {
-                idTest.add(new ResourceLocation(substring));
-            }
+        if (name.startsWith(idPre) && ResourceLocationHelp.isValidResourceLocation(substring)) {
+            idTest.add(new ResourceLocation(substring));
         }
-        if (name.startsWith(tagPre)) {
+        if (name.startsWith(tagPre) && ResourceLocationHelp.isValidResourceLocation(substring)) {
             // 1.7.10: 这里处理的是矿物词典名称
+            //TODO
             tagTest.add(substring);
         }
     }
@@ -65,7 +64,7 @@ public class ConditionalHold {
             return EMPTY;
         }
         ItemStack itemInHand = player.getHeldItem(hand);
-        ResourceLocation registryName = ForgeRegistries.ITEMS.getKey(itemInHand.getItem());
+        ResourceLocation registryName = itemInHand.getItem().getRegistryName();
         if (registryName == null) {
             return EMPTY;
         }
@@ -80,6 +79,7 @@ public class ConditionalHold {
             return EMPTY;
         }
         ItemStack itemInHand = player.getHeldItem(hand);
+
         // 获取物品堆栈对应的所有矿辞ID
         int[] oreIDs = OreDictionary.getOreIDs(itemInHand);
         if (oreIDs.length == 0) {

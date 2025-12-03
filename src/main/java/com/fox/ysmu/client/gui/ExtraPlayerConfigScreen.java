@@ -4,7 +4,6 @@ import com.fox.ysmu.Config;
 import com.fox.ysmu.util.RenderUtil;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
-import org.lwjgl.input.Keyboard;
 
 import java.io.IOException;
 import java.util.List;

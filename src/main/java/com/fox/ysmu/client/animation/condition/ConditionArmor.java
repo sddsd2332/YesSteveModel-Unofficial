@@ -1,14 +1,12 @@
-// TODO 待检查
 package com.fox.ysmu.client.animation.condition;
 
+import com.fox.ysmu.util.ResourceLocationHelp;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nullable;
@@ -24,21 +22,18 @@ public class ConditionArmor {
     private static final Pattern TAG_PRE_REG = Pattern.compile("^(.+?)#(.*?)$");
     private static final String EMPTY = "";
 
-    // 1.7.10: 使用 Integer 作为 Key 来代表装备槽位索引
     private final Map<EntityEquipmentSlot, List<ResourceLocation>> idTest = Maps.newHashMap();
     private final Map<EntityEquipmentSlot, List<String>> tagTest = Maps.newHashMap();
 
     public void addTest(String name) {
         Matcher matcherId = ID_PRE_REG.matcher(name);
         if (matcherId.find()) {
-            // 1.7.10: 将字符串槽位名转换为整数索引
             EntityEquipmentSlot type = getType(matcherId.group(1));
             if (type == null) {
                 return;
             }
             String id = matcherId.group(2);
-            // 1.7.10: 简单验证ID格式
-            if (!id.contains(":")) {
+            if (!ResourceLocationHelp.isValidResourceLocation(id)) {
                 return;
             }
             ResourceLocation res = new ResourceLocation(id);
@@ -57,9 +52,10 @@ public class ConditionArmor {
                 return;
             }
             String id = matcherTag.group(2);
-            if (!id.contains(":")) {
+            if (!ResourceLocationHelp.isValidResourceLocation(id)) {
                 return;
             }
+            ResourceLocation res = new ResourceLocation(id);
             if (tagTest.containsKey(type)) {
                 tagTest.get(type).add(id);
             } else {
@@ -68,7 +64,6 @@ public class ConditionArmor {
         }
     }
 
-    // 1.7.10: 方法签名改变，使用 EntityPlayer 和 int 索引
     public String doTest(EntityPlayer player, EntityEquipmentSlot slot) {
         ItemStack item = player.getItemStackFromSlot(slot);
         if (item.isEmpty()) {
@@ -90,7 +85,7 @@ public class ConditionArmor {
         }
         List<ResourceLocation> idListTest = idTest.get(slot);
         ItemStack item = player.getItemStackFromSlot(slot);
-        ResourceLocation registryName = ForgeRegistries.ITEMS.getKey(item.getItem());
+        ResourceLocation registryName = item.getItem().getRegistryName();
         if (registryName == null) {
             return EMPTY;
         }
@@ -109,7 +104,7 @@ public class ConditionArmor {
         }
         List<String> oreDictListTest = tagTest.get(slot);
         ItemStack item = player.getItemStackFromSlot(slot);
-        if (item.isEmpty()){
+        if (item.isEmpty()) {
             return EMPTY;
         }
 

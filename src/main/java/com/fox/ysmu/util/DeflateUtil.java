@@ -39,4 +39,3 @@ public final class DeflateUtil {
         return stream.toByteArray();
     }
 }
-

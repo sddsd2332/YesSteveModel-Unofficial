@@ -37,17 +37,13 @@ import java.util.Collections;
 import java.util.List;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-public abstract class GeoEntityRenderer<T extends EntityLivingBase & IAnimatable> extends Render<T>
-        implements IGeoRenderer<T> {
+public abstract class GeoEntityRenderer<T extends EntityLivingBase & IAnimatable> extends Render<T> implements IGeoRenderer<T> {
+
 
     static {
-        AnimationController.addModelFetcher((IAnimatable object) -> {
-            if (object instanceof Entity) {
-                return (IAnimatableModel<Object>) AnimationUtils.getGeoModelForEntity((Entity) object);
-            }
-            return null;
-        });
+        AnimationController.addModelFetcher(animatable -> animatable instanceof Entity ? (IAnimatableModel<Object>) AnimationUtils.getGeoModelForEntity((Entity) animatable) : null);
     }
+
 
     protected final AnimatedGeoModel<T> modelProvider;
     protected float widthScale = 1;
@@ -133,15 +129,7 @@ public abstract class GeoEntityRenderer<T extends EntityLivingBase & IAnimatable
 
                 // if (!(entity instanceof EntityPlayer) || !((EntityPlayer) entity).isSpectator()) {
                 for (GeoLayerRenderer<T> layerRenderer : this.layerRenderers) {
-                    layerRenderer.render(
-                            (T) entity,
-                            limbSwing,
-                            limbSwingAmount,
-                            partialTicks,
-                            limbSwing,
-                            rotations.getValue(),
-                            headPitch,
-                            renderColor);
+                    layerRenderer.render((T) entity, limbSwing, limbSwingAmount, partialTicks, limbSwing, rotations.getValue(), headPitch, renderColor);
                 }
                 // }
                 if (entity instanceof EntityLiving) {

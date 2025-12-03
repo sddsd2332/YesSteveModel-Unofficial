@@ -1,7 +1,8 @@
 package com.fox.ysmu.network.message;
 
-import com.fox.ysmu.client.ClientModelManager;
 
+
+import com.fox.ysmu.client.ClientModelManager;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -21,7 +22,9 @@ public class RequestSyncModel implements IMessage {
 
         @Override
         public IMessage onMessage(RequestSyncModel message, MessageContext ctx) {
-            ClientModelManager.sendSyncModelMessage();
+            if (ctx.side.isClient()) {
+                ClientModelManager.sendSyncModelMessage();
+            }
             return null;
         }
     }

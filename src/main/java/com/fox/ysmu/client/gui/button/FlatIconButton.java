@@ -1,11 +1,11 @@
 package com.fox.ysmu.client.gui.button;
 
-import com.fox.ysmu.ysmu;
+import com.fox.ysmu.YesSteveModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
 public class FlatIconButton extends FlatColorButton {
-    private final static ResourceLocation ICON = new ResourceLocation(ysmu.MODID, "texture/icon.png");
+    private final static ResourceLocation ICON = new ResourceLocation(YesSteveModel.MOD_ID, "texture/icon.png");
     private final int textureX;
     private final int textureY;
 

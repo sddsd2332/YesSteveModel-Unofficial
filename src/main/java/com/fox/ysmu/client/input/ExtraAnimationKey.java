@@ -29,7 +29,7 @@ public class ExtraAnimationKey {
     @SubscribeEvent
     public static void onKeyboardInput(InputEvent.KeyInputEvent event) {
         for (KeyBinding key : EXTRA_ANIMATION_KEYS) {
-            if (key.isPressed()) {
+            if (key.isKeyDown()) {
                 NetworkHandler.CHANNEL.sendToServer(new SetPlayAnimation(EXTRA_ANIMATION_KEYS.indexOf(key)));
                 return;
             }

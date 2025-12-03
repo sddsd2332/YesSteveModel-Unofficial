@@ -1,7 +1,6 @@
-package com.fox.ysmu.client.gui.button;
+package com.fox.ysmu.client.gui;
 
 import com.fox.ysmu.Config;
-import com.fox.ysmu.client.gui.ExtraPlayerConfigScreen;
 import com.fox.ysmu.util.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
