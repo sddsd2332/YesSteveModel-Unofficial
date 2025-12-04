@@ -4,13 +4,16 @@ import com.google.common.collect.Sets;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.INBTSerializable;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
 
-public class AuthModelsCapability implements INBTSerializable<NBTTagList> {
+public class AuthModelsCapability  {
 
     private Set<ResourceLocation> authModels = Sets.newHashSet();
 
@@ -43,7 +46,7 @@ public class AuthModelsCapability implements INBTSerializable<NBTTagList> {
     }
 
 
-    @Override
+
     public NBTTagList serializeNBT() {
         NBTTagList listTag = new NBTTagList();
         for (ResourceLocation modelId : authModels) {
@@ -52,7 +55,7 @@ public class AuthModelsCapability implements INBTSerializable<NBTTagList> {
         return listTag;
     }
 
-    @Override
+
     public void deserializeNBT(NBTTagList nbt) {
         this.authModels.clear();
         for (NBTBase tag : nbt) {
@@ -62,4 +65,18 @@ public class AuthModelsCapability implements INBTSerializable<NBTTagList> {
         }
     }
 
+    public static class Storage implements Capability.IStorage<AuthModelsCapability> {
+        @Nullable
+        @Override
+        public NBTBase writeNBT(Capability<AuthModelsCapability> capability, AuthModelsCapability instance, EnumFacing side) {
+            return instance.serializeNBT();
+        }
+
+        @Override
+        public void readNBT(Capability<AuthModelsCapability> capability, AuthModelsCapability instance, EnumFacing side, NBTBase nbt) {
+            if (nbt instanceof NBTTagList tag) {
+                instance.deserializeNBT(tag);
+            }
+        }
+    }
 }

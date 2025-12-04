@@ -33,4 +33,5 @@ public class CommonProxy {
         event.registerServerCommand(new YsmCommand());
     }
 
+
 }

@@ -31,6 +31,7 @@ public class YesSteveModel {
     // GameRegistry." (Remove if not needed)
     public void preInit(FMLPreInitializationEvent event) {
         proxy.preInit(event);
+
         Capabilities.registerCapabilities();
     }
 

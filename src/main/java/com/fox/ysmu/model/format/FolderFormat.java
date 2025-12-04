@@ -1,6 +1,18 @@
 package com.fox.ysmu.model.format;
 
-import static com.fox.ysmu.model.ServerModelManager.*;
+import com.fox.ysmu.data.EncryptTools;
+import com.fox.ysmu.data.ModelData;
+import com.fox.ysmu.geckolib3.geo.raw.pojo.Converter;
+import com.fox.ysmu.geckolib3.geo.raw.pojo.RawGeoModel;
+import com.fox.ysmu.util.Md5Utils;
+import com.fox.ysmu.util.ResourceLocationHelp;
+import com.google.common.collect.Maps;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.DirectoryFileFilter;
+import org.apache.commons.io.filefilter.FileFileFilter;
+import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,21 +22,7 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.DirectoryFileFilter;
-import org.apache.commons.io.filefilter.FileFileFilter;
-import org.apache.commons.io.filefilter.TrueFileFilter;
-import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
-
-import com.fox.ysmu.compat.Utils;
-import com.fox.ysmu.data.EncryptTools;
-import com.fox.ysmu.data.ModelData;
-import com.fox.ysmu.util.Md5Utils;
-import com.google.common.collect.Maps;
-
-import com.fox.ysmu.geckolib3.geo.raw.pojo.Converter;
-import com.fox.ysmu.geckolib3.geo.raw.pojo.RawGeoModel;
+import static com.fox.ysmu.model.ServerModelManager.*;
 
 public final class FolderFormat {
 
@@ -34,17 +32,17 @@ public final class FolderFormat {
         dirs.remove(root);
         for (File dir : dirs) {
             String dirName = dir.getName();
-            if (!Utils.isValidResourceLocation(dirName)) {
+            if (!ResourceLocationHelp.isValidResourceLocation(dirName)) {
                 continue;
             }
             boolean noMainModelFile = true;
             boolean noArmModelFile = true;
             boolean noTextureFile = true;
             Collection<File> files = FileUtils.listFiles(
-                rootPath.resolve(dirName)
-                    .toFile(),
-                FileFileFilter.FILE,
-                null);
+                    rootPath.resolve(dirName)
+                            .toFile(),
+                    FileFileFilter.FILE,
+                    null);
             for (File file : files) {
                 String fileName = file.getName();
                 if (MAIN_MODEL_FILE_NAME.equals(fileName) && isNotBlankFile(file)) {
@@ -86,14 +84,14 @@ public final class FolderFormat {
             ModelData data = getModelData(rootPath, modelId, false);
             byte[] dataBytes = EncryptTools.assembleEncryptModels(data);
             data.setMd5(
-                Md5Utils.md5Hex(dataBytes)
-                    .toUpperCase(Locale.US));
+                    Md5Utils.md5Hex(dataBytes)
+                            .toUpperCase(Locale.US));
             FileUtils.writeByteArrayToFile(
-                CACHE_SERVER.resolve(
-                    data.getInfo()
-                        .getMd5())
-                    .toFile(),
-                dataBytes);
+                    CACHE_SERVER.resolve(
+                                    data.getInfo()
+                                            .getMd5())
+                            .toFile(),
+                    dataBytes);
             return data.getInfo();
         } catch (Exception e) {
             e.printStackTrace();
@@ -110,7 +108,7 @@ public final class FolderFormat {
         model.put("arm", getBytes(modelPath, ARM_MODEL_FILE_NAME));
 
         Map<String, byte[]> texture = Maps.newHashMap();
-        Collection<File> textures = FileUtils.listFiles(modelPath.toFile(), new String[] { "png" }, false);
+        Collection<File> textures = FileUtils.listFiles(modelPath.toFile(), new String[]{"png"}, false);
         for (File png : textures) {
             String fileName = png.getName();
             texture.put(fileName, getBytes(modelPath, fileName));
@@ -127,15 +125,15 @@ public final class FolderFormat {
     private static byte[] getBytes(Path root, String fileName) throws IOException {
         Path filePath = root.resolve(fileName);
         if (MAIN_ANIMATION_FILE_NAME.equals(fileName) && !filePath.toFile()
-            .isFile()) {
+                .isFile()) {
             filePath = CUSTOM.resolve("default/main.animation.json");
         }
         if (ARM_ANIMATION_FILE_NAME.equals(fileName) && !filePath.toFile()
-            .isFile()) {
+                .isFile()) {
             filePath = CUSTOM.resolve("default/arm.animation.json");
         }
         if (EXTRA_ANIMATION_FILE_NAME.equals(fileName) && !filePath.toFile()
-            .isFile()) {
+                .isFile()) {
             filePath = CUSTOM.resolve("default/extra.animation.json");
         }
 

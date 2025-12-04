@@ -28,18 +28,19 @@ public class SyncAuthModels implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        int size = buf.readInt();
-        this.authModels = Sets.newHashSet();
         PacketBuffer buffer = new PacketBuffer(buf);
+        int size = buffer.readVarInt();
+        Set<ResourceLocation> tmp = Sets.newHashSet();
         for (int i = 0; i < size; i++) {
-            this.authModels.add(buffer.readResourceLocation());
+            tmp.add(buffer.readResourceLocation());
         }
+        authModels = tmp;
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(this.authModels.size());
         PacketBuffer buffer = new PacketBuffer(buf);
+        buffer.writeVarInt(this.authModels.size());
         for (ResourceLocation modelId : this.authModels) {
             buffer.writeResourceLocation(modelId);
         }

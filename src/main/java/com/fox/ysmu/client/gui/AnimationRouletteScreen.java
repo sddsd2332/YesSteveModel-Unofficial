@@ -81,8 +81,7 @@ public class AnimationRouletteScreen extends GuiScreen {
             if (keyMapping.getKeyCode() == Keyboard.KEY_NONE) {
                 keyText.appendSibling(new TextComponentTranslation("key.yes_steve_model.extra_animation.none"));
             } else {
-                String keyName = Keyboard.getKeyName(keyMapping.getKeyCode());
-                keyText.appendSibling(new TextComponentString(keyName));
+                keyText.appendSibling(new TextComponentString(keyMapping.getDisplayName()));
             }
             keyText.appendSibling(new TextComponentString(" ]"));
             int textX = (int) (x + r * MathHelper.cos(startDeg));

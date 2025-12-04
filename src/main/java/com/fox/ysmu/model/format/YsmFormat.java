@@ -1,6 +1,15 @@
 package com.fox.ysmu.model.format;
 
-import static com.fox.ysmu.model.ServerModelManager.*;
+import com.fox.ysmu.data.EncryptTools;
+import com.fox.ysmu.data.ModelData;
+import com.fox.ysmu.geckolib3.geo.raw.pojo.Converter;
+import com.fox.ysmu.geckolib3.geo.raw.pojo.RawGeoModel;
+import com.fox.ysmu.util.Md5Utils;
+import com.fox.ysmu.util.ResourceLocationHelp;
+import com.fox.ysmu.util.YesModelUtils;
+import com.google.common.collect.Maps;
+import org.apache.commons.io.FileUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,26 +19,15 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
-import org.jetbrains.annotations.NotNull;
-
-import com.fox.ysmu.compat.Utils;
-import com.fox.ysmu.data.EncryptTools;
-import com.fox.ysmu.data.ModelData;
-import com.fox.ysmu.util.Md5Utils;
-import com.fox.ysmu.util.YesModelUtils;
-import com.google.common.collect.Maps;
-
-import com.fox.ysmu.geckolib3.geo.raw.pojo.Converter;
-import com.fox.ysmu.geckolib3.geo.raw.pojo.RawGeoModel;
+import static com.fox.ysmu.model.ServerModelManager.*;
 
 public final class YsmFormat {
 
     public static void cacheAllModels(Path rootPath) {
-        Collection<File> ysmFiles = FileUtils.listFiles(rootPath.toFile(), new String[] { "ysm" }, false);
+        Collection<File> ysmFiles = FileUtils.listFiles(rootPath.toFile(), new String[]{"ysm"}, false);
         for (File ysmFile : ysmFiles) {
             String modelId = removeExtension(ysmFile.getName());
-            if (!Utils.isValidResourceLocation(modelId)) {
+            if (!ResourceLocationHelp.isValidResourceLocation(modelId)) {
                 continue;
             }
             try {
@@ -44,8 +42,8 @@ public final class YsmFormat {
                     continue;
                 }
                 if (data.keySet()
-                    .stream()
-                    .noneMatch(fileName -> fileName.endsWith(".png"))) {
+                        .stream()
+                        .noneMatch(fileName -> fileName.endsWith(".png"))) {
                     continue;
                 }
 
@@ -72,14 +70,14 @@ public final class YsmFormat {
             ModelData data = getModelData(input, modelId, isAuth);
             byte[] dataBytes = EncryptTools.assembleEncryptModels(data);
             data.setMd5(
-                Md5Utils.md5Hex(dataBytes)
-                    .toUpperCase(Locale.US));
+                    Md5Utils.md5Hex(dataBytes)
+                            .toUpperCase(Locale.US));
             FileUtils.writeByteArrayToFile(
-                CACHE_SERVER.resolve(
-                    data.getInfo()
-                        .getMd5())
-                    .toFile(),
-                dataBytes);
+                    CACHE_SERVER.resolve(
+                                    data.getInfo()
+                                            .getMd5())
+                            .toFile(),
+                    dataBytes);
             return data.getInfo();
         } catch (Exception e) {
             e.printStackTrace();

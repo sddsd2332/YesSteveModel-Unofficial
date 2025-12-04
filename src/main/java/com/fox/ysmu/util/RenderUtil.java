@@ -12,6 +12,7 @@ import com.fox.ysmu.geckolib3.model.AnimatedGeoModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
@@ -279,6 +280,8 @@ public final class RenderUtil {
         float yHeadRotO = player.prevRotationYawHead;
         float yHeadRot = player.rotationYawHead;
 
+        //实际上不用保存物品
+        /*
         ItemStack[] itemStacks = new ItemStack[EntityEquipmentSlot.values().length];
         int i = 0;
         for (EntityEquipmentSlot slot : EntityEquipmentSlot.values()) {
@@ -286,6 +289,8 @@ public final class RenderUtil {
             player.setItemStackToSlot(slot, ItemStack.EMPTY);
             i++;
         }
+
+         */
 
         // 设置渲染状态
         player.renderYawOffset = 200;
@@ -316,12 +321,15 @@ public final class RenderUtil {
         player.prevRotationYawHead = yHeadRotO;
         player.rotationYawHead = yHeadRot;
 
+        /*
         i = 0;
         for (EntityEquipmentSlot slot : EntityEquipmentSlot.values()) {
             ItemStack itemStack = itemStacks[i];
-            player.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, itemStack);
+            player.setItemStackToSlot(slot, itemStack);
             i++;
         }
+
+         */
         RenderHelper.disableStandardItemLighting();
 
         GlStateManager.popMatrix();
@@ -329,7 +337,7 @@ public final class RenderUtil {
     }
 
     public static void renderPlayerEntity(EntityPlayer player, double posX, double posY, float scale, float yawOffset, double z, float pPartialTick) {
-        if (player != Minecraft.getMinecraft().player) return;
+        GlStateManager.enableColorMaterial();
         GlStateManager.pushMatrix();
         GlStateManager.translate(posX + scale * 0.5, posY + scale * 2, z);
         GlStateManager.scale(1, 1, -1);
@@ -338,15 +346,16 @@ public final class RenderUtil {
         GlStateManager.rotate(player.rotationYaw + yawOffset, 0.0F, 1.0F, 0.0F);
         GlStateManager.rotate(180, 0.0F, 1.0F, 0.0F);
         RenderHelper.enableStandardItemLighting();
-
         RenderManager renderDispatcher = Minecraft.getMinecraft().getRenderManager();
         renderDispatcher.setRenderShadow(false);
         Minecraft.getMinecraft().getRenderManager().renderEntity(player, 0.0D, 0.0D, 0.0D, 0.0F, pPartialTick, false);
         renderDispatcher.setRenderShadow(true);
-        RenderHelper.disableStandardItemLighting();
         GlStateManager.popMatrix();
-        GlStateManager.color(1, 1, 1, 1);
-
+        RenderHelper.disableStandardItemLighting();
+        GlStateManager.disableRescaleNormal();
+        GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+        GlStateManager.disableTexture2D();
+        GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
     }
 
 

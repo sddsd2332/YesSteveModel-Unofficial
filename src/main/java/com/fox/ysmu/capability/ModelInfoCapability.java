@@ -2,11 +2,15 @@ package com.fox.ysmu.capability;
 
 import com.fox.ysmu.Config;
 import com.fox.ysmu.YesSteveModel;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.common.capabilities.Capability;
 
-public class ModelInfoCapability implements INBTSerializable<NBTTagCompound> {
+import javax.annotation.Nullable;
+
+public class ModelInfoCapability {
 
     private ResourceLocation modelId = new ResourceLocation(YesSteveModel.MOD_ID, Config.DEFAULT_MODEL_ID);
     private ResourceLocation selectTexture = new ResourceLocation(YesSteveModel.MOD_ID, Config.DEFAULT_MODEL_ID + "/" + Config.DEFAULT_MODEL_TEXTURE);
@@ -73,7 +77,6 @@ public class ModelInfoCapability implements INBTSerializable<NBTTagCompound> {
     }
 
 
-    @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setString("model_id", this.modelId.toString());
@@ -83,11 +86,26 @@ public class ModelInfoCapability implements INBTSerializable<NBTTagCompound> {
         return tag;
     }
 
-    @Override
+
     public void deserializeNBT(NBTTagCompound nbt) {
         this.modelId = new ResourceLocation(nbt.getString("model_id"));
         this.selectTexture = new ResourceLocation(nbt.getString("select_texture"));
         this.animation = nbt.getString("animation");
         this.playAnimation = nbt.getBoolean("play_animation");
+    }
+
+    public static class Storage implements Capability.IStorage<ModelInfoCapability> {
+        @Nullable
+        @Override
+        public NBTBase writeNBT(Capability<ModelInfoCapability> capability, ModelInfoCapability instance, EnumFacing side) {
+            return instance.serializeNBT();
+        }
+
+        @Override
+        public void readNBT(Capability<ModelInfoCapability> capability, ModelInfoCapability instance, EnumFacing side, NBTBase nbt) {
+            if (nbt instanceof NBTTagCompound tag) {
+                instance.deserializeNBT(tag);
+            }
+        }
     }
 }

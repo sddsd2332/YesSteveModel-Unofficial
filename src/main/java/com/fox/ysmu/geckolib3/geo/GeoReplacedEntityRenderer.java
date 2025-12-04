@@ -63,6 +63,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
         super(renderManager);
         this.modelProvider = modelProvider;
         this.animatable = animatable;
+
     }
 
     public static void registerReplacedEntity(Class<? extends IAnimatable> itemClass,
@@ -156,11 +157,12 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
                 ((IAnimatableModel<T>) modelProvider)
                         .setLivingAnimations(animatable, this.getUniqueID(entity), predicate);
             }
-
             GlStateManager.pushMatrix();
             try {
                 GlStateManager.translate(0, 0.01f, 0);
-                Minecraft.getMinecraft().renderEngine.bindTexture(getEntityTexture(entity));
+                if (getEntityTexture(entity) != null) {
+                    Minecraft.getMinecraft().renderEngine.bindTexture(getEntityTexture(entity));
+                }
                 Color renderColor = getRenderColor(entity, partialTicks);
 
                 if (!entity.isInvisibleToPlayer(Minecraft.getMinecraft().player)) render(
@@ -237,14 +239,12 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
                 f = 1.0F;
             }
             GlStateManager.rotate(f * this.getDeathMaxRotation(entityLiving), 0, 0, 1);
-        }else if (entityLiving.isPlayerSleeping()) {
+        } else if (entityLiving.isPlayerSleeping()) {
             EnumFacing bedOrientation = getBedOrientation(entityLiving);
-            GlStateManager.rotate((bedOrientation != null ? getFacingAngle(bedOrientation) : rotationYaw),0.0F, 1.0F, 0.0F);
-            GlStateManager.rotate(getDeathMaxRotation(entityLiving),0.0F, 0.0F, 1.0F);
-            GlStateManager.rotate(270f,0.0F, 1.0F, 0.0F);
-        }
-
-        else if (entityLiving.hasCustomName() || entityLiving instanceof EntityPlayer) {
+            GlStateManager.rotate((bedOrientation != null ? getFacingAngle(bedOrientation) : rotationYaw), 0.0F, 1.0F, 0.0F);
+            GlStateManager.rotate(getDeathMaxRotation(entityLiving), 0.0F, 0.0F, 1.0F);
+            GlStateManager.rotate(270f, 0.0F, 1.0F, 0.0F);
+        } else if (entityLiving.hasCustomName() || entityLiving instanceof EntityPlayer) {
             String s = ChatFormatting.stripFormatting(entityLiving.getName());
             if (("Dinnerbone".equals(s) || "Grumm".equals(s)) && (!(entityLiving instanceof EntityPlayer))) {
                 GlStateManager.translate(0.0D, (double) (entityLiving.height + 0.1F), 0.0D);

@@ -24,14 +24,16 @@ public class SetStarModel implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        this.modelId = new PacketBuffer(buf).readResourceLocation();
-        this.isAdd = buf.readBoolean();
+        PacketBuffer buffer =  new PacketBuffer(buf);
+        this.modelId = buffer.readResourceLocation();
+        this.isAdd = buffer.readBoolean();
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        new PacketBuffer(buf).writeResourceLocation(modelId);
-        buf.writeBoolean(this.isAdd);
+        PacketBuffer buffer =  new PacketBuffer(buf);
+        buffer.writeResourceLocation(modelId);
+        buffer.writeBoolean(this.isAdd);
     }
 
     public static SetStarModel add(ResourceLocation modelId) {

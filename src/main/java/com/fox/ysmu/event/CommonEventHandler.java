@@ -28,36 +28,27 @@ public class CommonEventHandler {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    @SubscribeEvent
-    public static void onPlayerLoggedIn(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent event) {
-        // 调用发送模型同步请求的方法
-        if (event.player != null) {
-            ServerModelManager.sendRequestSyncModelMessage(event.player);
-        }
-    }
-
-
-    private static final ResourceLocation MODEL_INFO_CAP = new ResourceLocation(YesSteveModel.MOD_ID, "model_id");
-    private static final ResourceLocation AUTH_MODELS_CAP = new ResourceLocation(YesSteveModel.MOD_ID, "own_models");
-    private static final ResourceLocation STAR_MODELS_CAP = new ResourceLocation(YesSteveModel.MOD_ID, "star_models");
+    private final ResourceLocation MODEL_INFO_CAP = new ResourceLocation(YesSteveModel.MOD_ID, "model_id");
+    private final ResourceLocation AUTH_MODELS_CAP = new ResourceLocation(YesSteveModel.MOD_ID, "own_models");
+    private final ResourceLocation STAR_MODELS_CAP = new ResourceLocation(YesSteveModel.MOD_ID, "star_models");
 
     @SubscribeEvent
     public void attachCaps(AttachCapabilitiesEvent<Entity> event) {
         if (event.getObject() instanceof EntityPlayer player) {
-            if (!player.hasCapability(Capabilities.MODEL_INFO_CAP, null) && !event.getCapabilities().containsKey(MODEL_INFO_CAP)) {
+            if (!player.hasCapability(ModelInfoCapabilityProvider.MODEL_INFO_CAP, null) && !event.getCapabilities().containsKey(MODEL_INFO_CAP)) {
                 event.addCapability(MODEL_INFO_CAP, new ModelInfoCapabilityProvider());
             }
-            if (!player.hasCapability(Capabilities.AUTH_MODELS_CAP, null) && !event.getCapabilities().containsKey(AUTH_MODELS_CAP)) {
+            if (!player.hasCapability(AuthModelsCapabilityProvider.AUTH_MODELS_CAP, null) && !event.getCapabilities().containsKey(AUTH_MODELS_CAP)) {
                 event.addCapability(AUTH_MODELS_CAP, new AuthModelsCapabilityProvider());
             }
-            if (!player.hasCapability(Capabilities.STAR_MODELS_CAP, null) && !event.getCapabilities().containsKey(STAR_MODELS_CAP)) {
+            if (!player.hasCapability(StarModelsCapabilityProvider.STAR_MODELS_CAP, null) && !event.getCapabilities().containsKey(STAR_MODELS_CAP)) {
                 event.addCapability(STAR_MODELS_CAP, new StarModelsCapabilityProvider());
             }
         }
     }
 
     @SubscribeEvent
-    public static void onPlayerClone(net.minecraftforge.event.entity.player.PlayerEvent.Clone event) {
+    public void onPlayerClone(PlayerEvent.Clone event) {
 
         Optional<ModelInfoCapability> oldModelInfoCap = Capabilities.getModelInfoCap(event.getOriginal());
         Optional<AuthModelsCapability> oldAuthModelsCap = Capabilities.getAuthModelsCap(event.getOriginal());
@@ -73,7 +64,7 @@ public class CommonEventHandler {
     }
 
     @SubscribeEvent
-    public static void onStartTracking(PlayerEvent.StartTracking event) {
+    public void onStartTracking(PlayerEvent.StartTracking event) {
         if (event.getTarget() instanceof EntityPlayer trackPlayer) {
             EntityPlayer player = event.getEntityPlayer();
             Capabilities.getModelInfoCap(trackPlayer).ifPresent(cap -> {
@@ -84,7 +75,7 @@ public class CommonEventHandler {
     }
 
     @SubscribeEvent
-    public static void onEntityJoinWorld(EntityJoinWorldEvent event) {
+    public void onEntityJoinWorld(EntityJoinWorldEvent event) {
         if (event.getEntity() instanceof EntityPlayer player) {
             Capabilities.getModelInfoCap(player).ifPresent(modelInfoCap -> {
                 if (player instanceof EntityPlayerMP serverPlayer) {
@@ -112,14 +103,14 @@ public class CommonEventHandler {
     }
 
     @SubscribeEvent
-    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+    public void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.player == null) {
             return;
         }
         EntityPlayer player = event.player;
         if (event.side.isServer() && event.phase == TickEvent.Phase.END) {
             Capabilities.getModelInfoCap(player).ifPresent(cap -> {
-                if (cap.isDirty()){
+                if (cap.isDirty()) {
                     SyncModelInfo syncMsg = new SyncModelInfo(player.getEntityId(), cap);
                     if (player.getServer() == null) {
                         return;

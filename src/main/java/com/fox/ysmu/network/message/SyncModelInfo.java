@@ -2,6 +2,7 @@ package com.fox.ysmu.network.message;
 
 import com.fox.ysmu.capability.Capabilities;
 import com.fox.ysmu.capability.ModelInfoCapability;
+import com.fox.ysmu.network.NetworkHandler;
 import com.fox.ysmu.util.ThreadTools;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -32,14 +33,15 @@ public class SyncModelInfo implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        entityId = buf.readInt();
         PacketBuffer buffer = new PacketBuffer(buf);
+        entityId = buffer.readVarInt();
         try {
             NBTTagCompound compoundTag = buffer.readCompoundTag();
             ModelInfoCapability cap = new ModelInfoCapability();
             if (compoundTag != null) {
                 cap.deserializeNBT(compoundTag);
             }
+            capability = cap;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -47,8 +49,9 @@ public class SyncModelInfo implements IMessage {
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(entityId);
-        new PacketBuffer(buf).writeCompoundTag(capability.serializeNBT());
+        PacketBuffer buffer = new PacketBuffer(buf);
+        buffer.writeVarInt(entityId);
+        buffer.writeCompoundTag(capability.serializeNBT());
     }
 
     public static class Handler implements IMessageHandler<SyncModelInfo, IMessage> {
@@ -65,6 +68,14 @@ public class SyncModelInfo implements IMessage {
         @SideOnly(Side.CLIENT)
         private void handleCapability(SyncModelInfo message) {
             Minecraft mc = Minecraft.getMinecraft();
+            //首次加载世界的时候需要等一下
+            if (mc.world == null) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
             if (mc.world != null) {
                 ThreadTools.THREAD_POOL.submit(() -> {
                     try {

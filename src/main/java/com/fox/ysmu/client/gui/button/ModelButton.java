@@ -1,9 +1,7 @@
 package com.fox.ysmu.client.gui.button;
 
 import com.fox.ysmu.YesSteveModel;
-import com.fox.ysmu.capability.Capabilities;
-import com.fox.ysmu.capability.ModelInfoCapability;
-import com.fox.ysmu.capability.StarModelsCapability;
+import com.fox.ysmu.capability.*;
 import com.fox.ysmu.network.NetworkHandler;
 import com.fox.ysmu.network.message.SetModelAndTexture;
 import com.fox.ysmu.util.RenderUtil;
@@ -41,8 +39,8 @@ public class ModelButton extends GuiButton {
         if (this.needAuth) {
             return;
         }
-        if (player.hasCapability(Capabilities.MODEL_INFO_CAP, null)) {
-            ModelInfoCapability cap = player.getCapability(Capabilities.MODEL_INFO_CAP, null);
+        if (player.hasCapability(ModelInfoCapabilityProvider.MODEL_INFO_CAP, null)) {
+            ModelInfoCapability cap = player.getCapability(ModelInfoCapabilityProvider.MODEL_INFO_CAP, null);
             if (cap != null) {
                 cap.setModelAndTexture(modelInfo.getLeft(), modelInfo.getRight().get(0));
             }
@@ -87,8 +85,8 @@ public class ModelButton extends GuiButton {
             this.drawGradientRect(this.x, this.y + this.height - 1, this.x + this.width, this.y + this.height, 0xFFF3EFE0, 0xFFF3EFE0);
         }
         // 收藏图标
-        if (player.hasCapability(Capabilities.STAR_MODELS_CAP, null)) {
-            StarModelsCapability cap = player.getCapability(Capabilities.STAR_MODELS_CAP, null);
+        if (player.hasCapability(StarModelsCapabilityProvider.STAR_MODELS_CAP, null)) {
+            StarModelsCapability cap = player.getCapability(StarModelsCapabilityProvider.STAR_MODELS_CAP, null);
             if (cap != null && cap.containModel(modelInfo.getLeft())) {
                 // graphics.blit
                 mc.getTextureManager().bindTexture(ICON);

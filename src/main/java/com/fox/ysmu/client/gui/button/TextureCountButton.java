@@ -2,6 +2,7 @@ package com.fox.ysmu.client.gui.button;
 
 import com.fox.ysmu.capability.Capabilities;
 import com.fox.ysmu.capability.ModelInfoCapability;
+import com.fox.ysmu.capability.ModelInfoCapabilityProvider;
 import com.fox.ysmu.client.ClientModelManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,8 +24,8 @@ public class TextureCountButton extends FlatColorButton {
     private void updateDisplayString() {
         EntityPlayer player = Minecraft.getMinecraft().player;
         if (player != null) {
-            if (player.hasCapability(Capabilities.MODEL_INFO_CAP, null)) {
-                ModelInfoCapability cap = player.getCapability(Capabilities.MODEL_INFO_CAP, null);
+            if (player.hasCapability(ModelInfoCapabilityProvider.MODEL_INFO_CAP, null)) {
+                ModelInfoCapability cap = player.getCapability(ModelInfoCapabilityProvider.MODEL_INFO_CAP, null);
                 if (cap != null) {
                     ResourceLocation modelId = cap.getModelId();
                     if (ClientModelManager.MODELS.containsKey(modelId)) {

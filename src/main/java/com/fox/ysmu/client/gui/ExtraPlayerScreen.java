@@ -8,25 +8,22 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 
 public class ExtraPlayerScreen {
 
-    public static void render(RenderGameOverlayEvent.Post event) {
-        Minecraft minecraft = Minecraft.getMinecraft();
-        if (event.getType() == RenderGameOverlayEvent.ElementType.HOTBAR) {
-            if (Config.DISABLE_PLAYER_RENDER) {
-                return;
-            }
-            EntityPlayer player = minecraft.player;
-            if (player == null) {
-                return;
-            }
-            if (minecraft.currentScreen instanceof ExtraPlayerConfigScreen) {
-                return;
-            }
-
-            double posX = Config.PLAYER_POS_X;
-            double posY = Config.PLAYER_POS_Y;
-            float scale = (float) Config.PLAYER_SCALE;
-            float yawOffset = (float) Config.PLAYER_YAW_OFFSET;
-            RenderUtil.renderPlayerEntity(player, posX, posY, scale, yawOffset, -500,event.getPartialTicks());
+    public static void render(RenderGameOverlayEvent.Text event) {
+        if (Config.DISABLE_PLAYER_RENDER) {
+            return;
         }
+        Minecraft minecraft = Minecraft.getMinecraft();
+        EntityPlayer player = minecraft.player;
+        if (player == null) {
+            return;
+        }
+        if (minecraft.currentScreen instanceof ExtraPlayerConfigScreen) {
+            return;
+        }
+        double posX = Config.PLAYER_POS_X;
+        double posY = Config.PLAYER_POS_Y;
+        float scale = (float) Config.PLAYER_SCALE;
+        float yawOffset = (float) Config.PLAYER_YAW_OFFSET;
+        RenderUtil.renderPlayerEntity(player, posX, posY, scale, yawOffset, -500, event.getPartialTicks());
     }
 }

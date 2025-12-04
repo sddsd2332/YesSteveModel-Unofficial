@@ -1,12 +1,15 @@
 package com.fox.ysmu.client.gui;
 
+import com.fox.ysmu.Config;
 import com.fox.ysmu.Tags;
 import com.fox.ysmu.capability.AuthModelsCapability;
+import com.fox.ysmu.capability.AuthModelsCapabilityProvider;
 import com.fox.ysmu.capability.Capabilities;
 import com.fox.ysmu.client.ClientModelManager;
 import com.fox.ysmu.client.gui.button.*;
 import com.fox.ysmu.compat.YsmConverter;
 import com.fox.ysmu.util.ModelIdUtil;
+import com.fox.ysmu.util.RenderUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.client.Minecraft;
@@ -136,8 +139,8 @@ public class PlayerModelScreen extends GuiScreen {
             ResourceLocation id = modelOrderList.get(modelIndex);
             int xStart = x + 143 + 55 * (i % 5);
             int yStart = y + 28 + 93 * (i / 5);
-            if (player.hasCapability(Capabilities.AUTH_MODELS_CAP, null)) {
-                AuthModelsCapability cap = player.getCapability(Capabilities.AUTH_MODELS_CAP, null);
+            if (player.hasCapability(AuthModelsCapabilityProvider.AUTH_MODELS_CAP, null)) {
+                AuthModelsCapability cap = player.getCapability(AuthModelsCapabilityProvider.AUTH_MODELS_CAP, null);
                 if (cap != null) {
                     boolean needAuth = ClientModelManager.AUTH_MODELS.contains(id.getPath()) && !cap.containModel(id);
                     this.buttonList.add(new ModelButton(buttonId++, xStart, yStart, needAuth, Pair.of(id, models.get(id)), ClientModelManager.EXTRA_INFO.get(ModelIdUtil.getMainId(id)), player));
@@ -219,7 +222,6 @@ public class PlayerModelScreen extends GuiScreen {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         // renderBackground(graphics) -> drawDefaultBackground()
         drawDefaultBackground();
-
         drawGradientRect(x, y, x + 135, y + 235, 0xFF222222, 0xFF222222);
         drawGradientRect(x + 138, y, x + 420, y + 235, 0xFF222222, 0xFF222222);
         drawGradientRect(x + 351, y + 7, x + 352, y + 21, 0xFFF3EFE0, 0xFFF3EFE0);
@@ -227,7 +229,13 @@ public class PlayerModelScreen extends GuiScreen {
         textField.drawTextBox();
         EntityPlayerSP player = mc.player;
         if (player != null) {
-            GuiInventory.drawEntityOnScreen(x + 67, y + 190, 70, x + 67 - mouseX, y + 180 - 95 - mouseY, player);
+            //防止因为禁用自身模型时，出现模型错误
+            if (!Config.DISABLE_SELF_MODEL) {
+                GuiInventory.drawEntityOnScreen(x + 67, y + 190, 70, x + 67 - mouseX, y + 180 - 95 - mouseY, player);
+            } else {
+                Capabilities.getModelInfoCap(player).ifPresent(cap -> RenderUtil.renderEntityInInventory(x + 67, y + 190, 70, player, cap.getModelId(), cap.getSelectTexture()));
+            }
+
             Capabilities.getModelInfoCap(player).ifPresent(cap -> {
                 String modelName = cap.getModelId().getPath();
                 // font -> fontRendererObj
@@ -247,11 +255,9 @@ public class PlayerModelScreen extends GuiScreen {
 
         String pageInfo = String.format("%d/%d", page + 1, this.maxPage + 1);
         this.drawString(fontRenderer, pageInfo, x + 138 + (282 - fontRenderer.getStringWidth(pageInfo)) / 2, y + 223 - fontRenderer.FONT_HEIGHT / 2, 0xF3EFE0);
-
         String debugInfo = String.format("%s-%s", "1.12.2", Tags.VERSION);
         this.drawString(fontRenderer, debugInfo, x + 2, y + 226, 0x555555);
         // super.render -> super.drawScreen, 这会绘制所有按钮
-        GuiInventory.drawEntityOnScreen(0, 0, 0, 0, 0, player);
         super.drawScreen(mouseX, mouseY, partialTicks);
         // Render tooltips
         buttonList.stream().filter(button -> button instanceof FlatIconButton f && f.isMouseOver() && f.tooltips != null && !f.tooltips.isEmpty()).forEach(button -> drawHoveringText(((FlatIconButton) button).tooltips, mouseX, mouseY));
@@ -348,7 +354,7 @@ public class PlayerModelScreen extends GuiScreen {
                     if (!newFile.exists()) {
                         file.renameTo(newFile);
                         isFileChanged = true;
-                        player.sendMessage(new TextComponentTranslation("message.yes_steve_model.model.compat.rename", rawName ,validName));
+                        player.sendMessage(new TextComponentTranslation("message.yes_steve_model.model.compat.rename", rawName, validName));
                     }
                 }
             }

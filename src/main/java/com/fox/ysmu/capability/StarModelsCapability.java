@@ -4,12 +4,15 @@ import com.google.common.collect.Sets;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.INBTSerializable;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-public class StarModelsCapability  implements INBTSerializable<NBTTagList> {
+public class StarModelsCapability  {
 
     private Set<ResourceLocation> starModels = Sets.newHashSet();
 
@@ -42,7 +45,7 @@ public class StarModelsCapability  implements INBTSerializable<NBTTagList> {
     }
 
 
-    @Override
+
     public NBTTagList serializeNBT() {
         NBTTagList listTag = new NBTTagList();
         for (ResourceLocation modelId : starModels) {
@@ -51,7 +54,7 @@ public class StarModelsCapability  implements INBTSerializable<NBTTagList> {
         return listTag;
     }
 
-    @Override
+
     public void deserializeNBT(NBTTagList nbt) {
         this.starModels.clear();
         for (NBTBase tag : nbt) {
@@ -59,6 +62,21 @@ public class StarModelsCapability  implements INBTSerializable<NBTTagList> {
                 starModels.add(new ResourceLocation(string.getString()));
             }
 
+        }
+    }
+
+    public static class Storage implements Capability.IStorage<StarModelsCapability> {
+        @Nullable
+        @Override
+        public NBTBase writeNBT(Capability<StarModelsCapability> capability, StarModelsCapability instance, EnumFacing side) {
+            return instance.serializeNBT();
+        }
+
+        @Override
+        public void readNBT(Capability<StarModelsCapability> capability, StarModelsCapability instance, EnumFacing side, NBTBase nbt) {
+            if (nbt instanceof NBTTagList tag) {
+                instance.deserializeNBT(tag);
+            }
         }
     }
 }
