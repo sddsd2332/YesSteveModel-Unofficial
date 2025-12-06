@@ -16,10 +16,12 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
+import net.minecraft.entity.item.EntityBoat;
+import net.minecraft.entity.passive.EntityHorse;
+import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.Collections;
@@ -107,9 +109,9 @@ public final class RenderUtil {
                 if (entity.hasPreviewAnimation("boat")) {
                     GlStateManager.translate(0, -0.45, 0);
                 }
-                GlStateManager.rotate(180,1,0,0);
-                GlStateManager.rotate(180,0,1,0);
-                renderer.doRender(player,0, 0, 0, player.rotationYaw, 1.0F);
+                GlStateManager.rotate(180, 1, 0, 0);
+                GlStateManager.rotate(180, 0, 1, 0);
+                renderer.doRender(player, animatable, 0, 0, 0, player.rotationYaw, 1.0F);
                 try {
                     renderExtraEntity(yaw, player, entity, dispatcher);
                 } catch (ExecutionException e) {
@@ -205,21 +207,18 @@ public final class RenderUtil {
     private static void renderExtraEntity(float yaw, EntityPlayer player, CustomPlayerEntity playerEntity,
                                           RenderManager dispatcher) throws ExecutionException {
         if (playerEntity.hasPreviewAnimation("ride")) {
-            // Entity entity = AnimatableCacheUtil.ENTITIES_CACHE.get(EntityType.getKey(EntityType.HORSE), () ->
-            // EntityType.HORSE.create(player.level()));
-            // renderExtraEntity(yaw, player, dispatcher, entity);
+            Entity entity = AnimatableCacheUtil.ENTITIES_CACHE.get(EntityList.getKey(EntityHorse.class), () -> new EntityHorse(player.world));
+            renderExtraEntity(yaw, player, dispatcher, entity);
             return;
         }
         if (playerEntity.hasPreviewAnimation("ride_pig")) {
-            // Entity entity = AnimatableCacheUtil.ENTITIES_CACHE.get(EntityType.getKey(EntityType.PIG), () ->
-            // EntityType.PIG.create(player.level()));
-            // renderExtraEntity(yaw, player, dispatcher, entity);
+            Entity entity = AnimatableCacheUtil.ENTITIES_CACHE.get(EntityList.getKey(EntityPig.class), () -> new EntityPig(player.world));
+            renderExtraEntity(yaw, player, dispatcher, entity);
             return;
         }
         if (playerEntity.hasPreviewAnimation("boat")) {
-            // Entity entity = AnimatableCacheUtil.ENTITIES_CACHE.get(EntityType.getKey(EntityType.BOAT), () ->
-            // EntityType.BOAT.create(player.level()));
-            // renderExtraEntity(yaw, player, dispatcher, entity);
+            Entity entity = AnimatableCacheUtil.ENTITIES_CACHE.get(EntityList.getKey(EntityBoat.class), () -> new EntityBoat(player.world));
+            renderExtraEntity(yaw, player, dispatcher, entity);
             return;
         }
     }

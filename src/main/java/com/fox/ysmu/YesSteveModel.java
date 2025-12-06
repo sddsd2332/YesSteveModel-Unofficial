@@ -2,6 +2,7 @@ package com.fox.ysmu;
 
 import com.fox.ysmu.capability.Capabilities;
 import com.fox.ysmu.event.CommonEventHandler;
+import com.fox.ysmu.network.PacketHandler;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.minecraftforge.common.MinecraftForge;
@@ -26,6 +27,8 @@ public class YesSteveModel {
     @SidedProxy(clientSide = "com.fox.ysmu.client.ClientProxy", serverSide = "com.fox.ysmu.CommonProxy")
     public static CommonProxy proxy;
 
+    public static PacketHandler packetHandler = new PacketHandler();
+
     @Mod.EventHandler
     // preInit "Run before anything else. Read your config, create blocks, items, etc, and register them with the
     // GameRegistry." (Remove if not needed)
@@ -41,6 +44,7 @@ public class YesSteveModel {
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new CommonEventHandler());
         proxy.init(event);
+        packetHandler.init();
     }
 
     @Mod.EventHandler

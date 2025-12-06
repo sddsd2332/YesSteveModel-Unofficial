@@ -1,7 +1,7 @@
 package com.fox.ysmu.client.gui.button;
 
 import com.fox.ysmu.capability.Capabilities;
-import com.fox.ysmu.network.NetworkHandler;
+import com.fox.ysmu.network.PacketHandler;
 import com.fox.ysmu.network.message.SetStarModel;
 import com.fox.ysmu.YesSteveModel;
 import net.minecraft.client.Minecraft;
@@ -42,10 +42,10 @@ public class StarButton extends FlatColorButton {
                 ResourceLocation modelId = modelInfoCap.getModelId();
                 if (starModelsCap.containModel(modelId)) {
                     starModelsCap.removeModel(modelId);
-                    NetworkHandler.CHANNEL.sendToServer(SetStarModel.remove(modelId));
+                    YesSteveModel.packetHandler.sendToServer(SetStarModel.remove(modelId));
                 } else {
                     starModelsCap.addModel(modelId);
-                    NetworkHandler.CHANNEL.sendToServer(SetStarModel.add(modelId));
+                    YesSteveModel.packetHandler.sendToServer(SetStarModel.add(modelId));
                 }
             }));
         }

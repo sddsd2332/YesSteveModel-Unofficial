@@ -1,6 +1,7 @@
 package com.fox.ysmu.client.input;
 
-import com.fox.ysmu.network.NetworkHandler;
+import com.fox.ysmu.YesSteveModel;
+import com.fox.ysmu.network.PacketHandler;
 import com.fox.ysmu.network.message.SetPlayAnimation;
 import com.google.common.collect.Lists;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -30,7 +31,7 @@ public class ExtraAnimationKey {
     public static void onKeyboardInput(InputEvent.KeyInputEvent event) {
         for (KeyBinding key : EXTRA_ANIMATION_KEYS) {
             if (key.isKeyDown()) {
-                NetworkHandler.CHANNEL.sendToServer(new SetPlayAnimation(EXTRA_ANIMATION_KEYS.indexOf(key)));
+                YesSteveModel.packetHandler.sendToServer(new SetPlayAnimation(EXTRA_ANIMATION_KEYS.indexOf(key)));
                 return;
             }
         }

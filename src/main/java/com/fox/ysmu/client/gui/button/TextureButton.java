@@ -1,8 +1,9 @@
 package com.fox.ysmu.client.gui.button;
 
 
+import com.fox.ysmu.YesSteveModel;
 import com.fox.ysmu.capability.Capabilities;
-import com.fox.ysmu.network.NetworkHandler;
+import com.fox.ysmu.network.PacketHandler;
 import com.fox.ysmu.network.message.SetModelAndTexture;
 import com.fox.ysmu.util.Keep;
 import com.fox.ysmu.util.ModelIdUtil;
@@ -34,7 +35,7 @@ public class TextureButton extends GuiButton {
         Capabilities.getModelInfoCap(player).ifPresent(cap -> {
             cap.setModelAndTexture(modelId, textureId);
             if (player.equals(Minecraft.getMinecraft().player)) {
-                NetworkHandler.CHANNEL.sendToServer(new SetModelAndTexture(modelId, textureId));
+                YesSteveModel.packetHandler.sendToServer(new SetModelAndTexture(modelId, textureId));
             }
         });
     }

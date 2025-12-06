@@ -1,8 +1,9 @@
 package com.fox.ysmu.network.message;
 
+import com.fox.ysmu.YesSteveModel;
 import com.fox.ysmu.data.EncryptTools;
 import com.fox.ysmu.model.format.ServerModelInfo;
-import com.fox.ysmu.network.NetworkHandler;
+import com.fox.ysmu.network.PacketHandler;
 import com.fox.ysmu.util.ThreadTools;
 import com.fox.ysmu.util.UuidUtils;
 import com.google.common.collect.Lists;
@@ -73,14 +74,14 @@ public class SyncModelFiles implements IMessage {
             for (String md5 : md5Info) {
                 if (cache.contains(md5)) {
                     output.remove(md5);
-                    NetworkHandler.sendToClientPlayer(new RequestLoadModel(md5), sender);
+                    YesSteveModel.packetHandler.sendToClientPlayer(new RequestLoadModel(md5), sender);
                 }
             }
             for (String md5 : output) {
                 File modelFile = CACHE_SERVER.resolve(md5).toFile();
                 try {
                     byte[] modelBytes = FileUtils.readFileToByteArray(modelFile);
-                    ThreadTools.THREAD_POOL.submit(() -> NetworkHandler.sendToClientPlayer(new SendModelFile(modelBytes), sender));
+                    ThreadTools.THREAD_POOL.submit(() -> YesSteveModel.packetHandler.sendToClientPlayer(new SendModelFile(modelBytes), sender));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -92,7 +93,7 @@ public class SyncModelFiles implements IMessage {
                 byte[] password = FileUtils.readFileToByteArray(PASSWORD_FILE.toFile());
                 byte[] uuid = UuidUtils.asBytes(sender.getUniqueID());
                 byte[] output = EncryptTools.encryptPassword(uuid, password);
-                ThreadTools.THREAD_POOL.submit(() -> NetworkHandler.sendToClientPlayer(new SendModelFile(output), sender));
+                ThreadTools.THREAD_POOL.submit(() -> YesSteveModel.packetHandler.sendToClientPlayer(new SendModelFile(output), sender));
             } catch (Exception e) {
                 e.printStackTrace();
             }

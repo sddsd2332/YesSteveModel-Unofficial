@@ -2,13 +2,12 @@ package com.fox.ysmu.client;
 
 import com.fox.ysmu.Config;
 import com.fox.ysmu.YesSteveModel;
-import com.fox.ysmu.capability.Capabilities;
 import com.fox.ysmu.capability.ModelInfoCapability;
 import com.fox.ysmu.capability.ModelInfoCapabilityProvider;
 import com.fox.ysmu.client.entity.CustomPlayerEntity;
 import com.fox.ysmu.client.gui.ExtraPlayerScreen;
 import com.fox.ysmu.event.api.SpecialPlayerRenderEvent;
-import com.fox.ysmu.network.NetworkHandler;
+import com.fox.ysmu.network.PacketHandler;
 import com.fox.ysmu.network.message.RequestLoadModel;
 import com.fox.ysmu.network.message.SetPlayAnimation;
 import com.fox.ysmu.util.ModelIdUtil;
@@ -89,7 +88,7 @@ public class ClientEventHandler {
             if (player.hasCapability(ModelInfoCapabilityProvider.MODEL_INFO_CAP, null)) {
                 ModelInfoCapability eep = player.getCapability(ModelInfoCapabilityProvider.MODEL_INFO_CAP, null);
                 if (eep != null && eep.isPlayAnimation()) {
-                    NetworkHandler.CHANNEL.sendToServer(SetPlayAnimation.stop());
+                    YesSteveModel.packetHandler.sendToServer(SetPlayAnimation.stop());
                 }
             }
         }

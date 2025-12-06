@@ -26,7 +26,7 @@ import com.fox.ysmu.client.texture.OuterFileTexture;
 import com.fox.ysmu.data.ModelData;
 import com.fox.ysmu.model.ServerModelManager;
 import com.fox.ysmu.model.format.FolderFormat;
-import com.fox.ysmu.network.NetworkHandler;
+import com.fox.ysmu.network.PacketHandler;
 import com.fox.ysmu.network.message.SyncModelFiles;
 import com.fox.ysmu.util.GsonHelper;
 import com.fox.ysmu.util.ModelIdUtil;
@@ -193,14 +193,14 @@ public class ClientModelManager {
         String[] md5Info = getMd5Info();
         SyncModelFiles syncModelFiles = new SyncModelFiles(md5Info);
         ThreadTools.THREAD_POOL.submit(() -> {
-            while (Minecraft.getMinecraft().world == null) {
-                try {
+            try {
+                while (Minecraft.getMinecraft().getConnection() == null) {
                     Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
+                YesSteveModel.packetHandler.sendToServer(syncModelFiles);
+            }catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            NetworkHandler.CHANNEL.sendToServer(syncModelFiles);
         });
     }
 

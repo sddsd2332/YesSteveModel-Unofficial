@@ -67,17 +67,13 @@ public class YsmCommand extends CommandBase {
         } else {
             ServerModelManager.sendRequestSyncModelMessage();
         }
-        server.getPlayerList().getPlayers().forEach(player -> {
-            Capabilities.getAuthModelsCap(player).ifPresent(ownModelsCap -> {
-                Capabilities.getModelInfoCap(player).ifPresent(modelIdCap -> {
-                    if (ServerModelManager.AUTH_MODELS.contains(modelIdCap.getModelId().getPath()) && !ownModelsCap.containModel(modelIdCap.getModelId())) {
-                        ResourceLocation defaultModelId = new ResourceLocation(YesSteveModel.MOD_ID, "default");
-                        ResourceLocation defaultTextureId = new ResourceLocation(YesSteveModel.MOD_ID, "default/default.png");
-                        modelIdCap.setModelAndTexture(defaultModelId, defaultTextureId);
-                    }
-                });
-            });
-        });
+        server.getPlayerList().getPlayers().forEach(player -> Capabilities.getAuthModelsCap(player).ifPresent(ownModelsCap -> Capabilities.getModelInfoCap(player).ifPresent(modelIdCap -> {
+            if (ServerModelManager.AUTH_MODELS.contains(modelIdCap.getModelId().getPath()) && !ownModelsCap.containModel(modelIdCap.getModelId())) {
+                ResourceLocation defaultModelId = new ResourceLocation(YesSteveModel.MOD_ID, "default");
+                ResourceLocation defaultTextureId = new ResourceLocation(YesSteveModel.MOD_ID, "default/default.png");
+                modelIdCap.setModelAndTexture(defaultModelId, defaultTextureId);
+            }
+        })));
         watch.stop();
         context.sendMessage(new TextComponentTranslation("message.yes_steve_model.model.reload.info", watch.getTime(TimeUnit.MICROSECONDS) / 1000.0));
     }

@@ -43,7 +43,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends Render<EntityLivingBase>
         implements IGeoRenderer {
 
-    protected final AnimatedGeoModel<T> modelProvider;
+    protected final AnimatedGeoModel<IAnimatable> modelProvider;
     protected T animatable;
     protected final List<GeoLayerRenderer> layerRenderers = Lists.newArrayList();
     private IAnimatable currentAnimatable;
@@ -59,7 +59,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
         });
     }
 
-    public GeoReplacedEntityRenderer(RenderManager renderManager, AnimatedGeoModel<T> modelProvider, T animatable) {
+    public GeoReplacedEntityRenderer(RenderManager renderManager, AnimatedGeoModel<IAnimatable> modelProvider, T animatable) {
         super(renderManager);
         this.modelProvider = modelProvider;
         this.animatable = animatable;
@@ -75,8 +75,8 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
         return renderers.get(item);
     }
 
-    @Override
-    public void doRender(EntityLivingBase entity, double x, double y, double z, float entityYaw, float partialTicks) {
+    public void doRender(EntityLivingBase entity,  IAnimatable animatable, double x, double y, double z, float entityYaw, float partialTicks) {
+        this.currentAnimatable = animatable;
         GlStateManager.pushMatrix();
         try {
             GlStateManager.translate(x, y, z);
@@ -145,18 +145,9 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
             entityModelData.headPitch = -headPitch;
             entityModelData.netHeadYaw = -netHeadYaw;
 
-            AnimationEvent predicate = new AnimationEvent(
-                    animatable,
-                    limbSwing,
-                    limbSwingAmount,
-                    partialTicks,
-                    !(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F),
-                    Collections.singletonList(entityModelData));
+            AnimationEvent predicate = new AnimationEvent(animatable, limbSwing, limbSwingAmount, partialTicks, !(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F), Collections.singletonList(entityModelData));
             GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(animatable));
-            if (modelProvider instanceof IAnimatableModel) {
-                ((IAnimatableModel<T>) modelProvider)
-                        .setLivingAnimations(animatable, this.getUniqueID(entity), predicate);
-            }
+            modelProvider.setLivingAnimations(animatable, this.getUniqueID(entity), predicate);
             GlStateManager.pushMatrix();
             try {
                 GlStateManager.translate(0, 0.01f, 0);
@@ -199,8 +190,12 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
         } finally {
             GlStateManager.popMatrix();
         }
+        super.doRender(entity,x,y,z,entityYaw,partialTicks);
+    }
 
-        // super.doRender(entity, x, y, z, entityYaw, partialTicks);
+    @Override
+    public void doRender(EntityLivingBase entity, double x, double y, double z, float entityYaw, float partialTicks) {
+        doRender(entity,animatable,x,y,z,entityYaw,partialTicks);
     }
 
     protected void preRenderCallback(EntityLivingBase entitylivingbaseIn, float partialTickTime) {

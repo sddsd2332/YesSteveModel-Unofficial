@@ -6,7 +6,7 @@ import com.fox.ysmu.data.EncryptTools;
 import com.fox.ysmu.model.format.FolderFormat;
 import com.fox.ysmu.model.format.ServerModelInfo;
 import com.fox.ysmu.model.format.YsmFormat;
-import com.fox.ysmu.network.NetworkHandler;
+import com.fox.ysmu.network.PacketHandler;
 import com.fox.ysmu.network.message.RequestSyncModel;
 import com.fox.ysmu.util.GetJarResources;
 import com.google.common.collect.Maps;
@@ -72,7 +72,7 @@ public final class ServerModelManager {
 
     public static void sendRequestSyncModelMessage(PlayerList playerList) {
         for (EntityPlayerMP player : playerList.getPlayers()) {
-            NetworkHandler.sendToClientPlayer(new RequestSyncModel(), player);
+            YesSteveModel.packetHandler.sendToClientPlayer(new RequestSyncModel(), player);
         }
     }
 
@@ -81,7 +81,7 @@ public final class ServerModelManager {
     }
 
     public static void sendRequestSyncModelMessage(EntityPlayer player) {
-        NetworkHandler.sendToClientPlayer(new RequestSyncModel(), player);
+        YesSteveModel.packetHandler.sendToClientPlayer(new RequestSyncModel(), player);
     }
 
     public static void reloadPacks() {

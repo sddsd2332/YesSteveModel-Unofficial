@@ -1,11 +1,13 @@
 package com.fox.ysmu.client.gui.button;
 
+import com.fox.ysmu.Config;
 import com.fox.ysmu.YesSteveModel;
 import com.fox.ysmu.capability.*;
-import com.fox.ysmu.network.NetworkHandler;
+import com.fox.ysmu.network.PacketHandler;
 import com.fox.ysmu.network.message.SetModelAndTexture;
 import com.fox.ysmu.util.RenderUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.ScaledResolution;
@@ -39,14 +41,10 @@ public class ModelButton extends GuiButton {
         if (this.needAuth) {
             return;
         }
-        if (player.hasCapability(ModelInfoCapabilityProvider.MODEL_INFO_CAP, null)) {
-            ModelInfoCapability cap = player.getCapability(ModelInfoCapabilityProvider.MODEL_INFO_CAP, null);
-            if (cap != null) {
-                cap.setModelAndTexture(modelInfo.getLeft(), modelInfo.getRight().get(0));
-            }
-            if (player.equals(Minecraft.getMinecraft().player)) {
-                NetworkHandler.CHANNEL.sendToServer(new SetModelAndTexture(modelInfo.getLeft(), modelInfo.getRight().get(0)));
-            }
+        Capabilities.getModelInfoCap(player).ifPresent(cap -> cap.setModelAndTexture(modelInfo.getLeft(), modelInfo.getRight().get(0)));
+        EntityPlayerSP localPlayer = Minecraft.getMinecraft().player;
+        if (player.equals(localPlayer)) {
+            YesSteveModel.packetHandler.sendToServer(new SetModelAndTexture(modelInfo.getLeft(), modelInfo.getRight().get(0)));
         }
     }
 

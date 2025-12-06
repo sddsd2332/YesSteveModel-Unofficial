@@ -4,7 +4,6 @@ package com.fox.ysmu.event;
 import com.fox.ysmu.YesSteveModel;
 import com.fox.ysmu.capability.*;
 import com.fox.ysmu.model.ServerModelManager;
-import com.fox.ysmu.network.NetworkHandler;
 import com.fox.ysmu.network.message.SyncAuthModels;
 import com.fox.ysmu.network.message.SyncModelInfo;
 import com.fox.ysmu.network.message.SyncStarModels;
@@ -31,6 +30,7 @@ public class CommonEventHandler {
     private final ResourceLocation MODEL_INFO_CAP = new ResourceLocation(YesSteveModel.MOD_ID, "model_id");
     private final ResourceLocation AUTH_MODELS_CAP = new ResourceLocation(YesSteveModel.MOD_ID, "own_models");
     private final ResourceLocation STAR_MODELS_CAP = new ResourceLocation(YesSteveModel.MOD_ID, "star_models");
+    private final ResourceLocation RENDERING_MODELS_CAP = new ResourceLocation(YesSteveModel.MOD_ID, "rendering_models");
 
     @SubscribeEvent
     public void attachCaps(AttachCapabilitiesEvent<Entity> event) {
@@ -58,9 +58,9 @@ public class CommonEventHandler {
         Optional<AuthModelsCapability> newAuthModelsCap = Capabilities.getAuthModelsCap(event.getEntityPlayer());
         Optional<StarModelsCapability> newStarModelsCap = Capabilities.getStarModelsCap(event.getEntityPlayer());
 
-        newModelInfoCap.ifPresent((newModelInfo) -> oldModelInfoCap.ifPresent(newModelInfo::copyFrom));
-        newAuthModelsCap.ifPresent((newAuthModels) -> oldAuthModelsCap.ifPresent(newAuthModels::copyFrom));
-        newStarModelsCap.ifPresent((newStarModels) -> oldStarModelsCap.ifPresent(newStarModels::copyFrom));
+        newModelInfoCap.ifPresent(newModelInfo -> oldModelInfoCap.ifPresent(newModelInfo::copyFrom));
+        newAuthModelsCap.ifPresent(newAuthModels -> oldAuthModelsCap.ifPresent(newAuthModels::copyFrom));
+        newStarModelsCap.ifPresent(newStarModels -> oldStarModelsCap.ifPresent(newStarModels::copyFrom));
     }
 
     @SubscribeEvent
@@ -69,7 +69,7 @@ public class CommonEventHandler {
             EntityPlayer player = event.getEntityPlayer();
             Capabilities.getModelInfoCap(trackPlayer).ifPresent(cap -> {
                 SyncModelInfo syncMsg = new SyncModelInfo(trackPlayer.getEntityId(), cap);
-                NetworkHandler.sendToClientPlayer(syncMsg, player);
+                YesSteveModel.packetHandler.sendToClientPlayer(syncMsg, player);
             });
         }
     }
@@ -80,23 +80,29 @@ public class CommonEventHandler {
             Capabilities.getModelInfoCap(player).ifPresent(modelInfoCap -> {
                 if (player instanceof EntityPlayerMP serverPlayer) {
                     Capabilities.getAuthModelsCap(player).ifPresent(authModelsCap -> {
-                        NetworkHandler.sendToClientPlayer(new SyncAuthModels(authModelsCap.getAuthModels()), serverPlayer);
+                        YesSteveModel.packetHandler.sendToClientPlayer(new SyncAuthModels(authModelsCap.getAuthModels()), serverPlayer);
                         if (ServerModelManager.AUTH_MODELS.contains(modelInfoCap.getModelId().getPath()) && !authModelsCap.containModel(modelInfoCap.getModelId())) {
                             ResourceLocation defaultModelId = new ResourceLocation(YesSteveModel.MOD_ID, "default");
                             ResourceLocation defaultTextureId = new ResourceLocation(YesSteveModel.MOD_ID, "default/default.png");
                             modelInfoCap.setModelAndTexture(defaultModelId, defaultTextureId);
                         }
                     });
+                    try {
+                        YesSteveModel.LOGGER.info("Waiting to synchronize the model data of player: {}", player.getName());
+                        YesSteveModel.LOGGER.info("This may result in a 'Failed to load texture' error, but it does not affect the game state.");
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                     SyncModelInfo syncMsg = new SyncModelInfo(serverPlayer.getEntityId(), modelInfoCap);
-                    NetworkHandler.sendToClientPlayer(syncMsg, serverPlayer);
+                    YesSteveModel.packetHandler.sendToClientPlayer(syncMsg, serverPlayer);
                 } else {
                     modelInfoCap.markDirty();
                 }
             });
-
             Capabilities.getStarModelsCap(player).ifPresent(starModelCap -> {
                 if (player instanceof EntityPlayerMP serverPlayer) {
-                    NetworkHandler.sendToClientPlayer(new SyncStarModels(starModelCap.getStarModels()), serverPlayer);
+                    YesSteveModel.packetHandler.sendToClientPlayer(new SyncStarModels(starModelCap.getStarModels()), serverPlayer);
                 }
             });
         }
@@ -115,7 +121,7 @@ public class CommonEventHandler {
                     if (player.getServer() == null) {
                         return;
                     }
-                    player.getServer().getPlayerList().getPlayers().forEach(p -> NetworkHandler.sendToClientPlayer(syncMsg, p));
+                    player.getServer().getPlayerList().getPlayers().forEach(p -> YesSteveModel.packetHandler.sendToClientPlayer(syncMsg, p));
                     cap.setDirty(false);
                 }
             });
