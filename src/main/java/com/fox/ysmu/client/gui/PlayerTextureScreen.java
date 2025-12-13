@@ -5,13 +5,10 @@ import com.fox.ysmu.client.ClientModelManager;
 import com.fox.ysmu.client.gui.button.FlatColorButton;
 import com.fox.ysmu.client.gui.button.FlatIconButton;
 import com.fox.ysmu.client.gui.button.TextureButton;
+import com.fox.ysmu.util.Keep;
 import com.fox.ysmu.util.RenderUtil;
 import com.google.common.collect.Lists;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
@@ -23,11 +20,10 @@ import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PlayerTextureScreen extends GuiScreen {
+public class PlayerTextureScreen extends Screen {
     private static final float SCALE_MAX = 360f;
     private static final float SCALE_MIN = 18f;
     private static final float PITCH_MAX = 90f;
@@ -63,15 +59,15 @@ public class PlayerTextureScreen extends GuiScreen {
         this.parent = parent;
         this.modelId = modelId;
         this.textures = textures;
-        this.textures.sort(Comparator.comparing(ResourceLocation::toString));
+        this.textures.sort(ResourceLocation::compareTo);
         this.animations = new ArrayList<>(ClientModelManager.DEFAULT_ANIMATION_FILE.animations.keySet().stream().collect(Collectors.toList()));
         this.animations.sort(String::compareTo);
         this.player = parent.player;
     }
 
     @Override
+    @Keep
     public void initGui() {
-        this.buttonList.clear();
         this.x = (width - 420) / 2;
         this.y = (height - 235) / 2;
         this.maxTexturePage = (textures.size() - 1) / 4;
@@ -82,16 +78,49 @@ public class PlayerTextureScreen extends GuiScreen {
         if (this.animationPage > this.maxAnimationPage) {
             this.animationPage = 0;
         }
-        this.buttonList.add(new FlatColorButton(0, x + 5, y, 80, 18, I18n.format("gui.yes_steve_model.model.return")));
-        this.buttonList.add(new FlatIconButton(1, x + 281, y + 2, 16, 16, 64, 16).setTooltips("gui.yes_steve_model.model.stop"));
-        this.buttonList.add(new FlatIconButton(2, x + 263, y + 2, 16, 16, 48, 16).setTooltips("gui.yes_steve_model.model.reset"));
-        this.buttonList.add(new FlatIconButton(3, x + 245, y + 2, 16, 16, 64, 0).setTooltips("gui.yes_steve_model.model.ground"));
-        this.buttonList.add(new FlatColorButton(4, x + 321, y + 213, 18, 18, "<"));
-        this.buttonList.add(new FlatColorButton(5, x + 383, y + 213, 18, 18, ">"));
-        this.buttonList.add(new FlatColorButton(6, x + 11, y + 214, 16, 16, "<"));
-        this.buttonList.add(new FlatColorButton(7, x + 63, y + 214, 16, 16, ">"));
 
-        int a = 10;
+        addButton(new FlatColorButton(x + 5, y, 80, 18, I18n.format("gui.yes_steve_model.model.return"), (b) -> this.mc.displayGuiScreen(this.parent)));
+
+        addButton(new FlatIconButton(x + 281, y + 2, 16, 16, 64, 16, (b) -> {
+            this.animation = "";
+        }).setTooltips("gui.yes_steve_model.model.stop"));
+        addButton(new FlatIconButton(x + 263, y + 2, 16, 16, 48, 16, (b) -> {
+            this.posX = 0;
+            this.posY = -60;
+            this.scale = 80;
+            this.yaw = 165;
+            this.pitch = -5;
+        }).setTooltips("gui.yes_steve_model.model.reset"));
+        addButton(new FlatIconButton(x + 245, y + 2, 16, 16, 64, 0, (b) -> {
+            this.showGround = !this.showGround;
+        }).setTooltips("gui.yes_steve_model.model.ground"));
+
+        addButton(new FlatColorButton(x + 321, y + 213, 18, 18, "<", (b) -> {
+            if (this.texturePage > 0) {
+                this.texturePage--;
+                this.initGui();
+            }
+        }));
+        addButton(new FlatColorButton(x + 383, y + 213, 18, 18, ">", (b) -> {
+            if (this.texturePage < this.maxTexturePage) {
+                this.texturePage++;
+                this.initGui();
+            }
+        }));
+        addButton(new FlatColorButton(x + 11, y + 214, 16, 16, "<", (b) -> {
+            if (this.animationPage > 0) {
+                this.animationPage--;
+                this.initGui();
+            }
+        }));
+        addButton(new FlatColorButton(x + 63, y + 214, 16, 16, ">", (b) -> {
+            if (this.animationPage < this.maxAnimationPage) {
+                this.animationPage++;
+                this.initGui();
+            }
+        }));
+
+
         for (int i = 0; i < 11; i++) {
             int animationIndex = i + this.animationPage * 11;
             if (animationIndex >= animations.size()) {
@@ -101,13 +130,12 @@ public class PlayerTextureScreen extends GuiScreen {
             int yStart = y + 27 + 17 * i;
             String key = String.format("gui.yes_steve_model.texture.button.%s", name.replaceAll("\\:", "."));
             String keyDesc = String.format("gui.yes_steve_model.texture.button.%s.desc", name.replaceAll("\\:", "."));
-            FlatColorButton sideButton = new FlatColorButton(a++, x + 5, yStart, 80, 16, I18n.format(key));
-            sideButton.setTooltips(Lists.newArrayList(TextFormatting.GOLD + I18n.format(keyDesc), TextFormatting.GRAY + I18n.format("gui.yes_steve_model.texture.button.animation_name", name)
-            ));
-            this.buttonList.add(sideButton);
+            FlatColorButton sideButton = new FlatColorButton(x + 5, yStart, 80, 16, I18n.format(key), b -> this.animation = name);
+            sideButton.setTooltips(Lists.newArrayList(TextFormatting.GOLD + I18n.format(keyDesc),
+                    TextFormatting.GRAY + I18n.format("gui.yes_steve_model.texture.button.animation_name", name)));
+            addButton(sideButton);
         }
 
-        int b = 30;
         for (int i = 0; i < 4; i++) {
             int modelIndex = i + this.texturePage * 4;
             if (modelIndex >= textures.size()) {
@@ -115,89 +143,36 @@ public class PlayerTextureScreen extends GuiScreen {
             }
             int xStart = x + 306 + 56 * (i % 2);
             int yStart = y + 5 + 104 * (i / 2);
-            this.buttonList.add(new TextureButton(b++, xStart, yStart, modelId, textures.get(modelIndex), player));
-        }
-    }
-
-    @Override
-    protected void actionPerformed(GuiButton button) {
-        switch (button.id) {
-            case 0:
-                this.mc.displayGuiScreen(parent);
-                break;
-            case 1:
-                this.animation = "";
-                break;
-            case 2:
-                this.posX = 0;
-                this.posY = -60;
-                this.scale = 80;
-                this.yaw = 165;
-                this.pitch = -5;
-                break;
-            case 3:
-                this.showGround = !this.showGround;
-                break;
-            case 4:
-                if (this.texturePage > 0) {
-                    this.texturePage--;
-                    this.initGui();
-                }
-                break;
-            case 5:
-                if (this.texturePage < this.maxTexturePage) {
-                    this.texturePage++;
-                    this.initGui();
-                }
-                break;
-            case 6:
-                if (this.animationPage > 0) {
-                    this.animationPage--;
-                    this.initGui();
-                }
-                break;
-            case 7:
-                if (this.animationPage < this.maxAnimationPage) {
-                    this.animationPage++;
-                    this.initGui();
-                }
-                break;
-            default:
-                if (button.id >= 10 && button.id < 30) {
-                    int animationIndex = (button.id - 10) + this.animationPage * 11;
-                    if (animationIndex < this.animations.size()) {
-                        this.animation = this.animations.get(animationIndex);
-                    }
-                }
-                    if (button instanceof TextureButton textureButton) {
-                    textureButton.onPress();
-                }
-                break;
+            addButton(new TextureButton(xStart, yStart, modelId, textures.get(modelIndex), player));
         }
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTick) {
         this.drawDefaultBackground();
-        this.drawGradientRect(x, y + 22, x + 90, y + 235, 0XFF222222, 0XFF222222);
-        this.drawGradientRect(x + 93, y, x + 299, y + 235, 0XFF222222, 0XFF222222);
-        this.drawGradientRect(x + 302, y, x + 420, y + 235, 0XFF222222, 0XFF222222);
+        this.drawGradientRect(x, y + 22, x + 90, y + 235, 0xFF222222, 0xFF222222);
+        this.drawGradientRect(x + 93, y, x + 299, y + 235, 0xFF222222, 0xFF222222);
+        this.drawGradientRect(x + 302, y, x + 420, y + 235, 0xFF222222, 0xFF222222);
+
         Capabilities.getModelInfoCap(player).ifPresent(cap -> {
+            RenderUtil.scissor(this.x + 93, this.y, 206, 235);
             RenderUtil.renderTextureScreenEntity(this.x + 299 / 2.0F + 40 + posX, this.y + 235 / 2.0F + 80 + posY, scale, pitch, yaw, mc.player, modelId, cap.getSelectTexture(), showGround, entity -> {
                 if (!entity.hasPreviewAnimation(animation)) {
                     entity.setPreviewAnimation(animation);
                 }
             });
+            GL11.glDisable(GL11.GL_SCISSOR_TEST);
         });
 
         String texturePageInfo = String.format("%d/%d", texturePage + 1, this.maxTexturePage + 1);
-        this.drawString(fontRenderer, texturePageInfo, x + 302 + (118 - fontRenderer.getStringWidth(texturePageInfo)) / 2, y + 223 - fontRenderer.FONT_HEIGHT / 2, 0xF3EFE0);
+        this.drawString(this.fontRenderer, texturePageInfo, x + 302 + (118 - this.fontRenderer.getStringWidth(texturePageInfo)) / 2, y + 223 - this.fontRenderer.FONT_HEIGHT / 2, 0xF3EFE0);
 
         String animationPageInfo = String.format("%d/%d", animationPage + 1, this.maxAnimationPage + 1);
-        this.drawString(fontRenderer, animationPageInfo, x + 5 + (80 - fontRenderer.getStringWidth(animationPageInfo)) / 2, y + 218, 0xF3EFE0);
+        this.drawString(this.fontRenderer, animationPageInfo, x + 5 + (80 - this.fontRenderer.getStringWidth(animationPageInfo)) / 2, y + 218, 0xF3EFE0);
 
         super.drawScreen(mouseX, mouseY, partialTick);
-        buttonList.stream().filter(r -> r instanceof FlatColorButton f && f.isMouseOver() && f.tooltips != null && !f.tooltips.isEmpty()).forEach(b -> drawHoveringText(((FlatColorButton) b).tooltips, mouseX, mouseY));
+        this.buttonList.stream().filter(r -> r instanceof FlatColorButton)
+                .forEach(r -> ((FlatColorButton) r).renderToolTip(this, mouseX, mouseY));
     }
 
     @Override
@@ -231,7 +206,7 @@ public class PlayerTextureScreen extends GuiScreen {
     @Override
     public void handleMouseInput() throws IOException {
         super.handleMouseInput();
-        int dWheel = Mouse.getDWheel();
+        int dWheel = Mouse.getEventDWheel();
         if (dWheel != 0) {
             int mouseX = Mouse.getEventX() * this.width / this.mc.displayWidth;
             int mouseY = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
@@ -247,7 +222,7 @@ public class PlayerTextureScreen extends GuiScreen {
         }
     }
 
-    private void scrollTexturePage(int delta) {
+    private boolean scrollTexturePage(double delta) {
         if (delta > 0 && this.texturePage > 0) {
             this.texturePage--;
             this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
@@ -258,9 +233,10 @@ public class PlayerTextureScreen extends GuiScreen {
             this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             this.initGui();
         }
+        return true;
     }
 
-    private void scrollAnimationPage(int delta) {
+    private boolean scrollAnimationPage(double delta) {
         if (delta > 0 && this.animationPage > 0) {
             this.animationPage--;
             this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
@@ -271,6 +247,7 @@ public class PlayerTextureScreen extends GuiScreen {
             this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             this.initGui();
         }
+        return true;
     }
 
     private boolean inViewRange(double mouseX, double mouseY) {
@@ -307,6 +284,7 @@ public class PlayerTextureScreen extends GuiScreen {
     }
 
     @Override
+    @Keep
     public boolean doesGuiPauseGame() {
         return false;
     }

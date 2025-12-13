@@ -1,15 +1,14 @@
 package com.fox.ysmu.client.gui;
 
+import com.fox.ysmu.YesSteveModel;
+import com.fox.ysmu.client.gui.button.Button;
 import com.fox.ysmu.model.ServerModelManager;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
+import com.fox.ysmu.util.Keep;
 import net.minecraft.client.resources.I18n;
 
-import java.awt.Desktop;
 import java.io.File;
-import java.util.List;
 
-public class OpenModelFolderScreen extends GuiScreen {
+public class OpenModelFolderScreen extends Screen {
     private final PlayerModelScreen screen;
 
     protected OpenModelFolderScreen(PlayerModelScreen screen) {
@@ -17,43 +16,30 @@ public class OpenModelFolderScreen extends GuiScreen {
     }
 
     @Override
+    @Keep
     public void initGui() {
-        int x = (this.width - 310) / 2;
-        int y = this.height / 2 + 60;
-        this.buttonList.clear();
-        this.buttonList.add(new GuiButton(0, x, y, 150, 20, I18n.format("gui.yes_steve_model.open_model_folder.open")));
-        this.buttonList.add(new GuiButton(1, x + 160, y, 150, 20, I18n.format("gui.yes_steve_model.model.return")));
+        int x = (width - 310) / 2;
+        int y = height / 2 + 60;
+        this.addButton(new Button(x, y, 150, 20, I18n.format("gui.yes_steve_model.open_model_folder.open"), (b) -> {
+            try {
+                Class<?> oclass = Class.forName("java.awt.Desktop");
+                Object object = oclass.getMethod("getDesktop", new Class[0]).invoke(null);
+                oclass.getMethod("open", File.class).invoke(object, ServerModelManager.CUSTOM.toFile());
+            } catch (Exception e) {
+                YesSteveModel.LOGGER.error("Problem opening mods folder", e);
+            }
+        }));
+        this.addButton(new Button(x + 160, y, 150, 20, I18n.format("gui.yes_steve_model.model.return"), (b) -> {
+            this.mc.displayGuiScreen(this.screen);
+        }));
     }
 
     @Override
-    protected void actionPerformed(GuiButton button) {
-        switch (button.id) {
-            case 0:
-                try {
-                    File modelFolder = ServerModelManager.CUSTOM.toFile();
-                    if (Desktop.isDesktopSupported()) {
-                        Desktop.getDesktop().open(modelFolder);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
-            case 1:
-                this.mc.displayGuiScreen(this.screen);
-                break;
-        }
-    }
-
-    @Override
+    @Keep
     public void drawScreen(int pMouseX, int pMouseY, float pPartialTick) {
         this.drawDefaultBackground();
-        String mainText = I18n.format("gui.yes_steve_model.open_model_folder.tips").replace("\\n", "\n");
-        List<String> textLines = this.fontRenderer.listFormattedStringToWidth(mainText, 400);
-        int currentY = this.height / 2 - 80;
-        for (String line : textLines) {
-            this.fontRenderer.drawString(line, (this.width - 400) / 2, currentY, 0xFFFFFF);
-            currentY += this.fontRenderer.FONT_HEIGHT;
-        }
+        this.drawWordWrap(I18n.format("gui.yes_steve_model.open_model_folder.tips"),
+                (width - 400) / 2, height / 2 - 80, 400, 0XFFFFFF);
         super.drawScreen(pMouseX, pMouseY, pPartialTick);
     }
 }

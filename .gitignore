@@ -1,21 +1,22 @@
-build
-output
-.idea
-*.iml
+# eclipse
+bin
+*.launch
+.settings
+.metadata
+.classpath
+.project
+
+# idea
+out
 *.ipr
 *.iws
-out
+*.iml
+.idea
 
-MDK.zip
-/.gradle
-*.classpath
-*.project
-/.settings
-/eclipse
-*.txt
-*.launch
+# gradle
+build
+.gradle
 
-*.blend1
-*.blend2
-/bin
-!/libs/**
+# other
+eclipse
+run

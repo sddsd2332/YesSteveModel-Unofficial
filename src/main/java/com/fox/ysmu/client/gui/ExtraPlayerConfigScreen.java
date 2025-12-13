@@ -1,14 +1,14 @@
 package com.fox.ysmu.client.gui;
 
 import com.fox.ysmu.Config;
+import com.fox.ysmu.util.Keep;
 import com.fox.ysmu.util.RenderUtil;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 
 import java.io.IOException;
 import java.util.List;
 
-public class ExtraPlayerConfigScreen extends GuiScreen {
+public class ExtraPlayerConfigScreen extends Screen {
     private static final char RESET_KEY = 'r';
     private int posX;
     private int posY;
@@ -28,7 +28,7 @@ public class ExtraPlayerConfigScreen extends GuiScreen {
         this.yawOffset = (float) Config.PLAYER_YAW_OFFSET;
     }
 
-
+    @Keep
     @Override
     public void drawScreen(int pMouseX, int pMouseY, float pPartialTick) {
         int startX = this.posX;
@@ -54,12 +54,12 @@ public class ExtraPlayerConfigScreen extends GuiScreen {
         this.drawGradientRect(startX - 5, startY - 5, startX + 5, startY + 5, 0xFF00FF9F, 0xFF00FF9F);
         this.drawGradientRect(endX - 5, endY - 5, endX + 5, endY + 5, 0xFF00009F, 0xFF00009F);
 
-        String mainText = I18n.format("gui.yes_steve_model.extra_player_render.tips").replace("\\n", "\n");
-        List<String> textLines = this.fontRenderer.listFormattedStringToWidth(mainText, 500);
         int y = 15;
-        for (String line : textLines) {
-            int w = fontRenderer.getStringWidth(line);
-            this.drawString(fontRenderer, line, width - 15 - w, y, 0xFFFFFF);
+        String component = I18n.format("gui.yes_steve_model.extra_player_render.tips");
+        List<String> split = this.fontRenderer.listFormattedStringToWidth(component, 500);
+        for (String charSequence : split) {
+            int w = this.fontRenderer.getStringWidth(charSequence);
+            this.drawString(this.fontRenderer, charSequence, width - 15 - w, y, 0xFFFFFF);
             y += 10;
         }
 
@@ -68,7 +68,7 @@ public class ExtraPlayerConfigScreen extends GuiScreen {
         }
     }
 
-
+    @Keep
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int button) throws IOException {
         boolean xIn = this.posX - 5 < mouseX && mouseX < this.posX + 5;
@@ -86,7 +86,7 @@ public class ExtraPlayerConfigScreen extends GuiScreen {
         super.mouseClicked(mouseX, mouseY, button);
     }
 
-
+    @Keep
     @Override
     protected void mouseReleased(int mouseX, int mouseY, int state) {
         this.isChangePos = false;
@@ -94,7 +94,7 @@ public class ExtraPlayerConfigScreen extends GuiScreen {
         super.mouseReleased(mouseX, mouseY, state);
     }
 
-
+    @Keep
     @Override
     protected void mouseClickMove(int mouseX, int mouseY, int button, long timeSinceLastClick) {
         if (isChangeScale) {
@@ -113,7 +113,7 @@ public class ExtraPlayerConfigScreen extends GuiScreen {
         this.lastMouseX = mouseX;
     }
 
-
+    @Keep
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         if (Character.toLowerCase(typedChar) == RESET_KEY && isAltKeyDown()) {
@@ -125,7 +125,7 @@ public class ExtraPlayerConfigScreen extends GuiScreen {
         super.keyTyped(typedChar, keyCode);
     }
 
-
+    @Keep
     @Override
     public void onGuiClosed() {
         Config.PLAYER_POS_X = this.posX;

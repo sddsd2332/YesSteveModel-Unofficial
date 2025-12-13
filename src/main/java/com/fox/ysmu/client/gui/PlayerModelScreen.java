@@ -7,7 +7,7 @@ import com.fox.ysmu.capability.AuthModelsCapabilityProvider;
 import com.fox.ysmu.capability.Capabilities;
 import com.fox.ysmu.client.ClientModelManager;
 import com.fox.ysmu.client.gui.button.*;
-import com.fox.ysmu.compat.YsmConverter;
+import com.fox.ysmu.util.Keep;
 import com.fox.ysmu.util.ModelIdUtil;
 import com.fox.ysmu.util.RenderUtil;
 import com.google.common.collect.Lists;
@@ -15,8 +15,6 @@ import com.google.common.collect.Maps;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.resources.I18n;
@@ -24,23 +22,21 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.util.text.event.HoverEvent;
+import net.minecraftforge.common.ForgeVersion;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 
-import java.io.File;
+import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.fox.ysmu.model.ServerModelManager.CUSTOM;
-import static com.fox.ysmu.model.ServerModelManager.removeExtension;
-
-public class PlayerModelScreen extends GuiScreen {
+public class PlayerModelScreen extends Screen {
     protected final EntityPlayer player;
     private Map<ResourceLocation, List<ResourceLocation>> models = Maps.newHashMap();
     private List<ResourceLocation> modelOrderList;
@@ -84,23 +80,23 @@ public class PlayerModelScreen extends GuiScreen {
                 }
             });
         }
+
         if (textField != null) {
             String search = this.textField.getText().toLowerCase(Locale.US);
             models.entrySet().removeIf(next -> !next.getKey().getPath().contains(search));
         }
         this.modelOrderList = Lists.newArrayList(models.keySet());
-        this.modelOrderList.sort(Comparator.comparing(ResourceLocation::toString));
+        this.modelOrderList.sort(ResourceLocation::compareTo);
         this.maxPage = (models.size() - 1) / 10;
     }
 
     @Override
+    @Keep
     public void initGui() {
-        // clearWidgets() -> buttonList.clear()
-        this.buttonList.clear();
         this.calculateModelList();
 
-        this.x = (width - 420) / 2;
-        this.y = (height - 235) / 2;
+        this.x = (this.width - 420) / 2;
+        this.y = (this.height - 235) / 2;
 
         String perText = "";
         boolean focus = false;
@@ -108,29 +104,72 @@ public class PlayerModelScreen extends GuiScreen {
             perText = textField.getText();
             focus = textField.isFocused();
         }
-        textField = new GuiTextField(0, this.fontRenderer, x + 144, y + 6, 158, 16);
+        textField = new GuiTextField(0, this.fontRenderer, x + 144, y + 6, 140, 16);
         textField.setText(perText);
         textField.setTextColor(0xF3EFE0);
         textField.setFocused(focus);
         textField.setCursorPositionEnd();
 
-        // 按钮创建和点击逻辑分离 使用唯一的 ID 来标识按钮
-        // addRenderableWidget -> this.buttonList.add
-        this.buttonList.add(new TextureCountButton(0, x + 5, y + 5));
-        this.buttonList.add(new FlatIconButton(1, x + 28, y + 5, 79, 20, 32, 16).setTooltips("gui.yes_steve_model.model.texture"));
-        this.buttonList.add(new StarButton(2, x + 110, y + 5));
-        this.buttonList.add(new FlatIconButton(3, x + 328, y + 5, 18, 18, 32, 0).setTooltips("gui.yes_steve_model.all_models"));
-        this.buttonList.add(new FlatIconButton(5, x + 308, y + 5, 18, 18, 0, 0).setTooltips("gui.yes_steve_model.star_models"));
-        this.buttonList.add(new FlatIconButton(6, x + 397, y + 5, 18, 18, 16, 16).setTooltips("gui.yes_steve_model.config"));
-        this.buttonList.add(new FlatIconButton(7, x + 377, y + 5, 18, 18, 48, 16).setTooltips("gui.yes_steve_model.fix"));
-        this.buttonList.add(new FlatIconButton(8, x + 357, y + 5, 18, 18, 80, 0).setTooltips("gui.yes_steve_model.open_model_folder.open"));
-        this.buttonList.add(new FlatColorButton(9, x + 198, y + 215, 52, 14, I18n.format("gui.yes_steve_model.pre_page")));
-        this.buttonList.add(new FlatColorButton(10, x + 308, y + 215, 52, 14, I18n.format("gui.yes_steve_model.next_page")));
+        addButton(new TextureCountButton(x + 5, y + 5));
+        addButton(new FlatIconButton(x + 28, y + 5, 79, 20, 32, 16, (b) -> {
+            Capabilities.getModelInfoCap(player).ifPresent(cap -> {
+                List<ResourceLocation> textures = ClientModelManager.MODELS.get(cap.getModelId());
+                if (textures != null) {
+                    this.mc.displayGuiScreen(new PlayerTextureScreen(this, cap.getModelId(), textures));
+                }
+            });
+        }).setTooltips("gui.yes_steve_model.model.texture"));
+        addButton(new StarButton(x + 110, y + 5));
+
+        addButton(new FlatIconButton(x + 328, y + 5, 18, 18, 32, 0, (b) -> {
+            if (this.category != Category.ALL) {
+                this.category = Category.ALL;
+                this.page = 0;
+                this.initGui();
+            }
+        }).setTooltips("gui.yes_steve_model.all_models"));
+        addButton(new FlatIconButton(x + 308, y + 5, 18, 18, 48, 0, (b) -> {
+            if (this.category != Category.AUTH) {
+                this.category = Category.AUTH;
+                this.page = 0;
+                this.initGui();
+            }
+        }).setTooltips("gui.yes_steve_model.auth_models"));
+        addButton(new FlatIconButton(x + 288, y + 5, 18, 18, 0, 0, (b) -> {
+            if (this.category != Category.STAR) {
+                this.category = Category.STAR;
+                this.page = 0;
+                this.initGui();
+            }
+        }).setTooltips("gui.yes_steve_model.star_models"));
+
+        addButton(new FlatIconButton(x + 397, y + 5, 18, 18, 16, 16, (b) -> {
+            this.mc.displayGuiScreen(new ConfigScreen(this));
+        }).setTooltips("gui.yes_steve_model.config"));
+        addButton(new FlatIconButton(x + 377, y + 5, 18, 18, 0, 16, (b) -> {
+            this.mc.displayGuiScreen(new DownloadScreen(this));
+        }).setTooltips("gui.yes_steve_model.download"));
+        addButton(new FlatIconButton(x + 357, y + 5, 18, 18, 80, 0, (b) -> {
+            this.mc.displayGuiScreen(new OpenModelFolderScreen(this));
+        }).setTooltips("gui.yes_steve_model.open_model_folder.open"));
+
+        addButton(new FlatColorButton(x + 198, y + 215, 52, 14, I18n.format("gui.yes_steve_model.pre_page"), (b) -> {
+            if (this.page > 0) {
+                this.page--;
+                this.initGui();
+            }
+        }));
+        addButton(new FlatColorButton(x + 308, y + 215, 52, 14, I18n.format("gui.yes_steve_model.next_page"), (b) -> {
+            if (this.page < this.maxPage) {
+                this.page++;
+                this.initGui();
+            }
+        }));
 
         if (this.page > this.maxPage) {
             this.page = 0;
         }
-        int buttonId = 11;
+
         for (int i = 0; i < 10; i++) {
             int modelIndex = i + this.page * 10;
             if (modelIndex >= models.size()) {
@@ -143,161 +182,109 @@ public class PlayerModelScreen extends GuiScreen {
                 AuthModelsCapability cap = player.getCapability(AuthModelsCapabilityProvider.AUTH_MODELS_CAP, null);
                 if (cap != null) {
                     boolean needAuth = ClientModelManager.AUTH_MODELS.contains(id.getPath()) && !cap.containModel(id);
-                    this.buttonList.add(new ModelButton(buttonId++, xStart, yStart, needAuth, Pair.of(id, models.get(id)), ClientModelManager.EXTRA_INFO.get(ModelIdUtil.getMainId(id)), player));
+                    this.buttonList.add(new ModelButton(xStart, yStart, needAuth, Pair.of(id, models.get(id)), ClientModelManager.EXTRA_INFO.get(ModelIdUtil.getMainId(id)).stream().map(ITextComponent::getFormattedText).collect(Collectors.toList()), player));
                 }
             }
         }
     }
 
     @Override
-    protected void actionPerformed(GuiButton button) {
-        switch (button.id) {
-            case 0:
-                break;
-            case 1:
-                Capabilities.getModelInfoCap(player).ifPresent(cap -> {
-                    List<ResourceLocation> textures = ClientModelManager.MODELS.get(cap.getModelId());
-                    if (textures != null) {
-                        this.mc.displayGuiScreen(new PlayerTextureScreen(this, cap.getModelId(), textures));
-                    }
-                });
-                break;
-            case 2:
-                if (button instanceof StarButton starButton) {
-                    starButton.doPress();
-                }
-                break;
-            case 3:
-                if (this.category != Category.ALL) {
-                    this.category = Category.ALL;
-                    this.page = 0;
-                    this.initGui();
-                }
-                break;
-            case 4:
-                if (this.category != Category.AUTH) {
-                    this.category = Category.AUTH;
-                    this.page = 0;
-                    this.initGui();
-                }
-                break;
-            case 5:
-                if (this.category != Category.STAR) {
-                    this.category = Category.STAR;
-                    this.page = 0;
-                    this.initGui();
-                }
-                break;
-            case 6:
-                this.mc.displayGuiScreen(new ConfigScreen(this));
-                break;
-            case 7:
-                fix();
-                break;
-            case 8:
-                this.mc.displayGuiScreen(new OpenModelFolderScreen(this));
-                break;
-            case 9:
-                if (this.page > 0) {
-                    this.page--;
-                    this.initGui();
-                }
-                break;
-            case 10:
-                if (this.page < this.maxPage) {
-                    this.page++;
-                    this.initGui();
-                }
-                break;
-            default:
-                if (button instanceof ModelButton modelButton) {
-                    modelButton.onPress();
-                }
-                break;
-        }
-    }
-
-    @Override
-
+    @Keep
+    @SuppressWarnings("all")
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        // renderBackground(graphics) -> drawDefaultBackground()
-        drawDefaultBackground();
-        drawGradientRect(x, y, x + 135, y + 235, 0xFF222222, 0xFF222222);
-        drawGradientRect(x + 138, y, x + 420, y + 235, 0xFF222222, 0xFF222222);
-        drawGradientRect(x + 351, y + 7, x + 352, y + 21, 0xFFF3EFE0, 0xFFF3EFE0);
-        // textField.render -> textField.drawTextBox
-        textField.drawTextBox();
-        EntityPlayerSP player = mc.player;
+        this.drawDefaultBackground();
+
+        this.drawGradientRect(x, y, x + 135, y + 235, 0xFF222222, 0xFF222222);
+        this.drawGradientRect(x + 138, y, x + 420, y + 235, 0xFF222222, 0xFF222222);
+        this.drawGradientRect(x + 351, y + 7, x + 352, y + 21, 0xFFF3EFE0, 0xFFF3EFE0);
+
+        this.textField.drawTextBox();
+
+        RenderUtil.scissor(this.x + 5, this.y + 29, 125, 171);
+
+        EntityPlayerSP player = this.mc.player;
         if (player != null) {
             //防止因为禁用自身模型时，出现模型错误
             if (!Config.DISABLE_SELF_MODEL) {
-                GuiInventory.drawEntityOnScreen(x + 67, y + 190, 70, x + 67 - mouseX, y + 180 - 95 - mouseY, player);
+                GuiInventory.drawEntityOnScreen(this.x + 67, this.y + 190, 70, this.x + 67 - mouseX, this.y + 180 - 95 - mouseY, player);
             } else {
-                Capabilities.getModelInfoCap(player).ifPresent(cap -> RenderUtil.renderEntityInInventory(x + 67, y + 190, 70, player, cap.getModelId(), cap.getSelectTexture()));
+                Capabilities.getModelInfoCap(player).ifPresent(cap -> RenderUtil.renderEntityInInventory(this.x + 67, this.y + 190, 70, player, cap.getModelId(), cap.getSelectTexture()));
             }
 
             Capabilities.getModelInfoCap(player).ifPresent(cap -> {
                 String modelName = cap.getModelId().getPath();
                 // font -> fontRendererObj
-                List<String> modelNameSplit = fontRenderer.listFormattedStringToWidth(modelName, 125);
-                int lineY = y + 205;
+                List<String> modelNameSplit = this.fontRenderer.listFormattedStringToWidth(modelName, 125);
+                int lineY = this.y + 205;
                 for (String line : modelNameSplit) {
-                    int nameWidth = fontRenderer.getStringWidth(line);
-                    this.drawString(fontRenderer, line, x + (135 - nameWidth) / 2, lineY, 0xF3EFE0);
+                    int nameWidth = this.fontRenderer.getStringWidth(line);
+                    this.drawString(this.fontRenderer, line, this.x + (135 - nameWidth) / 2, lineY, 0xF3EFE0);
                     lineY += 10;
                 }
             });
         }
 
-        if (textField.getText().isEmpty() && !textField.isFocused()) {
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+
+        if (this.textField.getText().isEmpty() && !this.textField.isFocused()) {
             this.drawString(fontRenderer, TextFormatting.ITALIC + I18n.format("gui.yes_steve_model.search"), x + 148, y + 10, 0x777777);
         }
 
         String pageInfo = String.format("%d/%d", page + 1, this.maxPage + 1);
-        this.drawString(fontRenderer, pageInfo, x + 138 + (282 - fontRenderer.getStringWidth(pageInfo)) / 2, y + 223 - fontRenderer.FONT_HEIGHT / 2, 0xF3EFE0);
-        String debugInfo = String.format("%s-%s", "1.12.2", Tags.VERSION);
-        this.drawString(fontRenderer, debugInfo, x + 2, y + 226, 0x555555);
-        // super.render -> super.drawScreen, 这会绘制所有按钮
+        this.drawString(this.fontRenderer, pageInfo, x + 138 + (282 - this.fontRenderer.getStringWidth(pageInfo)) / 2, y + 223 - this.fontRenderer.FONT_HEIGHT / 2, 0xF3EFE0);
+
+        String debugInfo = String.format("%s-%s", ForgeVersion.mcVersion, Tags.VERSION);
+        this.drawString(this.fontRenderer, TextFormatting.DARK_GRAY + debugInfo, x + 2, y + 226, 0xFFFFFFFF);
+
         super.drawScreen(mouseX, mouseY, partialTicks);
-        // Render tooltips
-        buttonList.stream().filter(button -> button instanceof FlatIconButton f && f.isMouseOver() && f.tooltips != null && !f.tooltips.isEmpty()).forEach(button -> drawHoveringText(((FlatIconButton) button).tooltips, mouseX, mouseY));
-        buttonList.stream().filter(button -> button instanceof ModelButton f && f.isMouseOver() && f.tooltips != null && !f.tooltips.isEmpty()).forEach(button -> drawHoveringText(((ModelButton) button).tooltips.stream().map(ITextComponent::getFormattedText).collect(Collectors.toList()), mouseX, mouseY));
+        this.buttonList.stream().filter(r -> r instanceof FlatIconButton).forEach(r -> ((FlatIconButton) r).renderToolTip(this, mouseX, mouseY));
+        this.buttonList.stream().filter(r -> r instanceof ModelButton).forEach(r -> ((ModelButton) r).renderComponentTooltip(this, mouseX, mouseY));
     }
 
-    // tick -> updateScreen
     @Override
+    @Keep
+    public void onResize(@Nonnull Minecraft minecraft, int width, int height) {
+        String value = this.textField.getText();
+        super.onResize(minecraft, width, height);
+        this.textField.setText(value);
+    }
+
+    @Override
+    @Keep
     public void updateScreen() {
         this.textField.updateCursorCounter();
     }
 
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int button) throws IOException {
+    @Keep
+    public void mouseClicked(int mouseX, int mouseY, int button) throws IOException {
+        if (this.textField.mouseClicked(mouseX, mouseY, button)) {
+            return;
+        }
         super.mouseClicked(mouseX, mouseY, button);
-        this.textField.mouseClicked(mouseX, mouseY, button);
     }
 
-    // charTyped and keyPressed -> keyTyped
     @Override
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+    @Keep
+    public void keyTyped(char codePoint, int modifiers) throws IOException {
+        if (textField == null) {
+            return;
+        }
         String perText = this.textField.getText();
-        if (this.textField.textboxKeyTyped(typedChar, keyCode)) {
+        if (this.textField.textboxKeyTyped(codePoint, modifiers)) {
             if (!Objects.equals(perText, this.textField.getText())) {
                 this.page = 0;
                 this.initGui();
             }
-        } else {
-            if (this.textField.isFocused() && keyCode != 1) {
-                return; // 阻止其他按键（如E键）关闭GUI
-            }
-            super.keyTyped(typedChar, keyCode);
+            return;
         }
+        super.keyTyped(codePoint, modifiers);
     }
 
-    // mouseScrolled -> handleMouseInput
     @Override
     public void handleMouseInput() throws IOException {
         super.handleMouseInput();
-        int dWheel = Mouse.getDWheel();
+        int dWheel = Mouse.getEventDWheel();
         if (dWheel != 0) {
             int mouseX = Mouse.getEventX() * this.width / this.mc.displayWidth;
             int mouseY = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
@@ -307,13 +294,13 @@ public class PlayerModelScreen extends GuiScreen {
         }
     }
 
-    private boolean inRange(int mouseX, int mouseY) {
+    private boolean inRange(double mouseX, double mouseY) {
         boolean isInWidthRange = (x + 143) < mouseX && mouseX < (x + 430);
         boolean isInHeightRange = (y + 25) < mouseY && mouseY < (y + 235);
         return isInWidthRange && isInHeightRange;
     }
 
-    private void scrollPage(int delta) {
+    private boolean scrollPage(double delta) {
         if (delta > 0 && this.page > 0) {
             this.page--;
             this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
@@ -324,9 +311,11 @@ public class PlayerModelScreen extends GuiScreen {
             this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             this.initGui();
         }
+        return true;
     }
 
     @Override
+    @Keep
     public boolean doesGuiPauseGame() {
         return false;
     }
@@ -336,60 +325,5 @@ public class PlayerModelScreen extends GuiScreen {
          * 不同页面类别
          */
         ALL, AUTH, STAR
-    }
-
-    private void fix() {
-        File customDir = CUSTOM.toFile();
-        if (!customDir.exists() || !customDir.isDirectory()) return;
-        EntityPlayer player = this.mc.player;
-        boolean isFileChanged = false;
-
-        File[] ysmFiles = customDir.listFiles((dir, name) -> name.endsWith(".ysm"));
-        if (ysmFiles != null) {
-            for (File file : ysmFiles) {
-                String rawName = removeExtension(file.getName());
-                String validName = YsmConverter.sanitizeDirName(rawName);
-                if (!rawName.equals(validName)) {
-                    File newFile = new File(customDir, validName + ".ysm");
-                    if (!newFile.exists()) {
-                        file.renameTo(newFile);
-                        isFileChanged = true;
-                        player.sendMessage(new TextComponentTranslation("message.yes_steve_model.model.compat.rename", rawName, validName));
-                    }
-                }
-            }
-        }
-
-        Set<String> loadedModelNames = new HashSet<>();
-        if (modelOrderList != null) {
-            for (ResourceLocation resourceLocation : modelOrderList) {
-                loadedModelNames.add(resourceLocation.getPath());
-            }
-        }
-        File[] subDirs = customDir.listFiles(File::isDirectory);
-        if (subDirs != null) {
-            for (File folder : subDirs) {
-                String folderName = folder.getName();
-                if (!loadedModelNames.contains(folderName)) {
-                    try {
-                        YsmConverter.convertAndReplace(folder, customDir);
-                        isFileChanged = true;
-                        String newName = YsmConverter.sanitizeDirName(folderName);
-                        player.sendMessage(new TextComponentTranslation("message.yes_steve_model.model.compat.fix.true", folderName, newName));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        player.sendMessage(new TextComponentTranslation("message.yes_steve_model.model.compat.fix.false", folderName));
-                    }
-                }
-            }
-        }
-
-        if (isFileChanged) {
-            ITextComponent reload = new TextComponentTranslation("message.yes_steve_model.model.compat.click");
-            reload.getStyle().setColor(TextFormatting.GOLD);
-            reload.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/ysm reload"));
-            reload.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString("/ysm reload")));
-            player.sendMessage(new TextComponentTranslation("message.yes_steve_model.model.compat.reload", reload));
-        }
     }
 }

@@ -1,6 +1,5 @@
 package com.fox.ysmu.client.gui.button;
 
-import com.fox.ysmu.capability.Capabilities;
 import com.fox.ysmu.capability.ModelInfoCapability;
 import com.fox.ysmu.capability.ModelInfoCapabilityProvider;
 import com.fox.ysmu.client.ClientModelManager;
@@ -8,16 +7,17 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
+import javax.annotation.Nonnull;
+
 public class TextureCountButton extends FlatColorButton {
-    public TextureCountButton(int id, int x, int y) {
-        super(id, x, y, 20, 20, "");
+    public TextureCountButton(int x, int y) {
+        super(x, y, 20, 20,"", (b) -> {
+        });
     }
 
     @Override
-    public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
-        // 在绘制前更新显示文本
+    public void drawButton(@Nonnull Minecraft mc, int mouseX, int mouseY, float partialTicks) {
         this.updateDisplayString();
-        // 调用父类方法进行绘制
         super.drawButton(mc, mouseX, mouseY, partialTicks);
     }
 
