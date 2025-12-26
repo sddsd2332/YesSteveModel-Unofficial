@@ -3,6 +3,8 @@ package com.fox.ysmu.client.gui;
 import com.fox.ysmu.client.gui.button.Button;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.common.MinecraftForge;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -18,6 +20,17 @@ public class Screen extends GuiScreen {
             return;
         }
         super.actionPerformed(guiButton);
+    }
+
+    /**
+     * 清除 {@link #buttonList} 并发起 Forge 事件，供 Gui 自己调用。其实就是把 {@link #initGui()} 包装了一下。
+     */
+    protected void refreshGui() {
+        if (!MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.InitGuiEvent.Pre(this, this.buttonList))) {
+            this.buttonList.clear();
+            this.initGui();
+        }
+        MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.InitGuiEvent.Post(this, this.buttonList));
     }
 
     /**

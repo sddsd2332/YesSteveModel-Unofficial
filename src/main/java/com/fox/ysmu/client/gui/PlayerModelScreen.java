@@ -58,12 +58,12 @@ public class PlayerModelScreen extends Screen {
     }
 
     private void calculateModelList() {
-        models = Maps.newHashMap();
+        this.models = Maps.newHashMap();
         if (this.category == Category.ALL) {
             this.models.putAll(ClientModelManager.MODELS);
         }
         if (this.category == Category.AUTH) {
-            Capabilities.getAuthModelsCap(player).ifPresent(cap -> {
+            Capabilities.getAuthModelsCap(this.player).ifPresent(cap -> {
                 for (ResourceLocation modelId : ClientModelManager.MODELS.keySet()) {
                     if (cap.containModel(modelId) || !ClientModelManager.AUTH_MODELS.contains(modelId.getPath())) {
                         this.models.put(modelId, ClientModelManager.MODELS.get(modelId));
@@ -72,7 +72,7 @@ public class PlayerModelScreen extends Screen {
             });
         }
         if (this.category == Category.STAR) {
-            Capabilities.getStarModelsCap(player).ifPresent(cap -> {
+            Capabilities.getStarModelsCap(this.player).ifPresent(cap -> {
                 for (ResourceLocation modelId : ClientModelManager.MODELS.keySet()) {
                     if (cap.containModel(modelId)) {
                         this.models.put(modelId, ClientModelManager.MODELS.get(modelId));
@@ -81,13 +81,13 @@ public class PlayerModelScreen extends Screen {
             });
         }
 
-        if (textField != null) {
+        if (this.textField != null) {
             String search = this.textField.getText().toLowerCase(Locale.US);
-            models.entrySet().removeIf(next -> !next.getKey().getPath().contains(search));
+            this.models.entrySet().removeIf(next -> !next.getKey().getPath().contains(search));
         }
-        this.modelOrderList = Lists.newArrayList(models.keySet());
+        this.modelOrderList = Lists.newArrayList(this.models.keySet());
         this.modelOrderList.sort(ResourceLocation::compareTo);
-        this.maxPage = (models.size() - 1) / 10;
+        this.maxPage = (this.models.size() - 1) / 10;
     }
 
     @Override
@@ -100,69 +100,69 @@ public class PlayerModelScreen extends Screen {
 
         String perText = "";
         boolean focus = false;
-        if (textField != null) {
-            perText = textField.getText();
-            focus = textField.isFocused();
+        if (this.textField != null) {
+            perText = this.textField.getText();
+            focus = this.textField.isFocused();
         }
-        textField = new GuiTextField(0, this.fontRenderer, x + 144, y + 6, 140, 16);
-        textField.setText(perText);
-        textField.setTextColor(0xF3EFE0);
-        textField.setFocused(focus);
-        textField.setCursorPositionEnd();
+        this.textField = new GuiTextField(0, this.fontRenderer, this.x + 144, this.y + 6, 140, 16);
+        this.textField.setText(perText);
+        this.textField.setTextColor(0xF3EFE0);
+        this.textField.setFocused(focus);
+        this.textField.setCursorPositionEnd();
 
-        addButton(new TextureCountButton(x + 5, y + 5));
-        addButton(new FlatIconButton(x + 28, y + 5, 79, 20, 32, 16, (b) -> {
-            Capabilities.getModelInfoCap(player).ifPresent(cap -> {
+        this.addButton(new TextureCountButton(this.x + 5, this.y + 5));
+        this.addButton(new FlatIconButton(this.x + 28, this.y + 5, 79, 20, 32, 16, (b) -> {
+            Capabilities.getModelInfoCap(this.player).ifPresent(cap -> {
                 List<ResourceLocation> textures = ClientModelManager.MODELS.get(cap.getModelId());
                 if (textures != null) {
                     this.mc.displayGuiScreen(new PlayerTextureScreen(this, cap.getModelId(), textures));
                 }
             });
         }).setTooltips("gui.yes_steve_model.model.texture"));
-        addButton(new StarButton(x + 110, y + 5));
+        this.addButton(new StarButton(this.x + 110, this.y + 5));
 
-        addButton(new FlatIconButton(x + 328, y + 5, 18, 18, 32, 0, (b) -> {
+        this.addButton(new FlatIconButton(this.x + 328, this.y + 5, 18, 18, 32, 0, (b) -> {
             if (this.category != Category.ALL) {
                 this.category = Category.ALL;
                 this.page = 0;
-                this.initGui();
+                this.refreshGui();
             }
         }).setTooltips("gui.yes_steve_model.all_models"));
-        addButton(new FlatIconButton(x + 308, y + 5, 18, 18, 48, 0, (b) -> {
+        this.addButton(new FlatIconButton(this.x + 308, this.y + 5, 18, 18, 48, 0, (b) -> {
             if (this.category != Category.AUTH) {
                 this.category = Category.AUTH;
                 this.page = 0;
-                this.initGui();
+                this.refreshGui();
             }
         }).setTooltips("gui.yes_steve_model.auth_models"));
-        addButton(new FlatIconButton(x + 288, y + 5, 18, 18, 0, 0, (b) -> {
+        this.addButton(new FlatIconButton(this.x + 288, this.y + 5, 18, 18, 0, 0, (b) -> {
             if (this.category != Category.STAR) {
                 this.category = Category.STAR;
                 this.page = 0;
-                this.initGui();
+                this.refreshGui();
             }
         }).setTooltips("gui.yes_steve_model.star_models"));
 
-        addButton(new FlatIconButton(x + 397, y + 5, 18, 18, 16, 16, (b) -> {
+        this.addButton(new FlatIconButton(this.x + 397, this.y + 5, 18, 18, 16, 16, (b) -> {
             this.mc.displayGuiScreen(new ConfigScreen(this));
         }).setTooltips("gui.yes_steve_model.config"));
-        addButton(new FlatIconButton(x + 377, y + 5, 18, 18, 0, 16, (b) -> {
+        this.addButton(new FlatIconButton(this.x + 377, this.y + 5, 18, 18, 0, 16, (b) -> {
             this.mc.displayGuiScreen(new DownloadScreen(this));
         }).setTooltips("gui.yes_steve_model.download"));
-        addButton(new FlatIconButton(x + 357, y + 5, 18, 18, 80, 0, (b) -> {
+        this.addButton(new FlatIconButton(this.x + 357, this.y + 5, 18, 18, 80, 0, (b) -> {
             this.mc.displayGuiScreen(new OpenModelFolderScreen(this));
         }).setTooltips("gui.yes_steve_model.open_model_folder.open"));
 
-        addButton(new FlatColorButton(x + 198, y + 215, 52, 14, I18n.format("gui.yes_steve_model.pre_page"), (b) -> {
+        this.addButton(new FlatColorButton(this.x + 198, this.y + 215, 52, 14, I18n.format("gui.yes_steve_model.pre_page"), (b) -> {
             if (this.page > 0) {
                 this.page--;
-                this.initGui();
+                this.refreshGui();
             }
         }));
-        addButton(new FlatColorButton(x + 308, y + 215, 52, 14, I18n.format("gui.yes_steve_model.next_page"), (b) -> {
+        this.addButton(new FlatColorButton(this.x + 308, this.y + 215, 52, 14, I18n.format("gui.yes_steve_model.next_page"), (b) -> {
             if (this.page < this.maxPage) {
                 this.page++;
-                this.initGui();
+                this.refreshGui();
             }
         }));
 
@@ -172,17 +172,17 @@ public class PlayerModelScreen extends Screen {
 
         for (int i = 0; i < 10; i++) {
             int modelIndex = i + this.page * 10;
-            if (modelIndex >= models.size()) {
+            if (modelIndex >= this.models.size()) {
                 break;
             }
-            ResourceLocation id = modelOrderList.get(modelIndex);
-            int xStart = x + 143 + 55 * (i % 5);
-            int yStart = y + 28 + 93 * (i / 5);
-            if (player.hasCapability(AuthModelsCapabilityProvider.AUTH_MODELS_CAP, null)) {
-                AuthModelsCapability cap = player.getCapability(AuthModelsCapabilityProvider.AUTH_MODELS_CAP, null);
+            ResourceLocation id = this.modelOrderList.get(modelIndex);
+            int xStart = this.x + 143 + 55 * (i % 5);
+            int yStart = this.y + 28 + 93 * (i / 5);
+            if (this.player.hasCapability(AuthModelsCapabilityProvider.AUTH_MODELS_CAP, null)) {
+                AuthModelsCapability cap = this.player.getCapability(AuthModelsCapabilityProvider.AUTH_MODELS_CAP, null);
                 if (cap != null) {
                     boolean needAuth = ClientModelManager.AUTH_MODELS.contains(id.getPath()) && !cap.containModel(id);
-                    this.buttonList.add(new ModelButton(xStart, yStart, needAuth, Pair.of(id, models.get(id)), ClientModelManager.EXTRA_INFO.get(ModelIdUtil.getMainId(id)).stream().map(ITextComponent::getFormattedText).collect(Collectors.toList()), player));
+                    this.buttonList.add(new ModelButton(xStart, yStart, needAuth, Pair.of(id, this.models.get(id)), ClientModelManager.EXTRA_INFO.get(ModelIdUtil.getMainId(id)).stream().map(ITextComponent::getFormattedText).collect(Collectors.toList()), this.player));
                 }
             }
         }
@@ -194,9 +194,9 @@ public class PlayerModelScreen extends Screen {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         this.drawDefaultBackground();
 
-        this.drawGradientRect(x, y, x + 135, y + 235, 0xFF222222, 0xFF222222);
-        this.drawGradientRect(x + 138, y, x + 420, y + 235, 0xFF222222, 0xFF222222);
-        this.drawGradientRect(x + 351, y + 7, x + 352, y + 21, 0xFFF3EFE0, 0xFFF3EFE0);
+        this.drawGradientRect(this.x, this.y, this.x + 135, this.y + 235, 0xFF222222, 0xFF222222);
+        this.drawGradientRect(this.x + 138, this.y, this.x + 420, this.y + 235, 0xFF222222, 0xFF222222);
+        this.drawGradientRect(this.x + 351, this.y + 7, this.x + 352, this.y + 21, 0xFFF3EFE0, 0xFFF3EFE0);
 
         this.textField.drawTextBox();
 
@@ -213,7 +213,6 @@ public class PlayerModelScreen extends Screen {
 
             Capabilities.getModelInfoCap(player).ifPresent(cap -> {
                 String modelName = cap.getModelId().getPath();
-                // font -> fontRendererObj
                 List<String> modelNameSplit = this.fontRenderer.listFormattedStringToWidth(modelName, 125);
                 int lineY = this.y + 205;
                 for (String line : modelNameSplit) {
@@ -227,14 +226,14 @@ public class PlayerModelScreen extends Screen {
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
         if (this.textField.getText().isEmpty() && !this.textField.isFocused()) {
-            this.drawString(fontRenderer, TextFormatting.ITALIC + I18n.format("gui.yes_steve_model.search"), x + 148, y + 10, 0x777777);
+            this.drawString(this.fontRenderer, TextFormatting.ITALIC + I18n.format("gui.yes_steve_model.search"), this.x + 148, this.y + 10, 0x777777);
         }
 
-        String pageInfo = String.format("%d/%d", page + 1, this.maxPage + 1);
-        this.drawString(this.fontRenderer, pageInfo, x + 138 + (282 - this.fontRenderer.getStringWidth(pageInfo)) / 2, y + 223 - this.fontRenderer.FONT_HEIGHT / 2, 0xF3EFE0);
+        String pageInfo = String.format("%d/%d", this.page + 1, this.maxPage + 1);
+        this.drawString(this.fontRenderer, pageInfo, this.x + 138 + (282 - this.fontRenderer.getStringWidth(pageInfo)) / 2, this.y + 223 - this.fontRenderer.FONT_HEIGHT / 2, 0xF3EFE0);
 
         String debugInfo = String.format("%s-%s", ForgeVersion.mcVersion, Tags.VERSION);
-        this.drawString(this.fontRenderer, TextFormatting.DARK_GRAY + debugInfo, x + 2, y + 226, 0xFFFFFFFF);
+        this.drawString(this.fontRenderer, TextFormatting.DARK_GRAY + debugInfo, this.x + 2, this.y + 226, 0xFFFFFFFF);
 
         super.drawScreen(mouseX, mouseY, partialTicks);
         this.buttonList.stream().filter(r -> r instanceof FlatIconButton).forEach(r -> ((FlatIconButton) r).renderToolTip(this, mouseX, mouseY));
@@ -267,14 +266,14 @@ public class PlayerModelScreen extends Screen {
     @Override
     @Keep
     public void keyTyped(char codePoint, int modifiers) throws IOException {
-        if (textField == null) {
+        if (this.textField == null) {
             return;
         }
         String perText = this.textField.getText();
         if (this.textField.textboxKeyTyped(codePoint, modifiers)) {
             if (!Objects.equals(perText, this.textField.getText())) {
                 this.page = 0;
-                this.initGui();
+                this.refreshGui();
             }
             return;
         }
@@ -288,15 +287,15 @@ public class PlayerModelScreen extends Screen {
         if (dWheel != 0) {
             int mouseX = Mouse.getEventX() * this.width / this.mc.displayWidth;
             int mouseY = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
-            if (inRange(mouseX, mouseY)) {
-                scrollPage(dWheel);
+            if (this.inRange(mouseX, mouseY)) {
+                this.scrollPage(dWheel);
             }
         }
     }
 
     private boolean inRange(double mouseX, double mouseY) {
-        boolean isInWidthRange = (x + 143) < mouseX && mouseX < (x + 430);
-        boolean isInHeightRange = (y + 25) < mouseY && mouseY < (y + 235);
+        boolean isInWidthRange = (this.x + 143) < mouseX && mouseX < (this.x + 430);
+        boolean isInHeightRange = (this.y + 25) < mouseY && mouseY < (this.y + 235);
         return isInWidthRange && isInHeightRange;
     }
 
@@ -304,12 +303,12 @@ public class PlayerModelScreen extends Screen {
         if (delta > 0 && this.page > 0) {
             this.page--;
             this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-            this.initGui();
+            this.refreshGui();
         }
         if (delta < 0 && this.page < this.maxPage) {
             this.page++;
             this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-            this.initGui();
+            this.refreshGui();
         }
         return true;
     }
