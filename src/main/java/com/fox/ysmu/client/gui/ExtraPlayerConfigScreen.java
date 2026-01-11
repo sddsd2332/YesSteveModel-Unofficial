@@ -3,12 +3,12 @@ package com.fox.ysmu.client.gui;
 import com.fox.ysmu.Config;
 import com.fox.ysmu.util.RenderUtil;
 import net.minecraft.client.resources.I18n;
+import org.lwjgl.input.Keyboard;
 
 import java.io.IOException;
 import java.util.List;
 
 public class ExtraPlayerConfigScreen extends Screen {
-    private static final char RESET_KEY = 'r';
     private int posX;
     private int posY;
     private float scale;
@@ -16,8 +16,6 @@ public class ExtraPlayerConfigScreen extends Screen {
     private boolean isChangePos = false;
     private boolean isChangeScale = false;
 
-    private static final int LEFT_MOUSE_BUTTON = 0;
-    private static final int RIGHT_MOUSE_BUTTON = 1;
     private int lastMouseX;
 
     public ExtraPlayerConfigScreen() {
@@ -54,7 +52,7 @@ public class ExtraPlayerConfigScreen extends Screen {
 
         int y = 15;
         String component = I18n.format("gui.yes_steve_model.extra_player_render.tips");
-        List<String> split = this.fontRenderer.listFormattedStringToWidth(component, 500);
+        List<String> split = this.listLineBreakStringToWidth(component, 500);
         for (String charSequence : split) {
             int w = this.fontRenderer.getStringWidth(charSequence);
             this.drawString(this.fontRenderer, charSequence, width - 15 - w, y, 0xFFFFFF);
@@ -110,7 +108,7 @@ public class ExtraPlayerConfigScreen extends Screen {
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        if (Character.toLowerCase(typedChar) == RESET_KEY && isAltKeyDown()) {
+        if (keyCode == Keyboard.KEY_R && isAltCombo()) {
             this.posX = 10;
             this.posY = 10;
             this.scale = 40;

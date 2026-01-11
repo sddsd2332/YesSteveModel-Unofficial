@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Screen extends GuiScreen {
+    protected static final int LEFT_MOUSE_BUTTON = 0;
+    protected static final int RIGHT_MOUSE_BUTTON = 1;
+
     @Override
     protected void actionPerformed(@Nonnull GuiButton guiButton) throws IOException {
         if (guiButton instanceof Button button) {
@@ -70,5 +73,9 @@ public class Screen extends GuiScreen {
             lineList.addAll(this.fontRenderer.listFormattedStringToWidth(para, wrapWidth));
         }
         return lineList;
+    }
+
+    public static boolean isAltCombo() {
+        return !isCtrlKeyDown() && !isShiftKeyDown() && isAltKeyDown();
     }
 }
