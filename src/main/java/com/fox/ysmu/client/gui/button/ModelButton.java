@@ -1,11 +1,10 @@
 package com.fox.ysmu.client.gui.button;
 
 import com.fox.ysmu.YesSteveModel;
-import com.fox.ysmu.capability.Capabilities;
 import com.fox.ysmu.capability.StarModelsCapability;
 import com.fox.ysmu.capability.StarModelsCapabilityProvider;
+import com.fox.ysmu.event.CapabilityEvent;
 import com.fox.ysmu.network.message.SetModelAndTexture;
-import com.fox.ysmu.util.Keep;
 import com.fox.ysmu.util.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -39,12 +38,11 @@ public class ModelButton extends Button {
     }
 
     @Override
-    @Keep
     public void onPress() {
         if (needAuth) {
             return;
         }
-        Capabilities.getModelInfoCap(player).ifPresent(cap -> cap.setModelAndTexture(modelInfo.getLeft(), modelInfo.getRight().get(0)));
+        CapabilityEvent.getModelInfoCap(player).ifPresent(cap -> cap.setModelAndTexture(modelInfo.getLeft(), modelInfo.getRight().get(0)));
         EntityPlayerSP localPlayer = Minecraft.getMinecraft().player;
         if (player.equals(localPlayer)) {
             YesSteveModel.packetHandler.sendToServer(new SetModelAndTexture(modelInfo.getLeft(), modelInfo.getRight().get(0)));
@@ -52,7 +50,6 @@ public class ModelButton extends Button {
     }
 
     @Override
-    @Keep
     public void renderWidget(@Nonnull Minecraft mc, int mouseX, int mouseY, float partialTick) {
         FontRenderer font = mc.fontRenderer;
 
@@ -98,7 +95,6 @@ public class ModelButton extends Button {
 
 
     @Override
-    @Keep
     public boolean mousePressed(@Nonnull Minecraft mc, int mouseX, int mouseY) {
         return !this.needAuth && super.mousePressed(mc, mouseX, mouseY);
     }

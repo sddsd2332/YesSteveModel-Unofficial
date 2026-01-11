@@ -3,7 +3,6 @@ package com.fox.ysmu.client.gui.button;
 import com.fox.ysmu.model.format.Type;
 import com.fox.ysmu.network.message.RequestServerModelInfo;
 import com.fox.ysmu.util.FileSizeUtils;
-import com.fox.ysmu.util.Keep;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
@@ -21,7 +20,6 @@ public class ModelInfoButton extends Button {
     }
 
     @Override
-    @Keep
     public void renderWidget(@Nonnull Minecraft mc, int mouseX, int mouseY, float pPartialTick) {
         FontRenderer font = mc.fontRenderer;
         if (isSelect) {

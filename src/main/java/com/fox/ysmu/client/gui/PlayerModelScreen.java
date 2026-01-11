@@ -4,10 +4,9 @@ import com.fox.ysmu.Config;
 import com.fox.ysmu.Tags;
 import com.fox.ysmu.capability.AuthModelsCapability;
 import com.fox.ysmu.capability.AuthModelsCapabilityProvider;
-import com.fox.ysmu.capability.Capabilities;
 import com.fox.ysmu.client.ClientModelManager;
 import com.fox.ysmu.client.gui.button.*;
-import com.fox.ysmu.util.Keep;
+import com.fox.ysmu.event.CapabilityEvent;
 import com.fox.ysmu.util.ModelIdUtil;
 import com.fox.ysmu.util.RenderUtil;
 import com.google.common.collect.Lists;
@@ -63,7 +62,7 @@ public class PlayerModelScreen extends Screen {
             this.models.putAll(ClientModelManager.MODELS);
         }
         if (this.category == Category.AUTH) {
-            Capabilities.getAuthModelsCap(this.player).ifPresent(cap -> {
+            CapabilityEvent.getAuthModelsCap(this.player).ifPresent(cap -> {
                 for (ResourceLocation modelId : ClientModelManager.MODELS.keySet()) {
                     if (cap.containModel(modelId) || !ClientModelManager.AUTH_MODELS.contains(modelId.getPath())) {
                         this.models.put(modelId, ClientModelManager.MODELS.get(modelId));
@@ -72,7 +71,7 @@ public class PlayerModelScreen extends Screen {
             });
         }
         if (this.category == Category.STAR) {
-            Capabilities.getStarModelsCap(this.player).ifPresent(cap -> {
+            CapabilityEvent.getStarModelsCap(this.player).ifPresent(cap -> {
                 for (ResourceLocation modelId : ClientModelManager.MODELS.keySet()) {
                     if (cap.containModel(modelId)) {
                         this.models.put(modelId, ClientModelManager.MODELS.get(modelId));
@@ -91,7 +90,6 @@ public class PlayerModelScreen extends Screen {
     }
 
     @Override
-    @Keep
     public void initGui() {
         this.calculateModelList();
 
@@ -112,7 +110,7 @@ public class PlayerModelScreen extends Screen {
 
         this.addButton(new TextureCountButton(this.x + 5, this.y + 5));
         this.addButton(new FlatIconButton(this.x + 28, this.y + 5, 79, 20, 32, 16, (b) -> {
-            Capabilities.getModelInfoCap(this.player).ifPresent(cap -> {
+            CapabilityEvent.getModelInfoCap(this.player).ifPresent(cap -> {
                 List<ResourceLocation> textures = ClientModelManager.MODELS.get(cap.getModelId());
                 if (textures != null) {
                     this.mc.displayGuiScreen(new PlayerTextureScreen(this, cap.getModelId(), textures));
@@ -189,7 +187,6 @@ public class PlayerModelScreen extends Screen {
     }
 
     @Override
-    @Keep
     @SuppressWarnings("all")
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         this.drawDefaultBackground();
@@ -208,10 +205,10 @@ public class PlayerModelScreen extends Screen {
             if (!Config.DISABLE_SELF_MODEL) {
                 GuiInventory.drawEntityOnScreen(this.x + 67, this.y + 190, 70, this.x + 67 - mouseX, this.y + 180 - 95 - mouseY, player);
             } else {
-                Capabilities.getModelInfoCap(player).ifPresent(cap -> RenderUtil.renderEntityInInventory(this.x + 67, this.y + 190, 70, player, cap.getModelId(), cap.getSelectTexture()));
+                CapabilityEvent.getModelInfoCap(player).ifPresent(cap -> RenderUtil.renderEntityInInventory(this.x + 67, this.y + 190, 70, player, cap.getModelId(), cap.getSelectTexture()));
             }
 
-            Capabilities.getModelInfoCap(player).ifPresent(cap -> {
+            CapabilityEvent.getModelInfoCap(player).ifPresent(cap -> {
                 String modelName = cap.getModelId().getPath();
                 List<String> modelNameSplit = this.fontRenderer.listFormattedStringToWidth(modelName, 125);
                 int lineY = this.y + 205;
@@ -241,7 +238,6 @@ public class PlayerModelScreen extends Screen {
     }
 
     @Override
-    @Keep
     public void onResize(@Nonnull Minecraft minecraft, int width, int height) {
         String value = this.textField.getText();
         super.onResize(minecraft, width, height);
@@ -249,13 +245,11 @@ public class PlayerModelScreen extends Screen {
     }
 
     @Override
-    @Keep
     public void updateScreen() {
         this.textField.updateCursorCounter();
     }
 
     @Override
-    @Keep
     public void mouseClicked(int mouseX, int mouseY, int button) throws IOException {
         if (this.textField.mouseClicked(mouseX, mouseY, button)) {
             return;
@@ -264,7 +258,6 @@ public class PlayerModelScreen extends Screen {
     }
 
     @Override
-    @Keep
     public void keyTyped(char codePoint, int modifiers) throws IOException {
         if (this.textField == null) {
             return;
@@ -314,7 +307,6 @@ public class PlayerModelScreen extends Screen {
     }
 
     @Override
-    @Keep
     public boolean doesGuiPauseGame() {
         return false;
     }

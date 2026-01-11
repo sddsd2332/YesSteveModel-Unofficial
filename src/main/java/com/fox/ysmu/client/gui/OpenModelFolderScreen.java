@@ -3,7 +3,6 @@ package com.fox.ysmu.client.gui;
 import com.fox.ysmu.YesSteveModel;
 import com.fox.ysmu.client.gui.button.Button;
 import com.fox.ysmu.model.ServerModelManager;
-import com.fox.ysmu.util.Keep;
 import net.minecraft.client.resources.I18n;
 
 import java.io.File;
@@ -16,7 +15,6 @@ public class OpenModelFolderScreen extends Screen {
     }
 
     @Override
-    @Keep
     public void initGui() {
         int x = (width - 310) / 2;
         int y = height / 2 + 60;
@@ -35,7 +33,6 @@ public class OpenModelFolderScreen extends Screen {
     }
 
     @Override
-    @Keep
     public void drawScreen(int pMouseX, int pMouseY, float pPartialTick) {
         this.drawDefaultBackground();
         this.drawWordWrap(I18n.format("gui.yes_steve_model.open_model_folder.tips"),

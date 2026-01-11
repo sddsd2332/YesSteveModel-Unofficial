@@ -1,9 +1,9 @@
 package com.fox.ysmu.client.renderer;
 
 import com.fox.ysmu.Config;
-import com.fox.ysmu.capability.Capabilities;
 import com.fox.ysmu.client.ClientProxy;
 import com.fox.ysmu.client.entity.CustomPlayerEntity;
+import com.fox.ysmu.event.CapabilityEvent;
 import com.fox.ysmu.geckolib3.core.IAnimatable;
 import com.fox.ysmu.geckolib3.geo.render.built.GeoModel;
 import com.fox.ysmu.geckolib3.resource.GeckoLibCache;
@@ -147,7 +147,7 @@ public class ReplacePlayerHandRenderEvent {
 
 
     private void renderArm(boolean rightHand, AbstractClientPlayer player) {
-        Capabilities.getModelInfoCap(player).ifPresent(cap -> {
+        CapabilityEvent.getModelInfoCap(player).ifPresent(cap -> {
             ResourceLocation modelId = cap.getModelId();
             GeoModel geoModel = GeckoLibCache.getInstance().getGeoModels().get(ModelIdUtil.getArmId(cap.getModelId()));
             if (geoModel == null || !hasArmBone(rightHand, geoModel)) {

@@ -8,7 +8,6 @@ import com.fox.ysmu.geckolib3.geo.IGeoRenderer;
 import com.fox.ysmu.geckolib3.geo.render.built.GeoBone;
 import com.fox.ysmu.geckolib3.geo.render.built.GeoModel;
 import com.fox.ysmu.geckolib3.util.RenderUtils;
-import com.fox.ysmu.util.Keep;
 import mekanism.api.mixninapi.ElytraMixinHelp;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -31,7 +30,6 @@ public class CustomPlayerElytraLayer<T extends EntityLivingBase & IAnimatable> e
     }
 
     @Override
-    @Keep
     public void render(T livingEntity, float pLimbSwing, float pLimbSwingAmount, float pPartialTicks, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch, Color renderColor) {
         ItemStack stack = livingEntity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
         if ((stack.getItem() instanceof ItemElytra || isElytra(stack, livingEntity)) && this.entityRenderer.getGeoModel() != null) {

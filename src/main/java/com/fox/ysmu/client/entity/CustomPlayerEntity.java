@@ -2,7 +2,6 @@ package com.fox.ysmu.client.entity;
 
 import static com.fox.ysmu.util.ControllerUtils.*;
 
-import com.fox.ysmu.util.Keep;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.util.ResourceLocation;
@@ -44,7 +43,6 @@ public class CustomPlayerEntity implements IAnimatable {
      * 越往后优先级越高
      */
     @Override
-    @Keep
     @SuppressWarnings("all")
     public void registerControllers(AnimationData data) {
         AnimationManager manager = AnimationManager.getInstance();
@@ -113,7 +111,6 @@ public class CustomPlayerEntity implements IAnimatable {
     }
 
     @Override
-    @Keep
     public AnimationFactory getFactory() {
         return this.factory;
     }

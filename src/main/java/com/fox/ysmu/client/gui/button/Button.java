@@ -1,5 +1,6 @@
 package com.fox.ysmu.client.gui.button;
 
+import com.fox.ysmu.util.MathUtil;
 import com.fox.ysmu.util.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -61,7 +62,7 @@ public class Button extends GuiButton {
             double d0 = (double) System.currentTimeMillis() / (double) 1000.0F;
             double d1 = Math.max((double) l * (double) 0.5F, (double) 3.0F);
             double d2 = Math.sin((Math.PI / 2D) * Math.cos((Math.PI * 2D) * d0 / d1)) / (double) 2.0F + (double) 0.5F;
-            double d3 = RenderUtil.lerp(d2, 0.0F, l);
+            double d3 = MathUtil.lerp(d2, 0.0F, l);
             RenderUtil.scissor(minX, minY, maxX - minX, maxY - minY);
             drawString(font, text, minX - (int) d3, j, color);
             GL11.glDisable(GL11.GL_SCISSOR_TEST);

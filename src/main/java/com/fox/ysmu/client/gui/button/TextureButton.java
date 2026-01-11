@@ -1,9 +1,8 @@
 package com.fox.ysmu.client.gui.button;
 
 import com.fox.ysmu.YesSteveModel;
-import com.fox.ysmu.capability.Capabilities;
+import com.fox.ysmu.event.CapabilityEvent;
 import com.fox.ysmu.network.message.SetModelAndTexture;
-import com.fox.ysmu.util.Keep;
 import com.fox.ysmu.util.ModelIdUtil;
 import com.fox.ysmu.util.RenderUtil;
 import net.minecraft.client.Minecraft;
@@ -31,9 +30,8 @@ public class TextureButton extends Button {
     }
 
     @Override
-    @Keep
     public void onPress() {
-        Capabilities.getModelInfoCap(player).ifPresent(cap -> {
+        CapabilityEvent.getModelInfoCap(player).ifPresent(cap -> {
             cap.setModelAndTexture(modelId, textureId);
             if (player.equals(Minecraft.getMinecraft().player)) {
                 YesSteveModel.packetHandler.sendToServer(new SetModelAndTexture(modelId, textureId));
@@ -42,7 +40,6 @@ public class TextureButton extends Button {
     }
 
     @Override
-    @Keep
     public void renderWidget(@Nonnull Minecraft mc, int mouseX, int mouseY, float partialTick) {
         FontRenderer font = mc.fontRenderer;
 

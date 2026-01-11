@@ -1,6 +1,6 @@
 package com.fox.ysmu.network.message;
 
-import com.fox.ysmu.capability.Capabilities;
+import com.fox.ysmu.event.CapabilityEvent;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.PacketBuffer;
@@ -58,7 +58,7 @@ public class SetStarModel implements IMessage {
         }
 
         private void handleCapability(SetStarModel message, EntityPlayerMP player) {
-            Capabilities.getStarModelsCap(player).ifPresent(cap -> {
+            CapabilityEvent.getStarModelsCap(player).ifPresent(cap -> {
                 if (message.isAdd) {
                     cap.addModel(message.modelId);
                 } else {

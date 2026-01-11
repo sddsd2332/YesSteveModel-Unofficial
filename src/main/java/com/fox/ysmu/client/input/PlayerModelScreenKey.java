@@ -4,6 +4,8 @@ import com.fox.ysmu.Config;
 import com.fox.ysmu.client.gui.DisclaimerScreen;
 import com.fox.ysmu.client.gui.PlayerModelScreen;
 
+import net.minecraftforge.client.settings.KeyConflictContext;
+import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
@@ -14,13 +16,17 @@ import org.lwjgl.input.Keyboard;
 
 @Mod.EventBusSubscriber(value = Side.CLIENT)
 public class PlayerModelScreenKey {
-    public static final KeyBinding PLAYER_MODEL_KEY =
-        new KeyBinding("key.yes_steve_model.player_model.desc", Keyboard.KEY_Y, "key.category.yes_steve_model");
+    public static final KeyBinding PLAYER_MODEL_KEY = new KeyBinding(
+            "key.yes_steve_model.player_model.desc",
+            KeyConflictContext.IN_GAME,
+            KeyModifier.ALT,
+            Keyboard.KEY_Y,
+            "key.category.yes_steve_model"
+    );
 
     @SubscribeEvent
     public static void onKeyboardInput(InputEvent.KeyInputEvent event) {
-   //     boolean isAltKeyDown = Keyboard.isKeyDown(Keyboard.KEY_LMENU) || Keyboard.isKeyDown(Keyboard.KEY_RMENU);
-        if (PLAYER_MODEL_KEY.isKeyDown()) {
+        if (PLAYER_MODEL_KEY.isPressed()) {
             if (Config.DISCLAIMER_SHOW) {
                 Minecraft.getMinecraft().displayGuiScreen(new DisclaimerScreen());
             } else {

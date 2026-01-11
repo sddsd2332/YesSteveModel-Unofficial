@@ -1,6 +1,6 @@
 package com.fox.ysmu.network.message;
 
-import com.fox.ysmu.capability.Capabilities;
+import com.fox.ysmu.event.CapabilityEvent;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -49,7 +49,7 @@ public class SetPlayAnimation implements IMessage {
         }
 
         private void handleCapability(SetPlayAnimation message, EntityPlayerMP player) {
-            Capabilities.getModelInfoCap(player).ifPresent(modelIdCap -> {
+            CapabilityEvent.getModelInfoCap(player).ifPresent(modelIdCap -> {
                 if (message.extraAnimationId == STOP) {
                     modelIdCap.stopAnimation();
                 } else {

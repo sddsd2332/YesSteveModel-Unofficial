@@ -1,11 +1,10 @@
 package com.fox.ysmu.client.gui;
 
-import com.fox.ysmu.capability.Capabilities;
 import com.fox.ysmu.client.ClientModelManager;
 import com.fox.ysmu.client.gui.button.FlatColorButton;
 import com.fox.ysmu.client.gui.button.FlatIconButton;
 import com.fox.ysmu.client.gui.button.TextureButton;
-import com.fox.ysmu.util.Keep;
+import com.fox.ysmu.event.CapabilityEvent;
 import com.fox.ysmu.util.RenderUtil;
 import com.google.common.collect.Lists;
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -21,7 +20,6 @@ import org.lwjgl.opengl.GL11;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class PlayerTextureScreen extends Screen {
     private static final float SCALE_MAX = 360f;
@@ -60,13 +58,13 @@ public class PlayerTextureScreen extends Screen {
         this.modelId = modelId;
         this.textures = textures;
         this.textures.sort(ResourceLocation::compareTo);
-        this.animations = new ArrayList<>(ClientModelManager.DEFAULT_ANIMATION_FILE.animations.keySet().stream().collect(Collectors.toList()));
+        this.animations = new ArrayList<>(ClientModelManager.DEFAULT_ANIMATION_FILE.animations.keySet());
         this.animations.sort(String::compareTo);
         this.player = parent.player;
     }
 
+    @SuppressWarnings("CodeBlock2Expr")
     @Override
-    @Keep
     public void initGui() {
         this.x = (this.width - 420) / 2;
         this.y = (this.height - 235) / 2;
@@ -154,7 +152,7 @@ public class PlayerTextureScreen extends Screen {
         this.drawGradientRect(this.x + 93, this.y, this.x + 299, this.y + 235, 0xFF222222, 0xFF222222);
         this.drawGradientRect(this.x + 302, this.y, this.x + 420, this.y + 235, 0xFF222222, 0xFF222222);
 
-        Capabilities.getModelInfoCap(this.player).ifPresent(cap -> {
+        CapabilityEvent.getModelInfoCap(this.player).ifPresent(cap -> {
             RenderUtil.scissor(this.x + 93, this.y, 206, 235);
             RenderUtil.renderTextureScreenEntity(this.x + 299 / 2.0F + 40 + this.posX, this.y + 235 / 2.0F + 80 + this.posY, this.scale, this.pitch, this.yaw, this.mc.player, this.modelId, cap.getSelectTexture(), this.showGround, entity -> {
                 if (!entity.hasPreviewAnimation(this.animation)) {
@@ -192,7 +190,7 @@ public class PlayerTextureScreen extends Screen {
         float dragX = mouseX - this.lastMouseX;
         float dragY = mouseY - this.lastMouseY;
         if (button == LEFT_MOUSE_BUTTON) {
-            this.yaw += (1.5 * dragX);
+            this.yaw += (float) (1.5 * dragX);
             this.changePitchValue(dragY);
         }
         if (button == RIGHT_MOUSE_BUTTON) {
@@ -208,6 +206,7 @@ public class PlayerTextureScreen extends Screen {
         super.handleMouseInput();
         int dWheel = Mouse.getEventDWheel();
         if (dWheel != 0) {
+            dWheel = dWheel > 0 ? 1 : -1;
             int mouseX = Mouse.getEventX() * this.width / this.mc.displayWidth;
             int mouseY = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
             if (this.inViewRange(mouseX, mouseY)) {
@@ -222,7 +221,7 @@ public class PlayerTextureScreen extends Screen {
         }
     }
 
-    private boolean scrollTexturePage(double delta) {
+    private void scrollTexturePage(int delta) {
         if (delta > 0 && this.texturePage > 0) {
             this.texturePage--;
             this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
@@ -233,10 +232,9 @@ public class PlayerTextureScreen extends Screen {
             this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             this.refreshGui();
         }
-        return true;
     }
 
-    private boolean scrollAnimationPage(double delta) {
+    private void scrollAnimationPage(int delta) {
         if (delta > 0 && this.animationPage > 0) {
             this.animationPage--;
             this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
@@ -247,7 +245,6 @@ public class PlayerTextureScreen extends Screen {
             this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             this.refreshGui();
         }
-        return true;
     }
 
     private boolean inViewRange(double mouseX, double mouseY) {
@@ -284,7 +281,6 @@ public class PlayerTextureScreen extends Screen {
     }
 
     @Override
-    @Keep
     public boolean doesGuiPauseGame() {
         return false;
     }

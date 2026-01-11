@@ -1,8 +1,8 @@
 package com.fox.ysmu.client.animation;
 
-import com.fox.ysmu.capability.Capabilities;
 import com.fox.ysmu.client.animation.condition.*;
 import com.fox.ysmu.client.entity.CustomPlayerEntity;
+import com.fox.ysmu.event.CapabilityEvent;
 import com.fox.ysmu.geckolib3.core.IAnimatable;
 import com.fox.ysmu.geckolib3.core.PlayState;
 import com.fox.ysmu.geckolib3.core.builder.AnimationBuilder;
@@ -77,7 +77,7 @@ public final class AnimationManager {
             }
             return PlayState.STOP;
         }
-        return Capabilities.getModelInfoCap(player).map(cap -> {
+        return CapabilityEvent.getModelInfoCap(player).map(cap -> {
             if (cap.isPlayAnimation()) {
                 return playAnimation(event, cap.getAnimation());
             }

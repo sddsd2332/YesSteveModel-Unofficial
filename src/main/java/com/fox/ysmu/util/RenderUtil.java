@@ -331,8 +331,4 @@ public final class RenderUtil {
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         GL11.glScissor(x, y, width, height);
     }
-
-    public static double lerp(double delta, double start, double end) {
-        return start + delta * (end - start);
-    }
 }

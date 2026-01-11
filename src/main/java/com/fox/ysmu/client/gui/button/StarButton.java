@@ -1,9 +1,8 @@
 package com.fox.ysmu.client.gui.button;
 
 import com.fox.ysmu.YesSteveModel;
-import com.fox.ysmu.capability.Capabilities;
+import com.fox.ysmu.event.CapabilityEvent;
 import com.fox.ysmu.network.message.SetStarModel;
-import com.fox.ysmu.util.Keep;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
@@ -19,14 +18,13 @@ public class StarButton extends FlatColorButton {
     }
 
     @Override
-    @Keep
     public void renderWidget(@Nonnull Minecraft mc, int mouseX, int mouseY, float pPartialTick) {
         super.renderWidget(mc, mouseX, mouseY, pPartialTick);
         int startX = (this.width - 16) / 2;
         int startY = (this.height - 16) / 2;
         EntityPlayer player = mc.player;
         if (player != null) {
-            Capabilities.getModelInfoCap(player).ifPresent(modelInfoCap -> Capabilities.getStarModelsCap(player).ifPresent(starModelsCap -> {
+            CapabilityEvent.getModelInfoCap(player).ifPresent(modelInfoCap -> CapabilityEvent.getStarModelsCap(player).ifPresent(starModelsCap -> {
                 ResourceLocation modelId = modelInfoCap.getModelId();
                 mc.getTextureManager().bindTexture(ICON);
                 if (starModelsCap.containModel(modelId)) {
@@ -39,11 +37,10 @@ public class StarButton extends FlatColorButton {
     }
 
     @Override
-    @Keep
     public void onPress() {
         EntityPlayer player = Minecraft.getMinecraft().player;
         if (player != null) {
-            Capabilities.getModelInfoCap(player).ifPresent(modelInfoCap -> Capabilities.getStarModelsCap(player).ifPresent(starModelsCap -> {
+            CapabilityEvent.getModelInfoCap(player).ifPresent(modelInfoCap -> CapabilityEvent.getStarModelsCap(player).ifPresent(starModelsCap -> {
                 ResourceLocation modelId = modelInfoCap.getModelId();
                 if (starModelsCap.containModel(modelId)) {
                     starModelsCap.removeModel(modelId);

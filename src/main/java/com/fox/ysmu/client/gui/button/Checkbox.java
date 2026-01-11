@@ -1,7 +1,6 @@
 package com.fox.ysmu.client.gui.button;
 
 import com.fox.ysmu.YesSteveModel;
-import com.fox.ysmu.util.Keep;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.ResourceLocation;
@@ -37,7 +36,6 @@ public class Checkbox extends Button {
     }
 
     @Override
-    @Keep
     public void onPress() {
         this.selected = !this.selected;
         super.onPress();

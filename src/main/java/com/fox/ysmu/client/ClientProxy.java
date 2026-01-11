@@ -25,8 +25,6 @@ public class ClientProxy extends CommonProxy {
 
     private static CustomPlayerRenderer CUSTOM_PLAYER_RENDERER;
 
-    // Override CommonProxy methods here, if you want a different behaviour on the client (e.g. registering renders).
-    // Don't forget to call the super methods as well.
     @Override
     public void init(FMLInitializationEvent event) {
         super.init(event);
@@ -73,6 +71,4 @@ public class ClientProxy extends CommonProxy {
             }
         }
     }
-
-
 }

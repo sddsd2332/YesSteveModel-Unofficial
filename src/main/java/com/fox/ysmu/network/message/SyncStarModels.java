@@ -1,6 +1,6 @@
 package com.fox.ysmu.network.message;
 
-import com.fox.ysmu.capability.Capabilities;
+import com.fox.ysmu.event.CapabilityEvent;
 import com.google.common.collect.Sets;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -63,7 +63,7 @@ public class SyncStarModels implements IMessage {
         Minecraft mc = Minecraft.getMinecraft();
         EntityPlayer player = mc.player;
         if (player != null) {
-            Capabilities.getStarModelsCap(player).ifPresent(cap -> {
+            CapabilityEvent.getStarModelsCap(player).ifPresent(cap -> {
                 cap.setStarModels(message.starModels);
             });
         }

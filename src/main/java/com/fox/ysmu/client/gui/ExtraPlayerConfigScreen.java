@@ -1,7 +1,6 @@
 package com.fox.ysmu.client.gui;
 
 import com.fox.ysmu.Config;
-import com.fox.ysmu.util.Keep;
 import com.fox.ysmu.util.RenderUtil;
 import net.minecraft.client.resources.I18n;
 
@@ -28,7 +27,6 @@ public class ExtraPlayerConfigScreen extends Screen {
         this.yawOffset = (float) Config.PLAYER_YAW_OFFSET;
     }
 
-    @Keep
     @Override
     public void drawScreen(int pMouseX, int pMouseY, float pPartialTick) {
         int startX = this.posX;
@@ -68,7 +66,6 @@ public class ExtraPlayerConfigScreen extends Screen {
         }
     }
 
-    @Keep
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int button) throws IOException {
         boolean xIn = this.posX - 5 < mouseX && mouseX < this.posX + 5;
@@ -86,7 +83,6 @@ public class ExtraPlayerConfigScreen extends Screen {
         super.mouseClicked(mouseX, mouseY, button);
     }
 
-    @Keep
     @Override
     protected void mouseReleased(int mouseX, int mouseY, int state) {
         this.isChangePos = false;
@@ -94,7 +90,6 @@ public class ExtraPlayerConfigScreen extends Screen {
         super.mouseReleased(mouseX, mouseY, state);
     }
 
-    @Keep
     @Override
     protected void mouseClickMove(int mouseX, int mouseY, int button, long timeSinceLastClick) {
         if (isChangeScale) {
@@ -113,7 +108,6 @@ public class ExtraPlayerConfigScreen extends Screen {
         this.lastMouseX = mouseX;
     }
 
-    @Keep
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         if (Character.toLowerCase(typedChar) == RESET_KEY && isAltKeyDown()) {
@@ -125,7 +119,6 @@ public class ExtraPlayerConfigScreen extends Screen {
         super.keyTyped(typedChar, keyCode);
     }
 
-    @Keep
     @Override
     public void onGuiClosed() {
         Config.PLAYER_POS_X = this.posX;

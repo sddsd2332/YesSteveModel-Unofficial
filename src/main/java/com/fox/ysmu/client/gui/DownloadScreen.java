@@ -1,7 +1,6 @@
 package com.fox.ysmu.client.gui;
 
 import com.fox.ysmu.client.gui.button.FlatColorButton;
-import com.fox.ysmu.util.Keep;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 
@@ -15,7 +14,6 @@ public class DownloadScreen extends Screen {
     }
 
     @Override
-    @Keep
     public void initGui() {
         this.x = (width - 420) / 2;
         this.y = (height - 235) / 2;
@@ -24,7 +22,6 @@ public class DownloadScreen extends Screen {
     }
 
     @Override
-    @Keep
     public void drawScreen(int pMouseX, int pMouseY, float pPartialTick) {
         this.drawDefaultBackground();
         this.drawCenteredString(this.fontRenderer, TextFormatting.DARK_RED + "Coming Soooooooooooooooooooooooooon™", width / 2, height / 2 - 5, 0xFFFFFFFF);

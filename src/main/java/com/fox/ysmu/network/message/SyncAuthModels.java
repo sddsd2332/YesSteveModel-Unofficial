@@ -1,6 +1,6 @@
 package com.fox.ysmu.network.message;
 
-import com.fox.ysmu.capability.Capabilities;
+import com.fox.ysmu.event.CapabilityEvent;
 import com.google.common.collect.Sets;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -68,7 +68,7 @@ public class SyncAuthModels implements IMessage {
         Minecraft mc = Minecraft.getMinecraft();
         EntityPlayer player = mc.player;
         if (player != null) {
-            Capabilities.getAuthModelsCap(player).ifPresent(cap -> {
+            CapabilityEvent.getAuthModelsCap(player).ifPresent(cap -> {
                 cap.setAuthModels(message.authModels);
             });
         }

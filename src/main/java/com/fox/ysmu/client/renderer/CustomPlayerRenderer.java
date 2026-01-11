@@ -1,10 +1,10 @@
 package com.fox.ysmu.client.renderer;
 
-import com.fox.ysmu.capability.Capabilities;
 import com.fox.ysmu.client.entity.CustomPlayerEntity;
 import com.fox.ysmu.client.model.CustomPlayerModel;
 import com.fox.ysmu.client.renderer.layer.CustomPlayerElytraLayer;
 import com.fox.ysmu.client.renderer.layer.CustomPlayerItemInHandLayer;
+import com.fox.ysmu.event.CapabilityEvent;
 import com.fox.ysmu.event.api.SpecialPlayerRenderEvent;
 import com.fox.ysmu.geckolib3.geo.GeoReplacedEntityRenderer;
 import com.fox.ysmu.geckolib3.geo.render.built.GeoModel;
@@ -32,7 +32,7 @@ public class CustomPlayerRenderer extends GeoReplacedEntityRenderer<CustomPlayer
     public void doRender(EntityLivingBase entity, double x, double y, double z, float entityYaw,
                          float partialTicks) {
         if (this.animatable != null && entity instanceof EntityPlayer player) {
-            Capabilities.getModelInfoCap(player).ifPresent(cap -> {
+            CapabilityEvent.getModelInfoCap(player).ifPresent(cap -> {
                 this.animatable.setPlayer(player);
                 this.animatable.setMainModel(ModelIdUtil.getMainId(cap.getModelId()));
                 this.animatable.setTexture(cap.getSelectTexture());

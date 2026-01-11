@@ -1,7 +1,7 @@
 package com.fox.ysmu.network.message;
 
-import com.fox.ysmu.capability.Capabilities;
 import com.fox.ysmu.capability.ModelInfoCapability;
+import com.fox.ysmu.event.CapabilityEvent;
 import com.fox.ysmu.network.PacketHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
@@ -58,7 +58,7 @@ public class SyncModelInfo implements IMessage {
             PacketHandler.handlePacket(() -> {
                 Entity entity = player.world.getEntityByID(message.entityId);
                 if (entity instanceof EntityPlayer entityPlayer) {
-                    Capabilities.getModelInfoCap(entityPlayer).ifPresent(cap -> {
+                    CapabilityEvent.getModelInfoCap(entityPlayer).ifPresent(cap -> {
                         cap.copyFrom(message.capability);
                     });
                 }

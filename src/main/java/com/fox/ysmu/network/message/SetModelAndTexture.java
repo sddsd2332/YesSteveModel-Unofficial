@@ -1,6 +1,6 @@
 package com.fox.ysmu.network.message;
 
-import com.fox.ysmu.capability.Capabilities;
+import com.fox.ysmu.event.CapabilityEvent;
 import com.fox.ysmu.model.ServerModelManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -51,7 +51,7 @@ public class SetModelAndTexture implements IMessage {
         }
 
         private void handleCapability(SetModelAndTexture message, EntityPlayerMP player) {
-            Capabilities.getModelInfoCap(player).ifPresent(modelIdCap -> Capabilities.getAuthModelsCap(player).ifPresent(ownModelsCap -> {
+            CapabilityEvent.getModelInfoCap(player).ifPresent(modelIdCap -> CapabilityEvent.getAuthModelsCap(player).ifPresent(ownModelsCap -> {
                 if (!ServerModelManager.AUTH_MODELS.contains(message.modelId.getPath()) || ownModelsCap.containModel(message.modelId)) {
                     modelIdCap.setModelAndTexture(message.modelId, message.selectTexture);
                 }

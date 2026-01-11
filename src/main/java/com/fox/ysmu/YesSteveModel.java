@@ -1,7 +1,5 @@
 package com.fox.ysmu;
 
-import com.fox.ysmu.capability.Capabilities;
-import com.fox.ysmu.event.CommonEventHandler;
 import com.fox.ysmu.network.PacketHandler;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -29,34 +27,22 @@ public class YesSteveModel {
     public static PacketHandler packetHandler = new PacketHandler();
 
     @Mod.EventHandler
-    // preInit "Run before anything else. Read your config, create blocks, items, etc, and register them with the
-    // GameRegistry." (Remove if not needed)
     public void preInit(FMLPreInitializationEvent event) {
         proxy.preInit(event);
-
-        Capabilities.registerCapabilities();
     }
 
     @Mod.EventHandler
-    // load "Do your mod setup. Build whatever data structures you care about. Register recipes." (Remove if not needed)
     public void init(FMLInitializationEvent event) {
-        MinecraftForge.EVENT_BUS.register(this);
-        MinecraftForge.EVENT_BUS.register(new CommonEventHandler());
         proxy.init(event);
-        packetHandler.init();
     }
 
     @Mod.EventHandler
-    // postInit "Handle interaction with other mods, complete your setup based on this." (Remove if not needed)
     public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit(event);
     }
 
     @Mod.EventHandler
-    // register server commands in this event handler (Remove if not needed)
     public void serverStarting(FMLServerStartingEvent event) {
         proxy.serverStarting(event);
     }
-
-
 }

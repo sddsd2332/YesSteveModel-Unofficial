@@ -3,7 +3,6 @@ package com.fox.ysmu.client.gui;
 import com.fox.ysmu.Config;
 import com.fox.ysmu.client.gui.button.Button;
 import com.fox.ysmu.client.gui.button.Checkbox;
-import com.fox.ysmu.util.Keep;
 import net.minecraft.client.resources.I18n;
 
 import java.util.List;
@@ -17,7 +16,6 @@ public class DisclaimerScreen extends Screen {
     }
 
     @Override
-    @Keep
     public void initGui() {
         String mainText = I18n.format("gui.yes_steve_model.disclaimer.text");
         List<String> splitMainText = this.listLineBreakStringToWidth(mainText, 400);

@@ -2,11 +2,10 @@ package com.fox.ysmu.client.gui;
 
 import com.fox.ysmu.Config;
 import com.fox.ysmu.YesSteveModel;
-import com.fox.ysmu.capability.Capabilities;
 import com.fox.ysmu.client.ClientModelManager;
 import com.fox.ysmu.client.input.ExtraAnimationKey;
+import com.fox.ysmu.event.CapabilityEvent;
 import com.fox.ysmu.network.message.SetPlayAnimation;
-import com.fox.ysmu.util.Keep;
 import com.fox.ysmu.util.ModelIdUtil;
 import com.github.bsideup.jabel.Desugar;
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -44,10 +43,9 @@ public class AnimationRouletteScreen extends GuiScreen {
     private static final float SELECT_RADIUS = 10, SELECT_RADIUS_WITH_PARENT = 20;
 
     @Override
-    @Keep
     public void initGui() {
         if (this.mc != null && this.mc.player != null) {
-            Capabilities.getModelInfoCap(this.mc.player).ifPresent(cap -> {
+            CapabilityEvent.getModelInfoCap(this.mc.player).ifPresent(cap -> {
                 ResourceLocation modelId = cap.getModelId();
                 if (ClientModelManager.EXTRA_ANIMATION_NAME.containsKey(ModelIdUtil.getMainId(modelId))) {
                     this.names = ClientModelManager.EXTRA_ANIMATION_NAME.get(ModelIdUtil.getMainId(modelId));

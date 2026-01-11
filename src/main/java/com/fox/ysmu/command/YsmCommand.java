@@ -1,11 +1,9 @@
 package com.fox.ysmu.command;
 
 import com.fox.ysmu.YesSteveModel;
-import com.fox.ysmu.capability.Capabilities;
+import com.fox.ysmu.event.CapabilityEvent;
 import com.fox.ysmu.model.ServerModelManager;
 import com.fox.ysmu.util.ResourceLocationHelp;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -67,7 +65,7 @@ public class YsmCommand extends CommandBase {
         } else {
             ServerModelManager.sendRequestSyncModelMessage();
         }
-        server.getPlayerList().getPlayers().forEach(player -> Capabilities.getAuthModelsCap(player).ifPresent(ownModelsCap -> Capabilities.getModelInfoCap(player).ifPresent(modelIdCap -> {
+        server.getPlayerList().getPlayers().forEach(player -> CapabilityEvent.getAuthModelsCap(player).ifPresent(ownModelsCap -> CapabilityEvent.getModelInfoCap(player).ifPresent(modelIdCap -> {
             if (ServerModelManager.AUTH_MODELS.contains(modelIdCap.getModelId().getPath()) && !ownModelsCap.containModel(modelIdCap.getModelId())) {
                 ResourceLocation defaultModelId = new ResourceLocation(YesSteveModel.MOD_ID, "default");
                 ResourceLocation defaultTextureId = new ResourceLocation(YesSteveModel.MOD_ID, "default/default.png");
