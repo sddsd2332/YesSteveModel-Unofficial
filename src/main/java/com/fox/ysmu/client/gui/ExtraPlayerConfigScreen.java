@@ -78,6 +78,9 @@ public class ExtraPlayerConfigScreen extends Screen {
         if (button == LEFT_MOUSE_BUTTON && xIn2 && yIn2) {
             this.isChangeScale = true;
         }
+        if (button == RIGHT_MOUSE_BUTTON) {
+            this.lastMouseX = mouseX;
+        }
         super.mouseClicked(mouseX, mouseY, button);
     }
 
