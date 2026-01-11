@@ -1,8 +1,8 @@
 package com.fox.ysmu.geckolib3.geo.raw.pojo;
 
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.Map;
 
 public class Bone {
 
@@ -15,11 +15,11 @@ public class Bone {
     private String name;
     private Boolean neverRender;
     private String parent;
-    private double[] pivot = new double[] { 0, 0, 0 };
+    private double[] pivot = new double[]{0, 0, 0};
     private PolyMesh polyMesh;
     private Long renderGroupID;
     private Boolean reset;
-    private double[] rotation = new double[] { 0, 0, 0 };
+    private double[] rotation = new double[]{0, 0, 0};
     private TextureMesh[] textureMeshes;
 
     @JsonProperty("bind_pose_rotation")

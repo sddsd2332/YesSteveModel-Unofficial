@@ -1,12 +1,11 @@
 package com.fox.ysmu.geckolib3.resource;
 
-import java.util.HashMap;
-
-import net.minecraft.util.ResourceLocation;
-
 import com.fox.ysmu.geckolib3.core.molang.MolangParser;
 import com.fox.ysmu.geckolib3.file.AnimationFile;
 import com.fox.ysmu.geckolib3.geo.render.built.GeoModel;
+import net.minecraft.util.ResourceLocation;
+
+import java.util.HashMap;
 
 @SuppressWarnings("deprecation")
 public class GeckoLibCache {

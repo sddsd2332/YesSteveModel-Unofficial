@@ -1,23 +1,22 @@
 package com.fox.ysmu.geckolib3.core.molang;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.DoubleSupplier;
-
-import com.fox.ysmu.mclib.math.Constant;
-import com.fox.ysmu.mclib.math.IValue;
-import com.fox.ysmu.mclib.math.MathBuilder;
-import com.fox.ysmu.mclib.math.Variable;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonPrimitive;
-
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import com.fox.ysmu.geckolib3.core.molang.expressions.MolangAssignment;
 import com.fox.ysmu.geckolib3.core.molang.expressions.MolangExpression;
 import com.fox.ysmu.geckolib3.core.molang.expressions.MolangMultiStatement;
 import com.fox.ysmu.geckolib3.core.molang.expressions.MolangValue;
 import com.fox.ysmu.geckolib3.core.molang.functions.CosDegrees;
 import com.fox.ysmu.geckolib3.core.molang.functions.SinDegrees;
+import com.fox.ysmu.mclib.math.Constant;
+import com.fox.ysmu.mclib.math.IValue;
+import com.fox.ysmu.mclib.math.MathBuilder;
+import com.fox.ysmu.mclib.math.Variable;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.DoubleSupplier;
 
 /**
  * MoLang 解析器
@@ -140,8 +139,8 @@ public class MolangParser extends MathBuilder {
     public MolangExpression parseExpression(String expression) throws MolangException {
         MolangMultiStatement result = null;
         for (String split : expression.toLowerCase()
-            .trim()
-            .split(";")) {
+                .trim()
+                .split(";")) {
             String trimmed = split.trim();
             if (!trimmed.isEmpty()) {
                 if (result == null) {
@@ -160,7 +159,7 @@ public class MolangParser extends MathBuilder {
      * 解析单个 MoLang 表达式
      */
     protected MolangExpression parseOneLine(String expression, MolangMultiStatement currentStatement)
-        throws MolangException {
+            throws MolangException {
         if (expression.startsWith(RETURN)) {
             try {
                 return new MolangValue(this, parse(expression.substring(RETURN.length()))).addReturn();
@@ -174,8 +173,8 @@ public class MolangParser extends MathBuilder {
             List<Object> symbols = breakdownChars(this.breakdown(expression));
             // 如果是赋值表达式
             if (symbols.size() >= 3 && (symbols.get(0) instanceof String name)
-                && isVariable(symbols.get(0))
-                && symbols.get(1)
+                    && isVariable(symbols.get(0))
+                    && symbols.get(1)
                     .equals("=")) {
                 symbols = symbols.subList(2, symbols.size());
                 LazyVariable variable;

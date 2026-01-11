@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.*;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.*;
+import java.util.Map;
 
 public class YsmConverter {
 
@@ -131,14 +131,14 @@ public class YsmConverter {
         } else if (version == Version.V_1_1_4) {
             // 如果是 1.1.4，尝试从 main.json 读取现有的 extra info 以便保留
             Path mainJson = srcPath.resolve("main.json");
-            if(Files.exists(mainJson)) {
+            if (Files.exists(mainJson)) {
                 try (Reader reader = new FileReader(mainJson.toFile())) {
                     JsonObject main = new JsonParser().parse(reader).getAsJsonObject();
-                    if(main.has("minecraft:geometry")) {
+                    if (main.has("minecraft:geometry")) {
                         JsonArray geo = main.getAsJsonArray("minecraft:geometry");
-                        if(geo.size() > 0 && geo.get(0).getAsJsonObject().has("description")) {
+                        if (geo.size() > 0 && geo.get(0).getAsJsonObject().has("description")) {
                             JsonObject desc = geo.get(0).getAsJsonObject().getAsJsonObject("description");
-                            if(desc.has("ysm_extra_info")) return desc.getAsJsonObject("ysm_extra_info");
+                            if (desc.has("ysm_extra_info")) return desc.getAsJsonObject("ysm_extra_info");
                         }
                     }
                 }
@@ -196,14 +196,17 @@ public class YsmConverter {
             if (rawInfo.has("authors")) extraInfo.add("authors", rawInfo.get("authors"));
             if (rawInfo.has("tips")) extraInfo.add("tips", rawInfo.get("tips"));
             if (rawInfo.has("license")) extraInfo.add("license", rawInfo.get("license"));
-            if (rawInfo.has("extra_animation_names")) extraInfo.add("extra_animation_names", rawInfo.get("extra_animation_names"));
+            if (rawInfo.has("extra_animation_names"))
+                extraInfo.add("extra_animation_names", rawInfo.get("extra_animation_names"));
         }
 
         // 暂时存储 scale 信息以便后续注入，不放入 ysm_extra_info
         if (version == Version.V_1_2_0 && rawInfo.has("properties")) {
             JsonObject props = rawInfo.getAsJsonObject("properties");
-            if (props.has("height_scale")) extraInfo.addProperty("__temp_h_scale", props.get("height_scale").getAsDouble());
-            if (props.has("width_scale")) extraInfo.addProperty("__temp_w_scale", props.get("width_scale").getAsDouble());
+            if (props.has("height_scale"))
+                extraInfo.addProperty("__temp_h_scale", props.get("height_scale").getAsDouble());
+            if (props.has("width_scale"))
+                extraInfo.addProperty("__temp_w_scale", props.get("width_scale").getAsDouble());
         }
 
         return extraInfo;

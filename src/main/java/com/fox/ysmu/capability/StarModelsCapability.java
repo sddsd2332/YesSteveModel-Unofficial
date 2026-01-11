@@ -7,12 +7,11 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-public class StarModelsCapability  {
+public class StarModelsCapability {
 
     private Set<ResourceLocation> starModels = Sets.newHashSet();
 
@@ -43,7 +42,6 @@ public class StarModelsCapability  {
     public void clear() {
         starModels.clear();
     }
-
 
 
     public NBTTagList serializeNBT() {

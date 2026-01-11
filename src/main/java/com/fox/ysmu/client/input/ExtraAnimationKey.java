@@ -1,9 +1,9 @@
 package com.fox.ysmu.client.input;
 
 import com.fox.ysmu.YesSteveModel;
-import com.fox.ysmu.network.PacketHandler;
 import com.fox.ysmu.network.message.SetPlayAnimation;
 import com.google.common.collect.Lists;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -11,7 +11,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraft.client.settings.KeyBinding;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;

@@ -1,12 +1,12 @@
 package com.fox.ysmu.geckolib3.core.easing;
 
+import com.fox.ysmu.geckolib3.core.util.Memoizer;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.DoubleStream;
-
-import com.fox.ysmu.geckolib3.core.util.Memoizer;
 
 public class EasingManager {
 
@@ -37,7 +37,7 @@ public class EasingManager {
     public static double ease(double number, EasingType easingType, List<Double> easingArgs) {
         Double firstArg = easingArgs == null || easingArgs.size() < 1 ? null : easingArgs.get(0);
         return getEasingFunction.apply(new EasingFunctionArgs(easingType, firstArg))
-            .apply(number);
+                .apply(number);
     }
 
     // Memoize easing functions so we don't need to create new ones from HOFs every
@@ -45,7 +45,7 @@ public class EasingManager {
     static Function<Double, Double> quart = poly(4);
     static Function<Double, Double> quint = poly(5);
     static Function<EasingFunctionArgs, Function<Double, Double>> getEasingFunction = Memoizer
-        .memoize(EasingManager::getEasingFuncImpl);
+            .memoize(EasingManager::getEasingFuncImpl);
 
     // Don't call this, use getEasingFunction instead as that function is the
     // memoized version
@@ -375,7 +375,9 @@ public class EasingManager {
         // There must be an easier way of doing this but I just don't care
         AtomicInteger i = new AtomicInteger();
         return DoubleStream.generate(() -> i.getAndIncrement() * stepLength)
-            .limit(steps)
-            .toArray();
-    };
+                .limit(steps)
+                .toArray();
+    }
+
+    ;
 }

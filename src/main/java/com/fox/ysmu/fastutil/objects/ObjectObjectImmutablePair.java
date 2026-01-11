@@ -33,7 +33,7 @@ public class ObjectObjectImmutablePair<K, V> implements Pair<K, V>, Serializable
         } else if (!(other instanceof Pair)) {
             return false;
         } else {
-            return Objects.equals(this.left, ((Pair)other).left()) && Objects.equals(this.right, ((Pair)other).right());
+            return Objects.equals(this.left, ((Pair) other).left()) && Objects.equals(this.right, ((Pair) other).right());
         }
     }
 

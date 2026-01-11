@@ -5,10 +5,10 @@
 
 package com.fox.ysmu.geckolib3.core.builder;
 
+import com.fox.ysmu.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.fox.ysmu.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
 
 /**
  * This class follows the builder pattern, which means that every method returns

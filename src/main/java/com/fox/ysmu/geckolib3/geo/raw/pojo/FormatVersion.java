@@ -1,8 +1,9 @@
 package com.fox.ysmu.geckolib3.geo.raw.pojo;
-import java.io.IOException;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+
+import java.io.IOException;
 
 public enum FormatVersion {
 

@@ -1,8 +1,8 @@
 package com.fox.ysmu.geckolib3.geo.raw.pojo;
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.io.Serializable;
 
 public class ModelProperties implements Serializable {
 

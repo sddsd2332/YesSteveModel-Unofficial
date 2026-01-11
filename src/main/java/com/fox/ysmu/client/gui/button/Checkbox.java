@@ -18,7 +18,8 @@ public class Checkbox extends Button {
     }
 
     public Checkbox(int x, int y, String message, FontRenderer font, boolean selected) {
-        this(x, y, message, font, selected, (b) -> {});
+        this(x, y, message, font, selected, (b) -> {
+        });
     }
 
     protected void renderWidget(@Nonnull Minecraft mc, int mouseX, int mouseY, float pPartialTick) {

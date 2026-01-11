@@ -5,9 +5,9 @@
 
 package com.fox.ysmu.geckolib3.core.builder;
 
-import java.util.Objects;
-
 import com.fox.ysmu.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
+
+import java.util.Objects;
 
 public class RawAnimation {
 

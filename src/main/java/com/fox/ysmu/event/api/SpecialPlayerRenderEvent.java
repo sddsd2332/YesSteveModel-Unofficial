@@ -1,9 +1,8 @@
 package com.fox.ysmu.event.api;
 
+import com.fox.ysmu.client.entity.CustomPlayerEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-
-import com.fox.ysmu.client.entity.CustomPlayerEntity;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 

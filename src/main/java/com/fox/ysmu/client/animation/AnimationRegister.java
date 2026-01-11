@@ -1,10 +1,6 @@
 package com.fox.ysmu.client.animation;
 
 import com.fox.ysmu.client.entity.CustomPlayerEntity;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.util.EnumFacing;
 import com.fox.ysmu.geckolib3.core.builder.ILoopType;
 import com.fox.ysmu.geckolib3.core.event.predicate.AnimationEvent;
 import com.fox.ysmu.geckolib3.core.molang.LazyVariable;
@@ -12,6 +8,10 @@ import com.fox.ysmu.geckolib3.core.molang.MolangParser;
 import com.fox.ysmu.geckolib3.model.provider.data.EntityModelData;
 import com.fox.ysmu.geckolib3.resource.GeckoLibCache;
 import com.fox.ysmu.geckolib3.util.MolangUtils;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.util.EnumFacing;
 
 import java.util.function.BiPredicate;
 

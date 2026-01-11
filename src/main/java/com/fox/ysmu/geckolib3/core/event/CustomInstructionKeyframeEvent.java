@@ -22,7 +22,7 @@ public class CustomInstructionKeyframeEvent<T> extends KeyframeEvent<T> {
      * @param controller    the controller
      */
     public CustomInstructionKeyframeEvent(T entity, double animationTick, String instructions,
-        AnimationController controller) {
+                                          AnimationController controller) {
         super(entity, animationTick, controller);
         this.instructions = instructions;
     }

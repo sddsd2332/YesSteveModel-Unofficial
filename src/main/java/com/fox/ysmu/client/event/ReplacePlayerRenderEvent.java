@@ -28,6 +28,6 @@ public class ReplacePlayerRenderEvent {
         double ix = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
         double iy = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks;
         double iz = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTicks;
-        ClientProxy.getInstance().doRender(player, ix - Minecraft.getMinecraft().getRenderManager().renderPosX, iy - Minecraft.getMinecraft().getRenderManager().renderPosY, iz - Minecraft.getMinecraft().getRenderManager().renderPosZ,player.rotationYaw, partialTicks);
+        ClientProxy.getInstance().doRender(player, ix - Minecraft.getMinecraft().getRenderManager().renderPosX, iy - Minecraft.getMinecraft().getRenderManager().renderPosY, iz - Minecraft.getMinecraft().getRenderManager().renderPosZ, player.rotationYaw, partialTicks);
     }
 }

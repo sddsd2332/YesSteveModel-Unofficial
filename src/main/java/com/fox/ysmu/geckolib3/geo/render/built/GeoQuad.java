@@ -1,11 +1,10 @@
 package com.fox.ysmu.geckolib3.geo.render.built;
 
-import java.io.Serializable;
-
-import net.minecraft.util.EnumFacing;
-
-import net.minecraft.util.math.Vec3i;
 import com.fox.ysmu.geckolib3.geo.raw.pojo.FaceUv;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.Vec3i;
+
+import java.io.Serializable;
 
 public class GeoQuad implements Serializable {
 
@@ -16,7 +15,7 @@ public class GeoQuad implements Serializable {
     public int uvRotation;
 
     public GeoQuad(GeoVertex[] verticesIn, float u1, float v1, float uSize, float vSize, int uvRotation, float texWidth,
-        float texHeight, Boolean mirrorIn, EnumFacing directionIn) {
+                   float texHeight, Boolean mirrorIn, EnumFacing directionIn) {
         this.direction = directionIn;
         this.vertices = verticesIn;
         this.uvRotation = uvRotation;
@@ -51,7 +50,7 @@ public class GeoQuad implements Serializable {
         }
 
         float[] uvs = FaceUv.Rotation.fromValue(uvRotation)
-            .rotateUvs(u1, v1, uWidth, vHeight);
+                .rotateUvs(u1, v1, uWidth, vHeight);
         vertices[0] = verticesIn[0].setTextureUV(uvs[0], uvs[1]);
         vertices[1] = verticesIn[1].setTextureUV(uvs[2], uvs[3]);
         vertices[2] = verticesIn[2].setTextureUV(uvs[4], uvs[5]);
@@ -60,37 +59,37 @@ public class GeoQuad implements Serializable {
     }
 
     public GeoQuad(GeoVertex[] verticesIn, double[] uvCoords, double[] uvSize, int uvRotation, float texWidth,
-        float texHeight, Boolean mirrorIn, EnumFacing directionIn) {
+                   float texHeight, Boolean mirrorIn, EnumFacing directionIn) {
         this(
-            verticesIn,
-            (float) uvCoords[0],
-            (float) uvCoords[1],
-            (float) uvSize[0],
-            (float) uvSize[1],
-            uvRotation,
-            texWidth,
-            texHeight,
-            mirrorIn,
-            directionIn);
+                verticesIn,
+                (float) uvCoords[0],
+                (float) uvCoords[1],
+                (float) uvSize[0],
+                (float) uvSize[1],
+                uvRotation,
+                texWidth,
+                texHeight,
+                mirrorIn,
+                directionIn);
     }
 
     public GeoQuad(GeoVertex[] verticesIn, float u1, float v1, float uSize, float vSize, float texWidth,
-        float texHeight, Boolean mirrorIn, EnumFacing directionIn) {
+                   float texHeight, Boolean mirrorIn, EnumFacing directionIn) {
         this(verticesIn, u1, v1, uSize, vSize, 0, texWidth, texHeight, mirrorIn, directionIn);
     }
 
     public GeoQuad(GeoVertex[] verticesIn, double[] uvCoords, double[] uvSize, float texWidth, float texHeight,
-        Boolean mirrorIn, EnumFacing directionIn) {
+                   Boolean mirrorIn, EnumFacing directionIn) {
         this(
-            verticesIn,
-            (float) uvCoords[0],
-            (float) uvCoords[1],
-            (float) uvSize[0],
-            (float) uvSize[1],
-            0,
-            texWidth,
-            texHeight,
-            mirrorIn,
-            directionIn);
+                verticesIn,
+                (float) uvCoords[0],
+                (float) uvCoords[1],
+                (float) uvSize[0],
+                (float) uvSize[1],
+                0,
+                texWidth,
+                texHeight,
+                mirrorIn,
+                directionIn);
     }
 }

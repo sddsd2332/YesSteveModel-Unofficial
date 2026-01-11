@@ -1,8 +1,8 @@
 package com.fox.ysmu.geckolib3.geo.raw.tree;
 
-import java.util.HashMap;
-
 import com.fox.ysmu.geckolib3.geo.raw.pojo.Bone;
+
+import java.util.HashMap;
 
 public class RawBoneGroup {
 

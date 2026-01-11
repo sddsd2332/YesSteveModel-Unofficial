@@ -1,15 +1,14 @@
 package com.fox.ysmu.client.input;
 
 import com.fox.ysmu.client.gui.ExtraPlayerConfigScreen;
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.KeyBinding;
 import org.lwjgl.input.Keyboard;
 
 @Mod.EventBusSubscriber(value = Side.CLIENT)

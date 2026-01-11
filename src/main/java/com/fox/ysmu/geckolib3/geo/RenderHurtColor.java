@@ -21,7 +21,7 @@ public class RenderHurtColor extends RenderLivingBase<EntityLivingBase> {
 
     public static RenderHurtColor getInstance() {
         if (instance == null) {
-            instance = new RenderHurtColor(Minecraft.getMinecraft().getRenderManager(),null, 0);
+            instance = new RenderHurtColor(Minecraft.getMinecraft().getRenderManager(), null, 0);
         }
 
         return instance;

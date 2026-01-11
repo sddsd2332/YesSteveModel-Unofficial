@@ -41,7 +41,7 @@ public enum EasingType {
     public static EasingType getEasingTypeFromString(String search) {
         for (EasingType each : EasingType.values()) {
             if (each.name()
-                .compareToIgnoreCase(search) == 0) {
+                    .compareToIgnoreCase(search) == 0) {
                 return each;
             }
         }

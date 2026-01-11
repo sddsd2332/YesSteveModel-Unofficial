@@ -7,13 +7,12 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
 
-public class AuthModelsCapability  {
+public class AuthModelsCapability {
 
     private Set<ResourceLocation> authModels = Sets.newHashSet();
 
@@ -44,7 +43,6 @@ public class AuthModelsCapability  {
     public void clear() {
         authModels.clear();
     }
-
 
 
     public NBTTagList serializeNBT() {

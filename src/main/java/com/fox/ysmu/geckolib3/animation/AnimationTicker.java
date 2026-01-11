@@ -1,11 +1,9 @@
 package com.fox.ysmu.geckolib3.animation;
 
+import com.fox.ysmu.geckolib3.core.manager.AnimationData;
 import net.minecraft.client.Minecraft;
-
-
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import com.fox.ysmu.geckolib3.core.manager.AnimationData;
 
 public class AnimationTicker {
 
@@ -18,7 +16,7 @@ public class AnimationTicker {
     @SubscribeEvent
     public void tickEvent(TickEvent.ClientTickEvent event) {
         if (Minecraft.getMinecraft()
-            .isGamePaused() && !data.shouldPlayWhilePaused) {
+                .isGamePaused() && !data.shouldPlayWhilePaused) {
             return;
         }
 

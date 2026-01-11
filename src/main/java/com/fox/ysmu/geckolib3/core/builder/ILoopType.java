@@ -5,11 +5,11 @@
 
 package com.fox.ysmu.geckolib3.core.builder;
 
-import java.io.Serializable;
-import java.util.Locale;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
+
+import java.io.Serializable;
+import java.util.Locale;
 
 public interface ILoopType extends Serializable {
 
@@ -37,7 +37,8 @@ public interface ILoopType extends Serializable {
             }
             try {
                 return EDefaultLoopTypes.valueOf(string.toUpperCase(Locale.ROOT));
-            } catch (Exception ignore) {}
+            } catch (Exception ignore) {
+            }
         }
         return EDefaultLoopTypes.PLAY_ONCE;
     }

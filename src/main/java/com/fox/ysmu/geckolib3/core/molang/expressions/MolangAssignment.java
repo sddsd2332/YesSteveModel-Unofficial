@@ -1,9 +1,8 @@
 package com.fox.ysmu.geckolib3.core.molang.expressions;
 
+import com.fox.ysmu.geckolib3.core.molang.MolangParser;
 import com.fox.ysmu.mclib.math.IValue;
 import com.fox.ysmu.mclib.math.Variable;
-
-import com.fox.ysmu.geckolib3.core.molang.MolangParser;
 
 public class MolangAssignment extends MolangExpression {
 

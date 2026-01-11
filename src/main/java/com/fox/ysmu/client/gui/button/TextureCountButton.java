@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 
 public class TextureCountButton extends FlatColorButton {
     public TextureCountButton(int x, int y) {
-        super(x, y, 20, 20,"", (b) -> {
+        super(x, y, 20, 20, "", (b) -> {
         });
     }
 

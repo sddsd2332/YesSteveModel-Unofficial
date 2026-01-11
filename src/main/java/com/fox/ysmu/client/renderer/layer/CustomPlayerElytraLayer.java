@@ -51,7 +51,7 @@ public class CustomPlayerElytraLayer<T extends EntityLivingBase & IAnimatable> e
                 translateToElytra(geoModel);
                 GlStateManager.translate(0, -0.625F, 0);
                 GlStateManager.rotate(180, 0, 0, 1);
-               // GlStateManager.scale(2.0f, 2.0f, 2.0f);
+                // GlStateManager.scale(2.0f, 2.0f, 2.0f);
                 Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
                 elytraModel.setRotationAngles(pLimbSwing, pLimbSwingAmount, pAgeInTicks, pNetHeadYaw, pHeadPitch, 0.0625F, livingEntity);
                 elytraModel.render(livingEntity, pLimbSwing, pLimbSwingAmount, pAgeInTicks, pNetHeadYaw, pHeadPitch, 0.0625F);
@@ -81,7 +81,6 @@ public class CustomPlayerElytraLayer<T extends EntityLivingBase & IAnimatable> e
         RenderUtils.rotateMatrixAroundBone(lastBone);
         RenderUtils.scaleMatrixForBone(lastBone);
     }
-
 
 
 }

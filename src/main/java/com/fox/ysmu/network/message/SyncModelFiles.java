@@ -3,7 +3,6 @@ package com.fox.ysmu.network.message;
 import com.fox.ysmu.YesSteveModel;
 import com.fox.ysmu.data.EncryptTools;
 import com.fox.ysmu.model.format.ServerModelInfo;
-import com.fox.ysmu.network.PacketHandler;
 import com.fox.ysmu.util.ThreadTools;
 import com.fox.ysmu.util.UuidUtils;
 import com.google.common.collect.Lists;
@@ -20,8 +19,10 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-;
+
 import static com.fox.ysmu.model.ServerModelManager.*;
+
+;
 
 public class SyncModelFiles implements IMessage {
 

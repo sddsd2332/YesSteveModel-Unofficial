@@ -1,8 +1,8 @@
 package com.fox.ysmu.geckolib3.core.molang;
 
-import java.util.function.DoubleSupplier;
-
 import com.fox.ysmu.mclib.math.Variable;
+
+import java.util.function.DoubleSupplier;
 
 /**
  * 变量延迟计算，在需要时才会进行计算 <br>

@@ -1,42 +1,9 @@
 package com.fox.ysmu.client;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Nullable;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.*;
-
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.FileFileFilter;
-import org.apache.commons.lang3.StringUtils;
-
+import com.fox.ysmu.YesSteveModel;
 import com.fox.ysmu.client.animation.condition.ConditionManager;
 import com.fox.ysmu.client.texture.OuterFileTexture;
 import com.fox.ysmu.data.ModelData;
-import com.fox.ysmu.model.ServerModelManager;
-import com.fox.ysmu.model.format.FolderFormat;
-import com.fox.ysmu.network.PacketHandler;
-import com.fox.ysmu.network.message.SyncModelFiles;
-import com.fox.ysmu.util.GsonHelper;
-import com.fox.ysmu.util.ModelIdUtil;
-import com.fox.ysmu.util.ThreadTools;
-import com.fox.ysmu.YesSteveModel;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
 import com.fox.ysmu.fastutil.Pair;
 import com.fox.ysmu.geckolib3.core.builder.Animation;
 import com.fox.ysmu.geckolib3.core.molang.MolangParser;
@@ -51,6 +18,34 @@ import com.fox.ysmu.geckolib3.geo.render.GeoBuilder;
 import com.fox.ysmu.geckolib3.geo.render.built.GeoModel;
 import com.fox.ysmu.geckolib3.resource.GeckoLibCache;
 import com.fox.ysmu.geckolib3.util.json.JsonAnimationUtils;
+import com.fox.ysmu.model.ServerModelManager;
+import com.fox.ysmu.model.format.FolderFormat;
+import com.fox.ysmu.network.message.SyncModelFiles;
+import com.fox.ysmu.util.GsonHelper;
+import com.fox.ysmu.util.ModelIdUtil;
+import com.fox.ysmu.util.ThreadTools;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.FileFileFilter;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.annotation.Nullable;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 public class ClientModelManager {
 
@@ -124,8 +119,8 @@ public class ClientModelManager {
 
     private static void registerTexture(ResourceLocation id, byte[] data) {
         Minecraft.getMinecraft()
-            .getTextureManager()
-            .loadTexture(id, new OuterFileTexture(data));
+                .getTextureManager()
+                .loadTexture(id, new OuterFileTexture(data));
     }
 
     private static void registerAnimations(ResourceLocation id, Map<String, byte[]> mapData) {
@@ -154,7 +149,7 @@ public class ClientModelManager {
                 Animation animation;
                 try {
                     animation = JsonAnimationUtils
-                        .deserializeJsonToAnimation(JsonAnimationUtils.getAnimation(jsonObject, animationName), parser);
+                            .deserializeJsonToAnimation(JsonAnimationUtils.getAnimation(jsonObject, animationName), parser);
                     animationFile.putAnimation(animationName, animation);
                 } catch (GeckoJsonException e) {
                     e.printStackTrace();
@@ -175,7 +170,7 @@ public class ClientModelManager {
             data.getAnimation().forEach((name, bytes) -> {
                 AnimationFile animationFile = getAnimationFile(new String(bytes, StandardCharsets.UTF_8));
                 mergeAnimationFile(DEFAULT_ANIMATION_FILE, animationFile);
-                });
+            });
             ClientModelManager.registerAll(data);
         } catch (IOException e) {
             e.printStackTrace();
@@ -198,7 +193,7 @@ public class ClientModelManager {
                     Thread.sleep(500);
                 }
                 YesSteveModel.packetHandler.sendToServer(syncModelFiles);
-            }catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         });
@@ -206,7 +201,7 @@ public class ClientModelManager {
 
     private static String[] getMd5Info() {
         Collection<File> files = FileUtils
-            .listFiles(ServerModelManager.CACHE_CLIENT.toFile(), FileFileFilter.FILE, null);
+                .listFiles(ServerModelManager.CACHE_CLIENT.toFile(), FileFileFilter.FILE, null);
         String[] output = new String[files.size()];
         int i = 0;
         for (File file : files) {
@@ -218,8 +213,8 @@ public class ClientModelManager {
 
     private static byte[] getBytes(Path root, String fileName) throws IOException {
         return FileUtils.readFileToByteArray(
-            root.resolve(fileName)
-                .toFile());
+                root.resolve(fileName)
+                        .toFile());
     }
 
     @Nullable
@@ -230,23 +225,23 @@ public class ClientModelManager {
         List<ITextComponent> component = Lists.newArrayList();
         ITextComponent textComponent = new TextComponentString(extraInfo.getName());
         textComponent.getStyle()
-            .setColor(TextFormatting.GOLD);
+                .setColor(TextFormatting.GOLD);
         component.add(textComponent);
         if (StringUtils.isNoneBlank(extraInfo.getTips())) {
             String[] split = extraInfo.getTips()
-                .split("\n");
+                    .split("\n");
             for (String s : split) {
                 ITextComponent lineComponent = new TextComponentString(s);
                 lineComponent.getStyle()
-                    .setColor(TextFormatting.GRAY);
+                        .setColor(TextFormatting.GRAY);
                 component.add(lineComponent);
             }
         }
         if (extraInfo.getAuthors() != null && extraInfo.getAuthors().length != 0) {
             component.add(
-                new TextComponentTranslation(
-                    "gui.yes_steve_model.model.authors",
-                    StringUtils.join(extraInfo.getAuthors(), "丨")));
+                    new TextComponentTranslation(
+                            "gui.yes_steve_model.model.authors",
+                            StringUtils.join(extraInfo.getAuthors(), "丨")));
         }
         if (StringUtils.isNoneBlank(extraInfo.getLicense())) {
             component.add(new TextComponentTranslation("gui.yes_steve_model.model.license", extraInfo.getLicense()));

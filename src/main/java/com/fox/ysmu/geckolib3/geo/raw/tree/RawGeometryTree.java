@@ -1,14 +1,14 @@
 package com.fox.ysmu.geckolib3.geo.raw.tree;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
 import com.fox.ysmu.geckolib3.geo.raw.pojo.Bone;
 import com.fox.ysmu.geckolib3.geo.raw.pojo.MinecraftGeometry;
 import com.fox.ysmu.geckolib3.geo.raw.pojo.ModelProperties;
 import com.fox.ysmu.geckolib3.geo.raw.pojo.RawGeoModel;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 public class RawGeometryTree {
 

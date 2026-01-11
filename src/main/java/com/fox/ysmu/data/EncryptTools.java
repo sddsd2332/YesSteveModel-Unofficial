@@ -1,25 +1,23 @@
 package com.fox.ysmu.data;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-
-import javax.annotation.Nullable;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
-
+import com.fox.ysmu.YesSteveModel;
 import com.fox.ysmu.model.format.Type;
 import com.fox.ysmu.util.AESUtil;
 import com.fox.ysmu.util.ByteInteger;
 import com.fox.ysmu.util.DeflateUtil;
 import com.fox.ysmu.util.Md5Utils;
-import com.fox.ysmu.YesSteveModel;
 import com.google.common.collect.Maps;
-
 import it.unimi.dsi.fastutil.bytes.ByteArrays;
+
+import javax.annotation.Nullable;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 public final class EncryptTools {
     /**

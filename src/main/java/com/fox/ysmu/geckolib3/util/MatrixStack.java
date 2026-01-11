@@ -1,15 +1,13 @@
 package com.fox.ysmu.geckolib3.util;
 
-import java.util.Stack;
+import com.fox.ysmu.geckolib3.geo.render.built.GeoBone;
+import com.fox.ysmu.geckolib3.geo.render.built.GeoCube;
+import org.lwjgl.util.vector.Quaternion;
 
 import javax.vecmath.Matrix3f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
-
-import org.lwjgl.util.vector.Quaternion;
-
-import com.fox.ysmu.geckolib3.geo.render.built.GeoBone;
-import com.fox.ysmu.geckolib3.geo.render.built.GeoCube;
+import java.util.Stack;
 
 /**
  * Simple implementation of a matrix stack
@@ -68,7 +66,7 @@ public class MatrixStack {
         this.tempModelMatrix.setTranslation(vec);
 
         this.model.peek()
-            .mul(this.tempModelMatrix);
+                .mul(this.tempModelMatrix);
     }
 
     public void moveToPivot(GeoCube cube) {
@@ -102,7 +100,7 @@ public class MatrixStack {
         this.tempModelMatrix.m22 = z;
 
         this.model.peek()
-            .mul(this.tempModelMatrix);
+                .mul(this.tempModelMatrix);
 
         if (x < 0 || y < 0 || z < 0) {
             this.tempNormalMatrix.setIdentity();
@@ -128,9 +126,9 @@ public class MatrixStack {
         this.tempNormalMatrix.rotX(radian);
 
         this.model.peek()
-            .mul(this.tempModelMatrix);
+                .mul(this.tempModelMatrix);
         this.normal.peek()
-            .mul(this.tempNormalMatrix);
+                .mul(this.tempNormalMatrix);
     }
 
     public void rotateY(float radian) {
@@ -141,9 +139,9 @@ public class MatrixStack {
         this.tempNormalMatrix.rotY(radian);
 
         this.model.peek()
-            .mul(this.tempModelMatrix);
+                .mul(this.tempModelMatrix);
         this.normal.peek()
-            .mul(this.tempNormalMatrix);
+                .mul(this.tempNormalMatrix);
     }
 
     public void rotateZ(float radian) {
@@ -154,9 +152,9 @@ public class MatrixStack {
         this.tempNormalMatrix.rotZ(radian);
 
         this.model.peek()
-            .mul(this.tempModelMatrix);
+                .mul(this.tempModelMatrix);
         this.normal.peek()
-            .mul(this.tempNormalMatrix);
+                .mul(this.tempNormalMatrix);
     }
 
     public void rotate(GeoBone bone) {
@@ -199,9 +197,9 @@ public class MatrixStack {
         this.tempNormalMatrix.mul(matrix3f);
 
         this.model.peek()
-            .mul(this.tempModelMatrix);
+                .mul(this.tempModelMatrix);
         this.normal.peek()
-            .mul(this.tempNormalMatrix);
+                .mul(this.tempNormalMatrix);
     }
 
     @SuppressWarnings("unused")

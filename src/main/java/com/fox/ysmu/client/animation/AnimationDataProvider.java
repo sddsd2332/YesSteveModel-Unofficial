@@ -1,6 +1,8 @@
 package com.fox.ysmu.client.animation;
 
 import com.fox.ysmu.client.entity.CustomPlayerEntity;
+import com.fox.ysmu.geckolib3.core.event.predicate.AnimationEvent;
+import com.fox.ysmu.geckolib3.util.MolangUtils;
 import com.fox.ysmu.util.MathUtil;
 import mekanism.api.mixninapi.ElytraMixinHelp;
 import net.minecraft.client.Minecraft;
@@ -19,8 +21,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Loader;
-import com.fox.ysmu.geckolib3.core.event.predicate.AnimationEvent;
-import com.fox.ysmu.geckolib3.util.MolangUtils;
 
 public final class AnimationDataProvider {
 

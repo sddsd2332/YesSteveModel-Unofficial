@@ -1,10 +1,10 @@
 package com.fox.ysmu.geckolib3.core.util;
 
-import java.util.function.Function;
-
 import com.fox.ysmu.geckolib3.core.easing.EasingManager;
 import com.fox.ysmu.geckolib3.core.easing.EasingType;
 import com.fox.ysmu.geckolib3.core.keyframe.AnimationPoint;
+
+import java.util.function.Function;
 
 public class MathUtil {
 
@@ -15,7 +15,7 @@ public class MathUtil {
      * @return the resulting lerped value
      */
     public static float lerpValues(AnimationPoint animationPoint, EasingType easingType,
-        Function<Double, Double> customEasingMethod) {
+                                   Function<Double, Double> customEasingMethod) {
         if (animationPoint.currentTick >= animationPoint.animationEndTick) {
             return animationPoint.animationEndValue.floatValue();
         }
@@ -25,16 +25,16 @@ public class MathUtil {
 
         if (easingType == EasingType.CUSTOM && customEasingMethod != null) {
             return lerpValues(
-                customEasingMethod.apply(animationPoint.currentTick / animationPoint.animationEndTick),
-                animationPoint.animationStartValue,
-                animationPoint.animationEndValue);
+                    customEasingMethod.apply(animationPoint.currentTick / animationPoint.animationEndTick),
+                    animationPoint.animationStartValue,
+                    animationPoint.animationEndValue);
         } else if (easingType == EasingType.NONE && animationPoint.keyframe != null) {
             easingType = animationPoint.keyframe.easingType;
         }
         double ease = EasingManager.ease(
-            animationPoint.currentTick / animationPoint.animationEndTick,
-            easingType,
-            animationPoint.keyframe == null ? null : animationPoint.keyframe.easingArgs);
+                animationPoint.currentTick / animationPoint.animationEndTick,
+                easingType,
+                animationPoint.keyframe == null ? null : animationPoint.keyframe.easingArgs);
         return lerpValues(ease, animationPoint.animationStartValue, animationPoint.animationEndValue);
     }
 

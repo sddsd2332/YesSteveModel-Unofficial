@@ -1,13 +1,13 @@
 package com.fox.ysmu.geckolib3.core.molang.expressions;
 
+import com.fox.ysmu.geckolib3.core.molang.LazyVariable;
+import com.fox.ysmu.geckolib3.core.molang.MolangParser;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
-
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import com.fox.ysmu.geckolib3.core.molang.LazyVariable;
-import com.fox.ysmu.geckolib3.core.molang.MolangParser;
 
 public class MolangMultiStatement extends MolangExpression {
 

@@ -5,9 +5,9 @@
 
 package com.fox.ysmu.geckolib3.core.keyframe;
 
-import java.util.LinkedList;
-
 import com.fox.ysmu.geckolib3.core.processor.IBone;
+
+import java.util.LinkedList;
 
 /**
  * An animation point queue holds a queue of Animation Points which are used in

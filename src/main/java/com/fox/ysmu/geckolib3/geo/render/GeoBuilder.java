@@ -1,14 +1,5 @@
 package com.fox.ysmu.geckolib3.geo.render;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.vecmath.Vector3f;
-
-import org.apache.commons.lang3.ArrayUtils;
-
 import com.fox.ysmu.geckolib3.geo.raw.pojo.Bone;
 import com.fox.ysmu.geckolib3.geo.raw.pojo.Cube;
 import com.fox.ysmu.geckolib3.geo.raw.pojo.ModelProperties;
@@ -18,6 +9,13 @@ import com.fox.ysmu.geckolib3.geo.render.built.GeoBone;
 import com.fox.ysmu.geckolib3.geo.render.built.GeoCube;
 import com.fox.ysmu.geckolib3.geo.render.built.GeoModel;
 import com.fox.ysmu.geckolib3.util.VectorUtils;
+import org.apache.commons.lang3.ArrayUtils;
+
+import javax.vecmath.Vector3f;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class GeoBuilder implements IGeoBuilder {
 
@@ -46,24 +44,24 @@ public class GeoBuilder implements IGeoBuilder {
             model.topLevelBones.add(this.constructBone(rawBone, geometryTree.properties, null));
         }
         model.getBone(LEFT_HAND_LOCATOR)
-            .ifPresent(b -> {
-                getBoneParent(b, model.leftHandBones);
-                Collections.reverse(model.leftHandBones);
-            });
+                .ifPresent(b -> {
+                    getBoneParent(b, model.leftHandBones);
+                    Collections.reverse(model.leftHandBones);
+                });
         model.getBone(RIGHT_HAND_LOCATOR)
-            .ifPresent(b -> {
-                getBoneParent(b, model.rightHandBones);
-                Collections.reverse(model.rightHandBones);
-            });
+                .ifPresent(b -> {
+                    getBoneParent(b, model.rightHandBones);
+                    Collections.reverse(model.rightHandBones);
+                });
         model.getBone(ELYTRA_LOCATOR_NAME)
-            .ifPresent(b -> {
-                getBoneParent(b, model.elytraBones);
-                Collections.reverse(model.elytraBones);
-            });
+                .ifPresent(b -> {
+                    getBoneParent(b, model.elytraBones);
+                    Collections.reverse(model.elytraBones);
+                });
         model.getBone(FIRST_PERSON_HEAD_NAME)
-            .ifPresent(b -> model.firstPersonHead = b);
+                .ifPresent(b -> model.firstPersonHead = b);
         model.getBone(FIRST_PERSON_VIEW_LOCATOR_NAME)
-            .ifPresent(b -> model.firstPersonViewLocator = b);
+                .ifPresent(b -> model.firstPersonViewLocator = b);
         return model;
     }
 
@@ -95,11 +93,11 @@ public class GeoBuilder implements IGeoBuilder {
         if (!ArrayUtils.isEmpty(rawBone.getCubes())) {
             for (Cube cube : rawBone.getCubes()) {
                 geoBone.childCubes.add(
-                    GeoCube.createFromPojoCube(
-                        cube,
-                        properties,
-                        geoBone.inflate == null ? null : geoBone.inflate / 16,
-                        geoBone.mirror));
+                        GeoCube.createFromPojoCube(
+                                cube,
+                                properties,
+                                geoBone.inflate == null ? null : geoBone.inflate / 16,
+                                geoBone.mirror));
             }
         }
 

@@ -5,9 +5,9 @@
 
 package com.fox.ysmu.geckolib3.core.keyframe;
 
-import java.io.Serializable;
-
 import com.fox.ysmu.mclib.math.IValue;
+
+import java.io.Serializable;
 
 public class BoneAnimation implements Serializable {
 
@@ -17,5 +17,6 @@ public class BoneAnimation implements Serializable {
     public VectorKeyFrameList<KeyFrame<IValue>> positionKeyFrames;
     public VectorKeyFrameList<KeyFrame<IValue>> scaleKeyFrames;
 
-    public BoneAnimation() {}
+    public BoneAnimation() {
+    }
 }

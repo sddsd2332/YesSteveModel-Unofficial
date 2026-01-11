@@ -1,8 +1,8 @@
 package com.fox.ysmu.geckolib3.core.manager;
 
-import java.util.HashMap;
-
 import com.fox.ysmu.geckolib3.core.IAnimatable;
+
+import java.util.HashMap;
 
 public class SingletonAnimationFactory extends AnimationFactory {
 

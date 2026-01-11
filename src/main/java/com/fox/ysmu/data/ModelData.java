@@ -1,9 +1,9 @@
 package com.fox.ysmu.data;
 
-import java.util.Map;
-
 import com.fox.ysmu.model.format.ServerModelInfo;
 import com.fox.ysmu.model.format.Type;
+
+import java.util.Map;
 
 public final class ModelData {
     private final String modelId;

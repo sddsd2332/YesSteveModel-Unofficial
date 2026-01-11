@@ -1,7 +1,17 @@
 package com.fox.ysmu.geckolib3.geo;
 
-import com.fox.ysmu.mclib.utils.Interpolations;
 import com.fox.ysmu.Config;
+import com.fox.ysmu.geckolib3.core.IAnimatable;
+import com.fox.ysmu.geckolib3.core.IAnimatableModel;
+import com.fox.ysmu.geckolib3.core.controller.AnimationController;
+import com.fox.ysmu.geckolib3.core.event.predicate.AnimationEvent;
+import com.fox.ysmu.geckolib3.core.util.Color;
+import com.fox.ysmu.geckolib3.geo.render.built.GeoModel;
+import com.fox.ysmu.geckolib3.model.AnimatedGeoModel;
+import com.fox.ysmu.geckolib3.model.provider.GeoModelProvider;
+import com.fox.ysmu.geckolib3.model.provider.data.EntityModelData;
+import com.fox.ysmu.geckolib3.util.AnimationUtils;
+import com.fox.ysmu.mclib.utils.Interpolations;
 import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -22,16 +32,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import com.fox.ysmu.geckolib3.core.IAnimatable;
-import com.fox.ysmu.geckolib3.core.IAnimatableModel;
-import com.fox.ysmu.geckolib3.core.controller.AnimationController;
-import com.fox.ysmu.geckolib3.core.event.predicate.AnimationEvent;
-import com.fox.ysmu.geckolib3.core.util.Color;
-import com.fox.ysmu.geckolib3.geo.render.built.GeoModel;
-import com.fox.ysmu.geckolib3.model.AnimatedGeoModel;
-import com.fox.ysmu.geckolib3.model.provider.GeoModelProvider;
-import com.fox.ysmu.geckolib3.model.provider.data.EntityModelData;
-import com.fox.ysmu.geckolib3.util.AnimationUtils;
 
 import java.util.Collections;
 import java.util.List;

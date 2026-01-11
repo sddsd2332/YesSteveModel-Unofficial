@@ -5,15 +5,15 @@
 
 package com.fox.ysmu.geckolib3.core.builder;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-
 import com.fox.ysmu.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
 import com.fox.ysmu.geckolib3.core.keyframe.BoneAnimation;
 import com.fox.ysmu.geckolib3.core.keyframe.EventKeyFrame;
 import com.fox.ysmu.geckolib3.core.keyframe.ParticleEventKeyFrame;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
 
 public class Animation implements Serializable {
 
@@ -40,10 +40,10 @@ public class Animation implements Serializable {
             objectOutputStream.writeObject(animation);
             objectOutputStream.flush();
             String serialized = Base64.getEncoder()
-                .encodeToString(byteArrayOutputStream.toByteArray());
+                    .encodeToString(byteArrayOutputStream.toByteArray());
 
             byte[] data = Base64.getDecoder()
-                .decode(serialized);
+                    .decode(serialized);
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);
             ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
             return (Animation) objectInputStream.readObject();

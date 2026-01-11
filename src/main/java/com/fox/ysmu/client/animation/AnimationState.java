@@ -1,10 +1,10 @@
 package com.fox.ysmu.client.animation;
 
 import com.fox.ysmu.client.entity.CustomPlayerEntity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.math.MathHelper;
 import com.fox.ysmu.geckolib3.core.builder.ILoopType;
 import com.fox.ysmu.geckolib3.core.event.predicate.AnimationEvent;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.MathHelper;
 
 import java.util.function.BiPredicate;
 

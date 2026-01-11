@@ -1,11 +1,10 @@
 package com.fox.ysmu.client.animation.condition;
 
-import java.util.Map;
-
+import com.google.common.collect.Maps;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 
-import com.google.common.collect.Maps;
+import java.util.Map;
 
 public class ConditionManager {
     public static Map<ResourceLocation, ConditionalSwing> SWING = Maps.newHashMap();

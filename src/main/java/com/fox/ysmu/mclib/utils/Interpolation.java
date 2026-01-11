@@ -4,7 +4,6 @@ public enum Interpolation {
 
     // 插值类型
     LINEAR("linear") {
-
         @Override
 
         public float interpolate(float a, float b, float x) {
@@ -12,7 +11,6 @@ public enum Interpolation {
         }
     },
     QUAD_IN("quad_in") {
-
         @Override
 
         public float interpolate(float a, float b, float x) {
@@ -20,7 +18,6 @@ public enum Interpolation {
         }
     },
     QUAD_OUT("quad_out") {
-
         @Override
 
         public float interpolate(float a, float b, float x) {
@@ -28,7 +25,6 @@ public enum Interpolation {
         }
     },
     QUAD_INOUT("quad_inout") {
-
         @Override
 
         public float interpolate(float a, float b, float x) {
@@ -41,7 +37,6 @@ public enum Interpolation {
         }
     },
     CUBIC_IN("cubic_in") {
-
         @Override
 
         public float interpolate(float a, float b, float x) {
@@ -49,7 +44,6 @@ public enum Interpolation {
         }
     },
     CUBIC_OUT("cubic_out") {
-
         @Override
 
         public float interpolate(float a, float b, float x) {
@@ -58,7 +52,6 @@ public enum Interpolation {
         }
     },
     CUBIC_INOUT("cubic_inout") {
-
         @Override
 
         public float interpolate(float a, float b, float x) {
@@ -71,7 +64,6 @@ public enum Interpolation {
         }
     },
     EXP_IN("exp_in") {
-
         @Override
 
         public float interpolate(float a, float b, float x) {
@@ -79,7 +71,6 @@ public enum Interpolation {
         }
     },
     EXP_OUT("exp_out") {
-
         @Override
 
         public float interpolate(float a, float b, float x) {
@@ -87,7 +78,6 @@ public enum Interpolation {
         }
     },
     EXP_INOUT("exp_inout") {
-
         @Override
 
         public float interpolate(float a, float b, float x) {

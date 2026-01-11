@@ -1,10 +1,10 @@
 package com.fox.ysmu.geckolib3.util;
 
-import javax.vecmath.Vector3d;
-import javax.vecmath.Vector3f;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.Validate;
+
+import javax.vecmath.Vector3d;
+import javax.vecmath.Vector3f;
 
 public class VectorUtils {
 

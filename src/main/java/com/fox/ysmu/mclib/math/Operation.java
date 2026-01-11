@@ -7,7 +7,6 @@ public enum Operation {
 
     // 操作符
     ADD("+", 1) {
-
         @Override
 
         public double calculate(double a, double b) {
@@ -15,7 +14,6 @@ public enum Operation {
         }
     },
     SUB("-", 1) {
-
         @Override
 
         public double calculate(double a, double b) {
@@ -23,7 +21,6 @@ public enum Operation {
         }
     },
     MUL("*", 2) {
-
         @Override
 
         public double calculate(double a, double b) {
@@ -31,7 +28,6 @@ public enum Operation {
         }
     },
     DIV("/", 2) {
-
         @Override
 
         public double calculate(double a, double b) {
@@ -40,7 +36,6 @@ public enum Operation {
         }
     },
     MOD("%", 2) {
-
         @Override
 
         public double calculate(double a, double b) {
@@ -48,7 +43,6 @@ public enum Operation {
         }
     },
     POW("^", 3) {
-
         @Override
 
         public double calculate(double a, double b) {
@@ -56,7 +50,6 @@ public enum Operation {
         }
     },
     AND("&&", 5) {
-
         @Override
 
         public double calculate(double a, double b) {
@@ -64,7 +57,6 @@ public enum Operation {
         }
     },
     OR("||", 5) {
-
         @Override
 
         public double calculate(double a, double b) {
@@ -72,7 +64,6 @@ public enum Operation {
         }
     },
     LESS("<", 5) {
-
         @Override
 
         public double calculate(double a, double b) {
@@ -80,7 +71,6 @@ public enum Operation {
         }
     },
     LESS_THAN("<=", 5) {
-
         @Override
 
         public double calculate(double a, double b) {
@@ -88,7 +78,6 @@ public enum Operation {
         }
     },
     GREATER_THAN(">=", 5) {
-
         @Override
 
         public double calculate(double a, double b) {
@@ -96,7 +85,6 @@ public enum Operation {
         }
     },
     GREATER(">", 5) {
-
         @Override
 
         public double calculate(double a, double b) {
@@ -104,7 +92,6 @@ public enum Operation {
         }
     },
     EQUALS("==", 5) {
-
         @Override
 
         public double calculate(double a, double b) {
@@ -112,7 +99,6 @@ public enum Operation {
         }
     },
     NOT_EQUALS("!=", 5) {
-
         @Override
 
         public double calculate(double a, double b) {

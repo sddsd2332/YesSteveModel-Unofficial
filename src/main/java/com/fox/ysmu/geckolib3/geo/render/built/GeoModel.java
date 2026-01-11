@@ -1,14 +1,13 @@
 package com.fox.ysmu.geckolib3.geo.render.built;
 
+import com.fox.ysmu.geckolib3.geo.raw.pojo.ModelProperties;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import javax.annotation.Nullable;
-
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import com.fox.ysmu.geckolib3.geo.raw.pojo.ModelProperties;
 
 public class GeoModel implements Serializable {
 

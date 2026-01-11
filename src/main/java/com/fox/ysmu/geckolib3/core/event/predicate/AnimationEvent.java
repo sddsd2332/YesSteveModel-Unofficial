@@ -1,10 +1,10 @@
 package com.fox.ysmu.geckolib3.core.event.predicate;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.fox.ysmu.geckolib3.core.IAnimatable;
 import com.fox.ysmu.geckolib3.core.controller.AnimationController;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class AnimationEvent<T extends IAnimatable> {
 
@@ -18,7 +18,7 @@ public class AnimationEvent<T extends IAnimatable> {
     protected AnimationController controller;
 
     public AnimationEvent(T animatable, float limbSwing, float limbSwingAmount, float partialTick, boolean isMoving,
-        List<Object> extraData) {
+                          List<Object> extraData) {
         this.animatable = animatable;
         this.limbSwing = limbSwing;
         this.limbSwingAmount = limbSwingAmount;
@@ -72,8 +72,8 @@ public class AnimationEvent<T extends IAnimatable> {
     @SuppressWarnings("hiding")
     public <T> List<T> getExtraDataOfType(Class<T> type) {
         return extraData.stream()
-            .filter(x -> type.isAssignableFrom(x.getClass()))
-            .map(x -> type.cast(x))
-            .collect(Collectors.toList());
+                .filter(x -> type.isAssignableFrom(x.getClass()))
+                .map(x -> type.cast(x))
+                .collect(Collectors.toList());
     }
 }

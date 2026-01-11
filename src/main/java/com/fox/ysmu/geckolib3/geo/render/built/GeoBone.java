@@ -1,11 +1,11 @@
 package com.fox.ysmu.geckolib3.geo.render.built;
 
+import com.fox.ysmu.geckolib3.core.processor.IBone;
+import com.fox.ysmu.geckolib3.core.snapshot.BoneSnapshot;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.fox.ysmu.geckolib3.core.processor.IBone;
-import com.fox.ysmu.geckolib3.core.snapshot.BoneSnapshot;
 
 public class GeoBone implements IBone, Serializable {
 

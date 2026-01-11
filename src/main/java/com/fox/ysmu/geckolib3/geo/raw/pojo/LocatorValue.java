@@ -1,5 +1,4 @@
 package com.fox.ysmu.geckolib3.geo.raw.pojo;
-import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -10,6 +9,8 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import java.io.IOException;
 
 @JsonDeserialize(using = LocatorValue.Deserializer.class)
 @JsonSerialize(using = LocatorValue.Serializer.class)

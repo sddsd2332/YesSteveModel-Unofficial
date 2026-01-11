@@ -18,7 +18,7 @@ public class ParticleKeyFrameEvent<T> extends KeyframeEvent<T> {
      * @param controller    the controller
      */
     public ParticleKeyFrameEvent(T entity, double animationTick, String effect, String locator, String script,
-        AnimationController controller) {
+                                 AnimationController controller) {
         super(entity, animationTick, controller);
         this.effect = effect;
         this.locator = locator;

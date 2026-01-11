@@ -1,10 +1,10 @@
 package com.fox.ysmu.model.format;
 
-import java.util.Optional;
-import java.util.Set;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.Optional;
+import java.util.Set;
 
 public class ServerModelInfo {
 
@@ -35,7 +35,7 @@ public class ServerModelInfo {
 
     public Optional<String> getTexture() {
         return textures.stream()
-            .findFirst();
+                .findFirst();
     }
 
     public boolean isNeedAuth() {

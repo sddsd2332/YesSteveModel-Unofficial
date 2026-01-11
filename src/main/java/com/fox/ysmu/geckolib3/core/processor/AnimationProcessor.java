@@ -1,14 +1,5 @@
 package com.fox.ysmu.geckolib3.core.processor;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.tuple.Pair;
-
-import com.google.common.collect.Maps;
-
 import com.fox.ysmu.geckolib3.core.IAnimatable;
 import com.fox.ysmu.geckolib3.core.IAnimatableModel;
 import com.fox.ysmu.geckolib3.core.controller.AnimationController;
@@ -20,6 +11,13 @@ import com.fox.ysmu.geckolib3.core.molang.MolangParser;
 import com.fox.ysmu.geckolib3.core.snapshot.BoneSnapshot;
 import com.fox.ysmu.geckolib3.core.snapshot.DirtyTracker;
 import com.fox.ysmu.geckolib3.core.util.MathUtil;
+import com.google.common.collect.Maps;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class AnimationProcessor<T extends IAnimatable> {
 
@@ -33,7 +31,7 @@ public class AnimationProcessor<T extends IAnimatable> {
     }
 
     public void tickAnimation(IAnimatable entity, Integer uniqueID, double seekTime, AnimationEvent event,
-        MolangParser parser, boolean crashWhenCantFindBone) {
+                              MolangParser parser, boolean crashWhenCantFindBone) {
         if (seekTime != animatedEntities.getOrDefault(uniqueID, 0.0)) {
             animatedEntities.put(uniqueID, seekTime);
         } else {
@@ -43,7 +41,7 @@ public class AnimationProcessor<T extends IAnimatable> {
         // Each animation has it's own collection of animations (called the
         // EntityAnimationManager), which allows for multiple independent animations
         AnimationData manager = entity.getFactory()
-            .getOrCreateAnimationData(uniqueID);
+                .getOrCreateAnimationData(uniqueID);
         // Keeps track of which bones have had animations applied to them, and
         // eventually sets the ones that don't have an animation to their default values
         HashMap<String, DirtyTracker> modelTracker = createNewDirtyTracker();
@@ -53,11 +51,11 @@ public class AnimationProcessor<T extends IAnimatable> {
         HashMap<String, Pair<IBone, BoneSnapshot>> boneSnapshots = manager.getBoneSnapshotCollection();
         HashMap<String, PointData> pointDataGroup = Maps.newHashMap();
         for (AnimationController<T> controller : manager.getAnimationControllers()
-            .values()) {
+                .values()) {
             if (reloadAnimations) {
                 controller.markNeedsReload();
                 controller.getBoneAnimationQueues()
-                    .clear();
+                        .clear();
             }
 
             controller.isJustStarting = manager.isFirstTick;
@@ -70,10 +68,10 @@ public class AnimationProcessor<T extends IAnimatable> {
 
             // Loop through every single bone and lerp each property
             for (BoneAnimationQueue boneAnimation : controller.getBoneAnimationQueues()
-                .values()) {
+                    .values()) {
                 IBone bone = boneAnimation.bone;
                 BoneSnapshot snapshot = boneSnapshots.get(bone.getName())
-                    .getRight();
+                        .getRight();
                 BoneSnapshot initialSnapshot = bone.getInitialSnapshot();
                 pointDataGroup.putIfAbsent(bone.getName(), new PointData());
                 PointData pointData = pointDataGroup.get(bone.getName());
@@ -103,7 +101,7 @@ public class AnimationProcessor<T extends IAnimatable> {
                     pointData.rotationValueY += valueY;
                     pointData.rotationValueZ += valueZ;
                     if (controller.getName()
-                        .startsWith("parallel_")) {
+                            .startsWith("parallel_")) {
                         bone.setRotationX(pointData.rotationValueX + initialSnapshot.rotationValueX);
                         bone.setRotationY(pointData.rotationValueY + initialSnapshot.rotationValueY);
                         bone.setRotationZ(pointData.rotationValueZ + initialSnapshot.rotationValueZ);
@@ -122,11 +120,11 @@ public class AnimationProcessor<T extends IAnimatable> {
                 // If there's any position points for this bone
                 if (pXPoint != null && pYPoint != null && pZPoint != null) {
                     bone.setPositionX(
-                        MathUtil.lerpValues(pXPoint, controller.easingType, controller.customEasingMethod));
+                            MathUtil.lerpValues(pXPoint, controller.easingType, controller.customEasingMethod));
                     bone.setPositionY(
-                        MathUtil.lerpValues(pYPoint, controller.easingType, controller.customEasingMethod));
+                            MathUtil.lerpValues(pYPoint, controller.easingType, controller.customEasingMethod));
                     bone.setPositionZ(
-                        MathUtil.lerpValues(pZPoint, controller.easingType, controller.customEasingMethod));
+                            MathUtil.lerpValues(pZPoint, controller.easingType, controller.customEasingMethod));
                     snapshot.positionOffsetX = bone.getPositionX();
                     snapshot.positionOffsetY = bone.getPositionY();
                     snapshot.positionOffsetZ = bone.getPositionZ();
@@ -157,12 +155,12 @@ public class AnimationProcessor<T extends IAnimatable> {
             IBone model = tracker.getValue().model;
             BoneSnapshot initialSnapshot = model.getInitialSnapshot();
             BoneSnapshot saveSnapshot = boneSnapshots.get(tracker.getKey())
-                .getRight();
+                    .getRight();
             if (saveSnapshot == null) {
                 if (crashWhenCantFindBone) {
                     throw new RuntimeException(
-                        "Could not find save snapshot for bone: " + tracker.getValue().model.getName()
-                            + ". Please don't add bones that are used in an animation at runtime.");
+                            "Could not find save snapshot for bone: " + tracker.getValue().model.getName()
+                                    + ". Please don't add bones that are used in an animation at runtime.");
                 } else {
                     continue;
                 }
@@ -175,14 +173,14 @@ public class AnimationProcessor<T extends IAnimatable> {
                 }
 
                 double percentageReset = Math
-                    .min((seekTime - saveSnapshot.mostRecentResetRotationTick) / resetTickLength, 1);
+                        .min((seekTime - saveSnapshot.mostRecentResetRotationTick) / resetTickLength, 1);
 
                 model.setRotationX(
-                    MathUtil.lerpValues(percentageReset, saveSnapshot.rotationValueX, initialSnapshot.rotationValueX));
+                        MathUtil.lerpValues(percentageReset, saveSnapshot.rotationValueX, initialSnapshot.rotationValueX));
                 model.setRotationY(
-                    MathUtil.lerpValues(percentageReset, saveSnapshot.rotationValueY, initialSnapshot.rotationValueY));
+                        MathUtil.lerpValues(percentageReset, saveSnapshot.rotationValueY, initialSnapshot.rotationValueY));
                 model.setRotationZ(
-                    MathUtil.lerpValues(percentageReset, saveSnapshot.rotationValueZ, initialSnapshot.rotationValueZ));
+                        MathUtil.lerpValues(percentageReset, saveSnapshot.rotationValueZ, initialSnapshot.rotationValueZ));
 
                 if (percentageReset >= 1) {
                     saveSnapshot.rotationValueX = model.getRotationX();
@@ -197,17 +195,17 @@ public class AnimationProcessor<T extends IAnimatable> {
                 }
 
                 double percentageReset = Math
-                    .min((seekTime - saveSnapshot.mostRecentResetPositionTick) / resetTickLength, 1);
+                        .min((seekTime - saveSnapshot.mostRecentResetPositionTick) / resetTickLength, 1);
 
                 model.setPositionX(
-                    MathUtil
-                        .lerpValues(percentageReset, saveSnapshot.positionOffsetX, initialSnapshot.positionOffsetX));
+                        MathUtil
+                                .lerpValues(percentageReset, saveSnapshot.positionOffsetX, initialSnapshot.positionOffsetX));
                 model.setPositionY(
-                    MathUtil
-                        .lerpValues(percentageReset, saveSnapshot.positionOffsetY, initialSnapshot.positionOffsetY));
+                        MathUtil
+                                .lerpValues(percentageReset, saveSnapshot.positionOffsetY, initialSnapshot.positionOffsetY));
                 model.setPositionZ(
-                    MathUtil
-                        .lerpValues(percentageReset, saveSnapshot.positionOffsetZ, initialSnapshot.positionOffsetZ));
+                        MathUtil
+                                .lerpValues(percentageReset, saveSnapshot.positionOffsetZ, initialSnapshot.positionOffsetZ));
 
                 if (percentageReset >= 1) {
                     saveSnapshot.positionOffsetX = model.getPositionX();
@@ -222,14 +220,14 @@ public class AnimationProcessor<T extends IAnimatable> {
                 }
 
                 double percentageReset = Math
-                    .min((seekTime - saveSnapshot.mostRecentResetScaleTick) / resetTickLength, 1);
+                        .min((seekTime - saveSnapshot.mostRecentResetScaleTick) / resetTickLength, 1);
 
                 model.setScaleX(
-                    MathUtil.lerpValues(percentageReset, saveSnapshot.scaleValueX, initialSnapshot.scaleValueX));
+                        MathUtil.lerpValues(percentageReset, saveSnapshot.scaleValueX, initialSnapshot.scaleValueX));
                 model.setScaleY(
-                    MathUtil.lerpValues(percentageReset, saveSnapshot.scaleValueY, initialSnapshot.scaleValueY));
+                        MathUtil.lerpValues(percentageReset, saveSnapshot.scaleValueY, initialSnapshot.scaleValueY));
                 model.setScaleZ(
-                    MathUtil.lerpValues(percentageReset, saveSnapshot.scaleValueZ, initialSnapshot.scaleValueZ));
+                        MathUtil.lerpValues(percentageReset, saveSnapshot.scaleValueZ, initialSnapshot.scaleValueZ));
 
                 if (percentageReset >= 1) {
                     saveSnapshot.scaleValueX = model.getScaleX();
@@ -265,11 +263,11 @@ public class AnimationProcessor<T extends IAnimatable> {
      */
     public IBone getBone(String boneName) {
         return modelRendererList.stream()
-            .filter(
-                x -> x.getName()
-                    .equals(boneName))
-            .findFirst()
-            .orElse(null);
+                .filter(
+                        x -> x.getName()
+                                .equals(boneName))
+                .findFirst()
+                .orElse(null);
     }
 
     /**

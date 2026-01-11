@@ -40,12 +40,12 @@ public final class MathUtil {
     }
 
     public static double wrapDegrees(double value) {
-        double d0 = value % (double)360.0F;
-        if (d0 >= (double)180.0F) {
+        double d0 = value % (double) 360.0F;
+        if (d0 >= (double) 180.0F) {
             d0 -= 360.0F;
         }
 
-        if (d0 < (double)-180.0F) {
+        if (d0 < (double) -180.0F) {
             d0 += 360.0F;
         }
 

@@ -1,11 +1,5 @@
 package com.fox.ysmu.mclib.math;
 
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.fox.ysmu.mclib.math.functions.Function;
 import com.fox.ysmu.mclib.math.functions.classic.*;
 import com.fox.ysmu.mclib.math.functions.limit.Clamp;
@@ -16,6 +10,12 @@ import com.fox.ysmu.mclib.math.functions.rounding.Floor;
 import com.fox.ysmu.mclib.math.functions.rounding.Round;
 import com.fox.ysmu.mclib.math.functions.rounding.Trunc;
 import com.fox.ysmu.mclib.math.functions.utility.*;
+
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MathBuilder {
 
@@ -102,12 +102,12 @@ public class MathBuilder {
         // 左括号和右括号的数量应相同
         if (left != right) {
             throw new Exception(
-                "Given expression '" + expression
-                    + "' has more uneven amount of parenthesis, there are "
-                    + left
-                    + " open and "
-                    + right
-                    + " closed!");
+                    "Given expression '" + expression
+                            + "' has more uneven amount of parenthesis, there are "
+                            + left
+                            + " open and "
+                            + right
+                            + " closed!");
         }
         return chars;
     }
@@ -128,8 +128,8 @@ public class MathBuilder {
                     int size = symbols.size();
                     boolean isFirst = size == 0 && buffer.isEmpty();
                     boolean isOperatorBehind = size > 0
-                        && (this.isOperator(symbols.get(size - 1)) || ",".equals(symbols.get(size - 1)))
-                        && buffer.isEmpty();
+                            && (this.isOperator(symbols.get(size - 1)) || ",".equals(symbols.get(size - 1)))
+                            && buffer.isEmpty();
                     if (isFirst || isOperatorBehind) {
                         buffer += s;
                         continue;
@@ -225,9 +225,9 @@ public class MathBuilder {
         }
         Operation operation = this.operationForOperator((String) symbols.get(lastOp));
         return new Operator(
-            operation,
-            this.parseSymbols(symbols.subList(0, lastOp)),
-            this.parseSymbols(symbols.subList(lastOp + 1, size)));
+                operation,
+                this.parseSymbols(symbols.subList(0, lastOp)),
+                this.parseSymbols(symbols.subList(lastOp + 1, size)));
     }
 
     protected int seekLastOperator(List<Object> symbols) {
@@ -285,9 +285,9 @@ public class MathBuilder {
         }
         if (questions == colons && question > 0 && question + 1 < colon && colon < size - 1) {
             return new Ternary(
-                this.parseSymbols(symbols.subList(0, question)),
-                this.parseSymbols(symbols.subList(question + 1, colon)),
-                this.parseSymbols(symbols.subList(colon + 1, size)));
+                    this.parseSymbols(symbols.subList(0, question)),
+                    this.parseSymbols(symbols.subList(question + 1, colon)),
+                    this.parseSymbols(symbols.subList(colon + 1, size)));
         }
 
         return null;

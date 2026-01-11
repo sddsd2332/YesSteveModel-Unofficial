@@ -8,7 +8,8 @@ public class Memoizer<T, U> {
 
     private final Map<T, U> cache = new ConcurrentHashMap<>();
 
-    private Memoizer() {}
+    private Memoizer() {
+    }
 
     private Function<T, U> doMemoize(final Function<T, U> function) {
         return input -> cache.computeIfAbsent(input, function::apply);

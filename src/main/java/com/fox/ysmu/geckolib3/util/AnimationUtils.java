@@ -5,13 +5,12 @@
 
 package com.fox.ysmu.geckolib3.util;
 
+import com.fox.ysmu.geckolib3.geo.IGeoRenderer;
+import com.fox.ysmu.geckolib3.model.provider.GeoModelProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
-
-import com.fox.ysmu.geckolib3.geo.IGeoRenderer;
-import com.fox.ysmu.geckolib3.model.provider.GeoModelProvider;
 
 public class AnimationUtils {
 

@@ -5,12 +5,12 @@
 
 package com.fox.ysmu.geckolib3.core.keyframe;
 
+import com.fox.ysmu.geckolib3.core.easing.EasingType;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import com.fox.ysmu.geckolib3.core.easing.EasingType;
 
 public class KeyFrame<T> implements Serializable {
 
@@ -73,7 +73,7 @@ public class KeyFrame<T> implements Serializable {
     }
 
     public int hashCode() {
-        return Objects.hash(new Object[] { this.length, this.startValue, this.endValue });
+        return Objects.hash(new Object[]{this.length, this.startValue, this.endValue});
     }
 
     public boolean equals(Object obj) {

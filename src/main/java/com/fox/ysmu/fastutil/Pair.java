@@ -1,6 +1,7 @@
 package com.fox.ysmu.fastutil;
 
 import com.fox.ysmu.fastutil.objects.ObjectObjectImmutablePair;
+
 import java.util.Comparator;
 
 public interface Pair<L, R> {
@@ -17,11 +18,11 @@ public interface Pair<L, R> {
     }
 
     default L first() {
-        return (L)this.left();
+        return (L) this.left();
     }
 
     default R second() {
-        return (R)this.right();
+        return (R) this.right();
     }
 
     default Pair<L, R> first(L l) {
@@ -41,11 +42,11 @@ public interface Pair<L, R> {
     }
 
     default L key() {
-        return (L)this.left();
+        return (L) this.left();
     }
 
     default R value() {
-        return (R)this.right();
+        return (R) this.right();
     }
 
     static <L, R> Pair<L, R> of(L l, R r) {
@@ -54,8 +55,8 @@ public interface Pair<L, R> {
 
     static <L, R> Comparator<Pair<L, R>> lexComparator() {
         return (x, y) -> {
-            int t = ((Comparable)x.left()).compareTo(y.left());
-            return t != 0 ? t : ((Comparable)x.right()).compareTo(y.right());
+            int t = ((Comparable) x.left()).compareTo(y.left());
+            return t != 0 ? t : ((Comparable) x.right()).compareTo(y.right());
         };
     }
 }

@@ -32,7 +32,7 @@ public final class PacketHandler {
     }
 
 
-    public  void sendToClientPlayer(IMessage message, EntityPlayer player) {
+    public void sendToClientPlayer(IMessage message, EntityPlayer player) {
         if (player instanceof EntityPlayerMP mp) {
             netHandler.sendTo(message, mp);
         }

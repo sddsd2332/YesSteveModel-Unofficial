@@ -1,15 +1,12 @@
 package com.fox.ysmu.geckolib3.geo;
 
-import net.minecraft.client.renderer.GlStateManager;
-
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.renderer.entity.layers.LayerRenderer;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.ResourceLocation;
-
 import com.fox.ysmu.geckolib3.core.IAnimatable;
 import com.fox.ysmu.geckolib3.core.util.Color;
 import com.fox.ysmu.geckolib3.model.provider.GeoModelProvider;
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.ResourceLocation;
 
 public abstract class GeoLayerRenderer<T extends EntityLivingBase & IAnimatable> {
 
@@ -20,8 +17,8 @@ public abstract class GeoLayerRenderer<T extends EntityLivingBase & IAnimatable>
     }
 
     protected static <T extends EntityLivingBase> void renderCopyCutoutModel(ModelBase modelParentIn, ModelBase modelIn,
-        ResourceLocation textureLocationIn, T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks,
-        float netHeadYaw, float headPitch, float partialTicks, float red, float green, float blue) {
+                                                                             ResourceLocation textureLocationIn, T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks,
+                                                                             float netHeadYaw, float headPitch, float partialTicks, float red, float green, float blue) {
         if (!entityIn.isInvisible()) {
             modelParentIn.isRiding = modelIn.isRiding;
             modelParentIn.isChild = modelIn.isChild;
@@ -33,8 +30,8 @@ public abstract class GeoLayerRenderer<T extends EntityLivingBase & IAnimatable>
     }
 
     protected static <T extends EntityLivingBase> void renderCutoutModel(ModelBase modelIn,
-        ResourceLocation textureLocationIn, T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks,
-        float netHeadYaw, float headPitch, float scale, float red, float green, float blue) {
+                                                                         ResourceLocation textureLocationIn, T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks,
+                                                                         float netHeadYaw, float headPitch, float scale, float red, float green, float blue) {
         GlStateManager.color(red, green, blue, 1f);
         modelIn.render(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
     }

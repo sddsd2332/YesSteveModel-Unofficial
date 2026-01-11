@@ -1,13 +1,5 @@
 package com.fox.ysmu.geckolib3.model;
 
-import java.util.Collections;
-
-import javax.annotation.Nullable;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
-
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import com.fox.ysmu.geckolib3.animation.AnimationTicker;
 import com.fox.ysmu.geckolib3.core.IAnimatable;
 import com.fox.ysmu.geckolib3.core.IAnimatableModel;
@@ -23,10 +15,16 @@ import com.fox.ysmu.geckolib3.geo.render.built.GeoModel;
 import com.fox.ysmu.geckolib3.model.provider.GeoModelProvider;
 import com.fox.ysmu.geckolib3.model.provider.IAnimatableModelProvider;
 import com.fox.ysmu.geckolib3.resource.GeckoLibCache;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
+import javax.annotation.Nullable;
+import java.util.Collections;
+
+@SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelProvider<T>
-    implements IAnimatableModel<T>, IAnimatableModelProvider<T> {
+        implements IAnimatableModel<T>, IAnimatableModelProvider<T> {
 
     private final AnimationProcessor animationProcessor;
     private GeoModel currentModel;
@@ -48,16 +46,16 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
         // Each animation has it's own collection of animations (called the
         // EntityAnimationManager), which allows for multiple independent animations
         AnimationData manager = entity.getFactory()
-            .getOrCreateAnimationData(uniqueID);
+                .getOrCreateAnimationData(uniqueID);
         if (manager.ticker == null) {
             AnimationTicker ticker = new AnimationTicker(manager);
             manager.ticker = ticker;
             FMLCommonHandler.instance()
-                .bus()
-                .register(ticker);
+                    .bus()
+                    .register(ticker);
         }
         if (!Minecraft.getMinecraft()
-            .isGamePaused() || manager.shouldPlayWhilePaused) {
+                .isGamePaused() || manager.shouldPlayWhilePaused) {
             seekTime = manager.tick + Minecraft.getMinecraft().timer.renderPartialTicks;
         } else {
             seekTime = manager.tick;
@@ -66,12 +64,12 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
         AnimationEvent<T> predicate;
         if (customPredicate == null) {
             predicate = new AnimationEvent<T>(
-                entity,
-                0,
-                0,
-                (float) (manager.tick - lastGameTickTime),
-                false,
-                Collections.emptyList());
+                    entity,
+                    0,
+                    0,
+                    (float) (manager.tick - lastGameTickTime),
+                    false,
+                    Collections.emptyList());
         } else {
             predicate = customPredicate;
         }
@@ -79,14 +77,14 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
         predicate.animationTick = seekTime;
         animationProcessor.preAnimationSetup(predicate.getAnimatable(), seekTime);
         if (!this.animationProcessor.getModelRendererList()
-            .isEmpty()) {
+                .isEmpty()) {
             animationProcessor.tickAnimation(
-                entity,
-                uniqueID,
-                seekTime,
-                predicate,
-                GeckoLibCache.getInstance().parser,
-                shouldCrashOnMissing);
+                    entity,
+                    uniqueID,
+                    seekTime,
+                    predicate,
+                    GeckoLibCache.getInstance().parser,
+                    shouldCrashOnMissing);
         }
     }
 
@@ -102,8 +100,8 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
     @Override
     public Animation getAnimation(String name, IAnimatable animatable) {
         AnimationFile file = GeckoLibCache.getInstance()
-            .getAnimations()
-            .get(this.getAnimationFileLocation((T) animatable));
+                .getAnimations()
+                .get(this.getAnimationFileLocation((T) animatable));
         if (file != null) {
             return file.getAnimation(name);
         }

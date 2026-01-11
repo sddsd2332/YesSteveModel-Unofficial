@@ -1,12 +1,11 @@
 package com.fox.ysmu.geckolib3.core.molang.expressions;
 
+import com.fox.ysmu.geckolib3.core.molang.MolangParser;
 import com.fox.ysmu.mclib.math.Constant;
 import com.fox.ysmu.mclib.math.IValue;
 import com.fox.ysmu.mclib.math.Operation;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-
-import com.fox.ysmu.geckolib3.core.molang.MolangParser;
 
 public abstract class MolangExpression implements IValue {
 

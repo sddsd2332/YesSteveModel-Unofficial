@@ -33,7 +33,7 @@ public class AnimationPoint {
     public final KeyFrame<IValue> keyframe;
 
     public AnimationPoint(KeyFrame<IValue> keyframe, Double currentTick, Double animationEndTick,
-        Double animationStartValue, Double animationEndValue) {
+                          Double animationStartValue, Double animationEndValue) {
         this.keyframe = keyframe;
         this.currentTick = currentTick;
         this.animationEndTick = animationEndTick;
@@ -42,7 +42,7 @@ public class AnimationPoint {
     }
 
     public AnimationPoint(KeyFrame<IValue> keyframe, double tick, double animationEndTick, float animationStartValue,
-        double animationEndValue) {
+                          double animationEndValue) {
         this.keyframe = keyframe;
         this.currentTick = tick;
         this.animationEndTick = animationEndTick;
@@ -53,11 +53,11 @@ public class AnimationPoint {
     @Override
     public String toString() {
         return "Tick: " + currentTick
-            + " | End Tick: "
-            + animationEndTick
-            + " | Start Value: "
-            + animationStartValue
-            + " | End Value: "
-            + animationEndValue;
+                + " | End Tick: "
+                + animationEndTick
+                + " | Start Value: "
+                + animationStartValue
+                + " | End Value: "
+                + animationEndValue;
     }
 }

@@ -1,10 +1,10 @@
 package com.fox.ysmu.geckolib3.file;
 
+import com.fox.ysmu.geckolib3.core.builder.Animation;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
-
-import com.fox.ysmu.geckolib3.core.builder.Animation;
 
 public class AnimationFile implements Serializable {
 

@@ -62,7 +62,7 @@ public class ExtraPlayerConfigScreen extends Screen {
         }
 
         if (this.mc.player != null) {
-            RenderUtil.renderPlayerEntity(this.mc.player, this.posX, this.posY, this.scale, this.yawOffset, 50,pPartialTick);
+            RenderUtil.renderPlayerEntity(this.mc.player, this.posX, this.posY, this.scale, this.yawOffset, 50, pPartialTick);
         }
     }
 

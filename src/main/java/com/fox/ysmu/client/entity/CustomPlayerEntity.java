@@ -1,17 +1,8 @@
 package com.fox.ysmu.client.entity;
 
-import static com.fox.ysmu.util.ControllerUtils.*;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.util.ResourceLocation;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.fox.ysmu.client.ClientModelManager;
 import com.fox.ysmu.client.animation.AnimationManager;
 import com.fox.ysmu.client.model.CustomPlayerModel;
-
 import com.fox.ysmu.geckolib3.core.IAnimatable;
 import com.fox.ysmu.geckolib3.core.PlayState;
 import com.fox.ysmu.geckolib3.core.builder.AnimationBuilder;
@@ -22,8 +13,14 @@ import com.fox.ysmu.geckolib3.core.manager.AnimationData;
 import com.fox.ysmu.geckolib3.core.manager.AnimationFactory;
 import com.fox.ysmu.geckolib3.resource.GeckoLibCache;
 import com.fox.ysmu.geckolib3.util.GeckoLibUtil;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.util.ResourceLocation;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
+
+import static com.fox.ysmu.util.ControllerUtils.*;
 
 public class CustomPlayerEntity implements IAnimatable {
 

@@ -5,13 +5,12 @@
 
 package com.fox.ysmu.geckolib3.core.manager;
 
-import java.util.HashMap;
-
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.fox.ysmu.geckolib3.core.controller.AnimationController;
 import com.fox.ysmu.geckolib3.core.processor.IBone;
 import com.fox.ysmu.geckolib3.core.snapshot.BoneSnapshot;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.HashMap;
 
 public class AnimationData {
 

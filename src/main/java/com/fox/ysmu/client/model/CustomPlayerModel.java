@@ -1,18 +1,8 @@
 package com.fox.ysmu.client.model;
 
-import java.util.List;
-
-import javax.annotation.Nullable;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ResourceLocation;
-
+import com.fox.ysmu.YesSteveModel;
 import com.fox.ysmu.client.animation.AnimationRegister;
 import com.fox.ysmu.client.entity.CustomPlayerEntity;
-import com.fox.ysmu.util.ModelIdUtil;
-import com.fox.ysmu.YesSteveModel;
-
 import com.fox.ysmu.geckolib3.core.IAnimatable;
 import com.fox.ysmu.geckolib3.core.event.predicate.AnimationEvent;
 import com.fox.ysmu.geckolib3.core.molang.MolangParser;
@@ -21,6 +11,13 @@ import com.fox.ysmu.geckolib3.geo.render.built.GeoBone;
 import com.fox.ysmu.geckolib3.model.AnimatedGeoModel;
 import com.fox.ysmu.geckolib3.model.provider.data.EntityModelData;
 import com.fox.ysmu.geckolib3.resource.GeckoLibCache;
+import com.fox.ysmu.util.ModelIdUtil;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 @SuppressWarnings("all")
 public class CustomPlayerModel extends AnimatedGeoModel {
@@ -62,10 +59,10 @@ public class CustomPlayerModel extends AnimatedGeoModel {
         List extraData = animationEvent.getExtraData();
         MolangParser parser = GeckoLibCache.getInstance().parser;
         if (!Minecraft.getMinecraft()
-            .isGamePaused() && extraData.size() == 1
-            && extraData.get(0) instanceof EntityModelData data
-            && animatable instanceof CustomPlayerEntity customPlayer
-            && customPlayer.getPlayer() != null) {
+                .isGamePaused() && extraData.size() == 1
+                && extraData.get(0) instanceof EntityModelData data
+                && animatable instanceof CustomPlayerEntity customPlayer
+                && customPlayer.getPlayer() != null) {
             EntityPlayer player = customPlayer.getPlayer();
             AnimationRegister.setParserValue(animationEvent, parser, data, player);
             super.setLivingAnimations(animatable, instanceId, animationEvent);
@@ -83,7 +80,7 @@ public class CustomPlayerModel extends AnimatedGeoModel {
             head.setRotationX(head.getRotationX() + (float) Math.toRadians(data.headPitch));
             head.setRotationY(head.getRotationY() + (float) Math.toRadians(data.netHeadYaw));
             FIRST_PERSON_HEAD_POS = head.getPivotY()
-                * ((CustomPlayerEntity) animationEvent.getAnimatable()).getHeightScale();
+                    * ((CustomPlayerEntity) animationEvent.getAnimatable()).getHeightScale();
         }
         if (getCurrentModel().firstPersonViewLocator != null) {
             float heightScale = ((CustomPlayerEntity) animationEvent.getAnimatable()).getHeightScale();
@@ -101,5 +98,6 @@ public class CustomPlayerModel extends AnimatedGeoModel {
 
     @Override
 
-    public void setMolangQueries(IAnimatable animatable, double seekTime) {}
+    public void setMolangQueries(IAnimatable animatable, double seekTime) {
+    }
 }

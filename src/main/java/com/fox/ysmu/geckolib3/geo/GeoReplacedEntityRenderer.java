@@ -2,7 +2,6 @@ package com.fox.ysmu.geckolib3.geo;
 
 import com.fox.ysmu.Config;
 import com.fox.ysmu.geckolib3.core.IAnimatable;
-import com.fox.ysmu.geckolib3.core.IAnimatableModel;
 import com.fox.ysmu.geckolib3.core.controller.AnimationController;
 import com.fox.ysmu.geckolib3.core.event.predicate.AnimationEvent;
 import com.fox.ysmu.geckolib3.core.util.Color;
@@ -75,7 +74,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
         return renderers.get(item);
     }
 
-    public void doRender(EntityLivingBase entity,  IAnimatable animatable, double x, double y, double z, float entityYaw, float partialTicks) {
+    public void doRender(EntityLivingBase entity, IAnimatable animatable, double x, double y, double z, float entityYaw, float partialTicks) {
         this.currentAnimatable = animatable;
         GlStateManager.pushMatrix();
         try {
@@ -190,12 +189,12 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
         } finally {
             GlStateManager.popMatrix();
         }
-        super.doRender(entity,x,y,z,entityYaw,partialTicks);
+        super.doRender(entity, x, y, z, entityYaw, partialTicks);
     }
 
     @Override
     public void doRender(EntityLivingBase entity, double x, double y, double z, float entityYaw, float partialTicks) {
-        doRender(entity,animatable,x,y,z,entityYaw,partialTicks);
+        doRender(entity, animatable, x, y, z, entityYaw, partialTicks);
     }
 
     protected void preRenderCallback(EntityLivingBase entitylivingbaseIn, float partialTickTime) {

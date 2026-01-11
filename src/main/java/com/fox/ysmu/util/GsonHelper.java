@@ -1,11 +1,11 @@
 package com.fox.ysmu.util;
 
-import javax.annotation.Nullable;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+
+import javax.annotation.Nullable;
 
 public class GsonHelper {
 
@@ -60,11 +60,11 @@ public class GsonHelper {
         if (jsonObject.has(memberName)) {
             JsonElement element = jsonObject.get(memberName);
             if (element.isJsonPrimitive() && element.getAsJsonPrimitive()
-                .isString()) {
+                    .isString()) {
                 return element.getAsString();
             } else {
                 throw new JsonSyntaxException(
-                    "Expected '" + memberName + "' to be a String, was " + getElementType(element));
+                        "Expected '" + memberName + "' to be a String, was " + getElementType(element));
             }
         } else {
             throw new JsonSyntaxException("Missing '" + memberName + "', expected to find a String");
@@ -78,11 +78,11 @@ public class GsonHelper {
         if (jsonObject.has(memberName)) {
             JsonElement element = jsonObject.get(memberName);
             if (element.isJsonPrimitive() && element.getAsJsonPrimitive()
-                .isBoolean()) {
+                    .isBoolean()) {
                 return element.getAsBoolean();
             } else {
                 throw new JsonSyntaxException(
-                    "Expected '" + memberName + "' to be a Boolean, was " + getElementType(element));
+                        "Expected '" + memberName + "' to be a Boolean, was " + getElementType(element));
             }
         } else {
             throw new JsonSyntaxException("Missing '" + memberName + "', expected to find a Boolean");
@@ -96,11 +96,11 @@ public class GsonHelper {
         if (jsonObject.has(memberName)) {
             JsonElement element = jsonObject.get(memberName);
             if (element.isJsonPrimitive() && element.getAsJsonPrimitive()
-                .isNumber()) {
+                    .isNumber()) {
                 return element.getAsInt();
             } else {
                 throw new JsonSyntaxException(
-                    "Expected '" + memberName + "' to be a Int, was " + getElementType(element));
+                        "Expected '" + memberName + "' to be a Int, was " + getElementType(element));
             }
         } else {
             throw new JsonSyntaxException("Missing '" + memberName + "', expected to find a Int");

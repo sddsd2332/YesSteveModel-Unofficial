@@ -10,10 +10,10 @@ public abstract class Function implements IValue {
     public Function(IValue[] values, String name) throws Exception {
         if (values.length < this.getRequiredArguments()) {
             String message = String.format(
-                "Function '%s' requires at least %s arguments. %s are given!",
-                this.getName(),
-                this.getRequiredArguments(),
-                values.length);
+                    "Function '%s' requires at least %s arguments. %s are given!",
+                    this.getName(),
+                    this.getRequiredArguments(),
+                    values.length);
             throw new Exception(message);
         }
         this.args = values;

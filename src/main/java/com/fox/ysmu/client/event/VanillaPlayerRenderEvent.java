@@ -34,7 +34,7 @@ public class VanillaPlayerRenderEvent {
             Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> map = minecraft.getSkinManager().loadSkinFromCache(clientPlayer.getGameProfile());
             if (map.containsKey(MinecraftProfileTexture.Type.SKIN)) {
                 location = minecraft.getSkinManager().loadSkin(map.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN);
-            }else {
+            } else {
                 location = getDefaultSkin(event.getModelId());
             }
             animatable.setTexture(location);
