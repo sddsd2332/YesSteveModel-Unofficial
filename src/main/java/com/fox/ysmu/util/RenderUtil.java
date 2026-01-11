@@ -305,7 +305,7 @@ public final class RenderUtil {
     public static void renderPlayerEntity(EntityPlayer player, double posX, double posY, float scale, float yawOffset, int z, float pPartialTick) {
         GlStateManager.pushMatrix();
         GlStateManager.translate((float) posX + scale * 0.5f, (float) posY + scale * 2, z);
-        GlStateManager.translate(1, 1, -1);
+        GlStateManager.scale(1, 1, -1);
         GlStateManager.scale(scale, scale, scale);
         GlStateManager.rotate(180.0F, 0, 0, 1);
         GlStateManager.rotate(player.renderYawOffset + yawOffset - 180, 0, 1, 0);
