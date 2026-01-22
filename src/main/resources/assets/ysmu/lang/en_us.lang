@@ -339,3 +339,22 @@ molang.yes_steve_model.ysm.elytra_rot_y.desc=Returns the entity's elytra y rotat
 molang.yes_steve_model.ysm.elytra_rot_z.desc=Returns the entity's elytra z rotation.
 molang.yes_steve_model.ysm.food_level.desc=Returns the player's hunger value.
 molang.yes_steve_model.ysm.first_person_mod_hide.desc=Return 1.0 if the First Person Mod is installed and player's head needs to be hidden, else it returns 0.0
+
+
+gui.yes_steve_model.texture.button.use_mainhand$crossbow:crossbow=Mainhand: Crossbow(Crossbow)
+gui.yes_steve_model.texture.button.use_mainhand$crossbow:crossbow.desc=The animation of using the crossbow in the main hand
+
+gui.yes_steve_model.texture.button.use_offhand$crossbow:crossbow=Offhand: Crossbow(Crossbow)
+gui.yes_steve_model.texture.button.use_offhand$crossbow:crossbow.desc=The animation of using the crossbow in the off hand
+
+gui.yes_steve_model.texture.button.use_mainhand$crossbows:crossbow=Mainhand: Crossbow(Crossbows Backport)
+gui.yes_steve_model.texture.button.use_mainhand$crossbows:crossbow.desc=The animation of using the crossbow in the main hand
+
+gui.yes_steve_model.texture.button.use_offhand$crossbows:crossbow=Offhand: Crossbow(Crossbows Backport)
+gui.yes_steve_model.texture.button.use_offhand$crossbows:crossbow.desc=The animation of using the crossbow in the off hand
+
+gui.yes_steve_model.texture.button.use_mainhand$deeperdepths:spyglass=Mainhand: SpyglassDeeper Depths)
+gui.yes_steve_model.texture.button.use_mainhand$deeperdepths:spyglass.desc=The animation of using the spyglass in the main hand
+
+gui.yes_steve_model.texture.button.use_offhand$deeperdepths:spyglass=Offhand: Spyglass(Deeper Depths)
+gui.yes_steve_model.texture.button.use_offhand$deeperdepths:spyglass.desc=The animation of using the spyglass in the off hand

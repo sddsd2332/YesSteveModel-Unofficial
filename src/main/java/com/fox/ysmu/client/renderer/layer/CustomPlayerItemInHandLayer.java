@@ -13,18 +13,12 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformT
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHandSide;
-import org.lwjgl.opengl.GL11;
-
-import java.util.List;
-import java.util.Objects;
-
 
 public class CustomPlayerItemInHandLayer<T extends EntityLivingBase & IAnimatable> extends GeoLayerRenderer<T> {
 
     public CustomPlayerItemInHandLayer(IGeoRenderer<T> entityRendererIn) {
         super(entityRendererIn);
     }
-
 
     @Override
     public void render(T entityLivingBaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, Color renderColor) {
@@ -34,60 +28,57 @@ public class CustomPlayerItemInHandLayer<T extends EntityLivingBase & IAnimatabl
         }
         ItemStack offhandItem = entityLivingBaseIn.getHeldItemOffhand();
         ItemStack mainHandItem = entityLivingBaseIn.getHeldItemMainhand();
-        String name = geoModel.properties.getExtraInfo().getName();
-        boolean isVanilla = Objects.equals(name, "Steve") || Objects.equals(name, "Alex");
         if (!offhandItem.isEmpty() || !mainHandItem.isEmpty()) {
+            if (!geoModel.rightHandBones.isEmpty()) {
+                GlStateManager.pushMatrix();
+                this.renderArmWithItem(entityLivingBaseIn, mainHandItem, TransformType.THIRD_PERSON_RIGHT_HAND, EnumHandSide.RIGHT);
+                GlStateManager.popMatrix();
+            }
+            if (!geoModel.leftHandBones.isEmpty()) {
+                GlStateManager.pushMatrix();
+                this.renderArmWithItem(entityLivingBaseIn, offhandItem, TransformType.THIRD_PERSON_LEFT_HAND, EnumHandSide.LEFT);
+                GlStateManager.popMatrix();
+            }
+        }
+    }
+
+    protected void renderArmWithItem(EntityLivingBase livingEntity, ItemStack itemStack, TransformType transformType, EnumHandSide arm) {
+        if (!itemStack.isEmpty()) {
             GlStateManager.pushMatrix();
-            renderArmWithItem(entityLivingBaseIn, mainHandItem, geoModel.rightHandBones, TransformType.THIRD_PERSON_RIGHT_HAND, EnumHandSide.RIGHT, isVanilla);
-            renderArmWithItem(entityLivingBaseIn, offhandItem, geoModel.leftHandBones, TransformType.THIRD_PERSON_LEFT_HAND, EnumHandSide.LEFT, isVanilla);
+            if (livingEntity.isSneaking()){
+                GlStateManager.translate(0.0F, 0.2F, 0.0F);
+            }
+            boolean isLeftHand = arm == EnumHandSide.LEFT;
+            translateToHand(arm, this.entityRenderer.getGeoModel());
+            GlStateManager.translate(0, 0.0625, -0.125F);
+            GlStateManager.rotate(-90.0F, 1.0F, 0.0F, 0.0F);
+            GlStateManager.translate((float)(isLeftHand ? -1 : 1) / 16.0F, 0.125F, -0.625F);
+            Minecraft.getMinecraft().getItemRenderer().renderItemSide(livingEntity,itemStack, transformType, isLeftHand);
             GlStateManager.popMatrix();
         }
     }
 
-    protected void applyBoneTransform(List<GeoBone> bones) {
-        int size = bones.size();
-        for (int i = 0; i < size - 1; i++) {
-            RenderUtils.prepMatrixForBone(bones.get(i));
+    protected void translateToHand(EnumHandSide arm, GeoModel geoModel) {
+        if (arm == EnumHandSide.LEFT) {
+            int size = geoModel.leftHandBones.size();
+            for (int i = 0; i < size - 1; i++) {
+                RenderUtils.prepMatrixForBone(geoModel.leftHandBones.get(i));
+            }
+            GeoBone lastBone = geoModel.leftHandBones.get(size - 1);
+            RenderUtils.translateMatrixToBone(lastBone);
+            RenderUtils.translateToPivotPoint(lastBone);
+            RenderUtils.rotateMatrixAroundBone(lastBone);
+            RenderUtils.scaleMatrixForBone(lastBone);
+        } else {
+            int size = geoModel.rightHandBones.size();
+            for (int i = 0; i < size - 1; i++) {
+                RenderUtils.prepMatrixForBone(geoModel.rightHandBones.get(i));
+            }
+            GeoBone lastBone = geoModel.rightHandBones.get(size - 1);
+            RenderUtils.translateMatrixToBone(lastBone);
+            RenderUtils.translateToPivotPoint(lastBone);
+            RenderUtils.rotateMatrixAroundBone(lastBone);
+            RenderUtils.scaleMatrixForBone(lastBone);
         }
-        GeoBone lastBone = bones.get(size - 1);
-        RenderUtils.translateMatrixToBone(lastBone);
-        RenderUtils.translateToPivotPoint(lastBone);
-        RenderUtils.rotateMatrixAroundBone(lastBone);
-        RenderUtils.scaleMatrixForBone(lastBone);
     }
-
-
-    protected void renderArmWithItem(EntityLivingBase base, ItemStack stack, List<GeoBone> bones, TransformType type, EnumHandSide arm, boolean isVanilla) {
-        if (stack == null || bones.isEmpty()) return;
-        boolean isLeftHand = arm == EnumHandSide.LEFT;
-        GlStateManager.pushMatrix();
-        GlStateManager.enableRescaleNormal();
-        GlStateManager.enableCull();
-        if (!isVanilla) {
-            GlStateManager.scale(0.7F, 0.7F, 0.7F);
-        }
-        if (base.isSneaking()) {
-            GlStateManager.translate(0.0F, 0.2F, 0.0F);
-        }
-        applyBoneTransform(bones);
-        if (!isLeftHand) {
-            GlStateManager.scale(-1, 1, 1);
-            GL11.glFrontFace(GL11.GL_CW); // 修正镜像导致的面剔除反转
-        }
-
-
-        //doRenderItem(base, stack,type, isLeftHand);
-        GlStateManager.translate(0, -0.0625, -0.1);
-        GlStateManager.rotate(-180.0F, 1.0F, 0.0F, 0.0F);
-        GlStateManager.rotate(180.0F, 0.0F, 1.0F, 0.0F);
-        GlStateManager.translate((float) (isLeftHand ? -1 : 1) / 16.0F, 0.125F, -0.625F);
-        Minecraft.getMinecraft().entityRenderer.itemRenderer.renderItemSide(base, stack, type, isLeftHand);
-        if (!isLeftHand) {
-            GL11.glFrontFace(GL11.GL_CCW);
-        }
-        GlStateManager.disableCull();
-        GlStateManager.disableRescaleNormal();
-        GlStateManager.popMatrix();
-    }
-
 }
